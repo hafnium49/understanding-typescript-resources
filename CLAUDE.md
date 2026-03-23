@@ -28,3 +28,25 @@ There is no global `package.json`, build command, or test suite at the repositor
 ## Key Context
 
 The course was significantly updated — sections 4, 9, 10, 11, 15 are brand-new additions. Section 11 covers standard ECMAScript decorators while section 12 covers the older experimental decorator syntax. See `other/what-changed.md` for full update details.
+
+## Recommended Agents for Course Development
+
+This is a Udemy coding course. The following agents are most valuable for maintaining and improving it:
+
+### Technical Writer
+Use for: rewriting lecture descriptions, improving code comments for student clarity, creating step-by-step instructions in attachments, and ensuring code snapshots have clear inline explanations. Best when a section's code needs to teach, not just work.
+
+### Corporate Training Designer
+Use for: evaluating section ordering and learning progression, identifying gaps between sections (e.g., missing prerequisite concepts), designing practice exercises, and structuring new sections with learning objectives. Consult when adding or reorganizing course content.
+
+### Content Creator
+Use for: drafting Udemy course descriptions, section summaries, promotional copy, and supplementary materials like cheat sheets or quick-reference guides that students can download.
+
+### Code Reviewer
+Use for: auditing code snapshots for pedagogical quality — catching patterns that work but would confuse learners, ensuring consistency across sections, and verifying that "starting project" templates in `attachments/` cleanly set up what the corresponding `code/` snapshot builds toward.
+
+### Software Architect
+Use for: explaining design decisions in the more advanced sections (generics, decorators, modules, React/Node integration), ensuring architectural patterns taught in later sections build naturally on earlier ones, and reviewing whether demo projects reflect real-world practices students will encounter.
+
+### Developer Advocate
+Use for: improving the student experience end-to-end — README clarity, repository navigation, Q&A response templates, and identifying friction points where students commonly get stuck. Also useful for planning community engagement around course updates.
