@@ -5,11 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TypeScript - What & Why?</title>
     <link rel="stylesheet" href="app.css" />
+
+    <!--
+      This page imports a plain JavaScript file (calculator.js).
+      The "defer" attribute ensures the script runs after the HTML has been
+      fully parsed, so the form and output elements exist by the time the
+      script tries to access them.
+    -->
     <script src="calculator.js" defer></script>
   </head>
   <body>
     <h1>TypeScript - What & Why?</h1>
 
+    <!--
+      This form collects a price from the user. When submitted, calculator.js
+      extracts the value, adds 19% tax, and displays the result.
+
+      KEY INSIGHT: The input type is "text", not "number". This means the
+      browser will always provide the entered value as a string — even if the
+      user types digits only. This is a fundamental web/JavaScript behavior
+      and is the root cause of the bug demonstrated in this lesson.
+    -->
     <form>
       <p>
         <label>Price</label>
@@ -20,6 +36,10 @@
       </p>
     </form>
 
+    <!--
+      This paragraph displays the calculated result. It starts with
+      placeholder text and gets updated by JavaScript after form submission.
+    -->
     <p id="final-price">Price not calculated yet</p>
   </body>
 </html>
