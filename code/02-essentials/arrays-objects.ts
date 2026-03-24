@@ -84,6 +84,28 @@ possibleResults = [1, -1];
 // length of two, even though all values are numbers.
 // possibleResults = [5, 10, 12];
 
+// OBJECT TYPES — TypeScript's way of describing the shape of objects.
+//
+// Objects are among the most common data structures in JavaScript, and
+// TypeScript handles them naturally. If you assign an object literal to a
+// variable, TypeScript infers the type from its properties and their values
+// (e.g., { name: string; age: number }).
+//
+// You can also define the object type EXPLICITLY using a syntax that
+// resembles an object literal — but instead of property: value pairs, you
+// write property: type pairs. This appears on the left side of the "=",
+// after the colon following the variable name.
+//
+// Inside an object type, you can use any type you already know:
+// - Primitives (string, number, boolean)
+// - Union types (number | string)
+// - Array types (string[])
+// - Nested object types (another { ... } block inside the type)
+//
+// The assigned value must satisfy EVERY property in the type definition.
+// Missing or extra properties will produce compile errors. Your IDE also
+// provides autocompletion based on the type, helping you fill in the
+// required properties correctly.
 let user: {
   name: string;
   age: number | string;
@@ -95,7 +117,12 @@ let user: {
 } = {
   name: 'Max',
   age: 38,
+  // TypeScript enforces types all the way down — adding a number here
+  // (e.g., hobbies: ['Sports', 10]) would fail because hobbies is
+  // typed as string[], not (string | number)[].
   hobbies: ['Sports', 'Cooking'],
+  // Nested objects must also match their type definition exactly.
+  // Both "description" and "id" are required with the correct types.
   role: {
     description: 'admin',
     id: 5
