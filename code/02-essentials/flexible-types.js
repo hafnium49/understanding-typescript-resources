@@ -1,3 +1,4 @@
+"use strict";
 // FLEXIBLE TYPES — when a single type is too restrictive.
 //
 // Sometimes a variable legitimately needs to hold more than one type of
@@ -24,13 +25,10 @@
 // Instead of "any", list exactly the types you want to allow, separated
 // by "|". This gives you the flexibility you need while still preventing
 // unintended types from being assigned.
-let age: string | number = 36;
-
+let age = 36;
 // ... imagine more application code in between ...
-
 // Valid: '37' is a string, which the union type explicitly allows.
 age = '37';
-
 // The lines below would pass without errors if "age" were typed as "any",
 // but with the union type "string | number" TypeScript flags them —
 // booleans, objects, and arrays are not in the allowed set. This is
