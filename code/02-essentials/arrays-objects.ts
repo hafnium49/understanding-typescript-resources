@@ -32,11 +32,24 @@ let hobbies = ['Sports', 'Cooking'];
 // with array notation. There are two equivalent syntaxes:
 //
 //   (string | number)[]          — union wrapped in parentheses, then []
-//   Array<string | number>       — generic Array syntax (covered later)
+//   Array<string | number>       — generic Array syntax (see below)
 //
 // The parentheses in (string | number)[] are essential — without them,
 // "string | number[]" would mean "a string OR an array of numbers",
 // which is a very different type.
+//
+// GENERIC ARRAY SYNTAX: Array<elementType>
+//
+// The "Array" keyword followed by angle brackets < > is a GENERIC TYPE.
+// Generics are a more advanced TypeScript feature covered in depth later,
+// but the core idea is simple: a generic type is a combination of types
+// where one type (Array) is parameterized by another (the element type
+// inside the angle brackets).
+//
+// Array<string | number> means exactly the same thing as (string | number)[]
+// — both describe an array whose elements can be strings or numbers.
+// Neither form is "better"; you will encounter both in real-world projects.
+// The commented-out line below shows the bracket syntax for comparison.
 // let users: (string | number)[];
 let users: Array<string | number>;
 
