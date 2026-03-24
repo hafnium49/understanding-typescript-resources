@@ -20,6 +20,16 @@ function add(a: number, b: number) {
   return a + b;
 }
 
+// THE "void" RETURN TYPE — for functions that return nothing.
+//
+// When a function has no return statement (or returns without a value),
+// its return type is "void". This is a special type used exclusively
+// with function return values — you would never use void as the type
+// of a variable or parameter.
+//
+// As with other return types, TypeScript infers void automatically when
+// no value is returned, so an explicit ": void" annotation is usually
+// unnecessary. Hover over the function name to confirm the inference.
 function log(message: string) {
   console.log(message);
 }
