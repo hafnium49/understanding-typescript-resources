@@ -59,9 +59,29 @@ users = [1, 'Max'];
 users = [5, 1];
 users = ['Max', 'Anna'];
 
-let possibleResults: [number, number]; // [1, -1]
+// TUPLE TYPES — fixed-length arrays with per-position types.
+//
+// A regular array type like number[] allows any number of elements.
+// A TUPLE restricts both the LENGTH and the TYPE at each position.
+//
+// The syntax places types inside square brackets: [type1, type2, ...].
+// This looks similar to an array literal, but appears in a type position.
+//
+// Tuples are useful when you know the exact structure of a short array —
+// for example, a pair of coordinates, a success/error result, or (as here)
+// a fixed set of possible outcome values. They provide stronger guarantees
+// than a plain number[] because colleagues working on the same codebase
+// cannot accidentally store arrays of the wrong length or shape.
+//
+// NOTE: TypeScript can be even more precise than "any number" — you can
+// restrict to specific literal values (e.g., only 1 or -1), but that
+// feature (literal types) is covered in a later lesson.
+let possibleResults: [number, number]; // intended to hold [1, -1]
 
+// Valid: exactly two elements, both numbers — matches the tuple shape.
 possibleResults = [1, -1];
+// COMPILE ERROR if uncommented: three elements violate the tuple's fixed
+// length of two, even though all values are numbers.
 // possibleResults = [5, 10, 12];
 
 let user: {
