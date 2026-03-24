@@ -151,8 +151,31 @@ let user: {
 // but it actually has nothing to do with describing object shapes.
 let val: {} = 'is a value';
 
+// RECORD TYPE — a flexible object type for dynamic key-value pairs.
+//
+// Sometimes you need an object but don't know in advance which property
+// names it will contain. You might dynamically add or remove entries.
+// The {} type won't help here (as shown above, it allows non-objects).
+//
+// Record<KeyType, ValueType> is a built-in TypeScript generic type that
+// means: "an object whose keys are of KeyType and whose values are of
+// ValueType." It guarantees the variable holds an actual object — not
+// a string, number, or other non-object value.
+//
+// The angle brackets contain two type arguments separated by a comma:
+//   1. The KEY type — typically "string" (since JavaScript object keys
+//      are strings, even when written without quotes). Numbers and
+//      symbols are also valid key types in JavaScript.
+//   2. The VALUE type — the type of data stored under each key.
+//
+// Use Record when you need a typed object but cannot define the exact
+// property names at development time. For objects with a known, fixed
+// shape, prefer an explicit object type definition (as shown above
+// with the "user" variable).
 let data: Record<string, number | string>;
 
+// Valid: both entries have string keys and values that are either
+// numbers or strings, satisfying Record<string, number | string>.
 data = {
   entry1: 1,
   entry2: 'some string'
