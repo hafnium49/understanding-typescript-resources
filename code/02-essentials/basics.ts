@@ -60,21 +60,36 @@ userName = 'Max';
 // in the output JavaScript file. They serve purely as development-time
 // safety checks, which is why TypeScript requires a compilation step.
 
-// Annotations and inference also apply to function parameters.
+// FUNCTION PARAMETERS — the other most common place for type annotations.
+//
+// Along with variables, function parameters are where you will use
+// TypeScript's type system most frequently. The same syntax applies:
+// parameterName: typeName, right after the parameter name.
+//
 // Parameter "a" has an explicit annotation (: number).
-// Parameter "b" has a default value of 5, so TypeScript infers its type
-// as "number" from that default — no annotation needed, same inference
-// concept as with variables above.
+// Parameter "b" has a DEFAULT VALUE of 5. Default parameter values are a
+// standard JavaScript feature (not TypeScript-specific), but TypeScript
+// leverages them: it infers the type of "b" as "number" from the default,
+// so no explicit annotation is needed — the same inference concept as
+// with initialized variables above.
+//
+// A default value also makes the parameter OPTIONAL at call sites.
+// Callers can omit "b" entirely, and it will default to 5.
 function add(a: number, b = 5) {
   return a + b;
 }
 
-// Valid: both arguments are numbers.
+// Valid: only one argument provided. "b" uses its default value of 5.
 add(10);
 // COMPILE ERROR: '10' is a string, but parameter "a" expects a number.
 // add('10');
-// Valid: explicitly providing both arguments as numbers.
+// Valid: both arguments provided as numbers. The default for "b" is
+// overridden by the explicit value 6.
 add(10, 6);
-// COMPILE ERROR: '6' is a string, but "b" was inferred as number.
+// COMPILE ERROR: '6' is a string, but "b" was inferred as number from
+// its default value. Overriding a default does not change the type.
 // add(10, '6');
+
+// Other places where type annotations and inference appear — such as
+// classes and objects — will be covered in later sections of this course.
 
