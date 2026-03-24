@@ -25,6 +25,11 @@
 // userName to only accept string values. Attempting to assign a number
 // or boolean to it would produce a compile-time error.
 // Other built-in primitive types include: number, boolean.
+//
+// IMPORTANT: Always use lowercase type names — "string", not "String".
+// The uppercase versions (String, Number, Boolean) refer to JavaScript's
+// wrapper objects and are NOT the same thing. TypeScript won't error on
+// the uppercase form, but it is incorrect for type annotations.
 let userName: string;
 let userAge = 38;
 
