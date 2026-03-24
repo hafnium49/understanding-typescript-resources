@@ -22,9 +22,26 @@ let hobbies = ['Sports', 'Cooking'];
 // allow at runtime.
 // hobbies.push(10);
 
+// EXPLICIT ARRAY TYPE ANNOTATIONS — needed when there is no initial value.
+//
+// When a variable is declared without an initial array, TypeScript cannot
+// infer the element type. You must annotate it explicitly.
+//
+// For a simple array of one type, use: string[] or number[].
+// For an array that accepts multiple element types, combine union types
+// with array notation. There are two equivalent syntaxes:
+//
+//   (string | number)[]          — union wrapped in parentheses, then []
+//   Array<string | number>       — generic Array syntax (covered later)
+//
+// The parentheses in (string | number)[] are essential — without them,
+// "string | number[]" would mean "a string OR an array of numbers",
+// which is a very different type.
 // let users: (string | number)[];
 let users: Array<string | number>;
 
+// All three assignments below are valid because every element in each
+// array is either a string or a number, both of which the union allows.
 users = [1, 'Max'];
 users = [5, 1];
 users = ['Max', 'Anna'];
