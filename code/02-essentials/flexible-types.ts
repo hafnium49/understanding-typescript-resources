@@ -22,8 +22,12 @@
 // UNION TYPES — precise flexibility with the "|" (pipe) operator.
 //
 // Instead of "any", list exactly the types you want to allow, separated
-// by "|". This gives you the flexibility you need while still preventing
-// unintended types from being assigned.
+// by "|". You can chain as many types as needed (e.g., string | number |
+// boolean) — just add another pipe and type name for each additional type.
+//
+// GUIDING PRINCIPLE: Be as specific as possible. If only one type makes
+// sense, use a single type. If you genuinely need multiple types, use a
+// union. Only fall back to "any" when you truly cannot narrow it down.
 let age: string | number = 36;
 
 // ... imagine more application code in between ...
