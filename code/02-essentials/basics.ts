@@ -10,52 +10,71 @@
 // the browser.
 //
 // The .ts extension is the standard convention for files containing
-// TypeScript code. Even plain JavaScript is valid inside a .ts file,
-// but the compiler will still process it through TypeScript's type system.
+// TypeScript code. Most plain JavaScript is valid inside a .ts file —
+// the compiler will process it through TypeScript's type system either way.
 
 // TYPE ANNOTATIONS — the most fundamental TypeScript feature.
 //
-// When a variable is declared without an initial value, TypeScript cannot
-// infer its type. Without an explicit annotation, the variable receives the
-// "any" type, which effectively disables type checking for that variable.
-// Adding ": type" after the variable name tells TypeScript exactly what
-// kind of value this variable is allowed to hold.
-
-// The colon followed by "string" is a TYPE ANNOTATION. It restricts
-// userName to only accept string values. Attempting to assign a number
-// or boolean to it would produce a compile-time error.
-// Other built-in primitive types include: number, boolean.
+// The syntax is: variableName: typeName
+// The colon followed by a type name tells TypeScript exactly what kind of
+// value a variable is allowed to hold. Built-in primitive types include:
+// string, number, and boolean.
 //
 // IMPORTANT: Always use lowercase type names — "string", not "String".
 // The uppercase versions (String, Number, Boolean) refer to JavaScript's
-// wrapper objects and are NOT the same thing. TypeScript won't error on
-// the uppercase form, but it is incorrect for type annotations.
+// wrapper objects, which are not equivalent. While TypeScript accepts the
+// uppercase form without error, it is strongly discouraged.
+//
+// An explicit annotation is essential when a variable has no initial value,
+// because TypeScript cannot infer the type from nothing. Without one, the
+// variable silently receives the "any" type, which disables type checking.
 let userName: string;
+
+// TYPE INFERENCE — TypeScript's ability to determine types automatically.
+//
+// When a variable is initialized with a value at declaration time,
+// TypeScript examines that value and infers the variable's type from it.
+// Here, 38 is a number literal, so TypeScript automatically assigns the
+// type "number" to userAge. You can verify this by hovering over userAge
+// in your editor — the tooltip will show "let userAge: number".
+//
+// BEST PRACTICE: Do NOT add a redundant explicit annotation when an
+// initial value is present (e.g., "let userAge: number = 38"). It adds
+// visual noise without any benefit, since TypeScript already knows the
+// type. Only use explicit annotations when there is no initial value or
+// when you intentionally need a broader type than what would be inferred.
 let userAge = 38;
 
-// ...
+// ... imagine more application code running in between ...
 
-// This assignment succeeds because 'Max' is a string, matching the
-// declared type. Changing the annotation above to "number" would cause
-// TypeScript to flag this line as an error — a string is not assignable
-// to a variable that expects a number.
 userName = 'Max';
 
 // UNCOMMENTING THE LINE BELOW WOULD CAUSE A COMPILE ERROR:
-// '34' is a string literal, but userAge was inferred as number from its
-// initial value of 38. TypeScript enforces that consistency.
+// Although '34' looks numeric, the quotes make it a string literal.
+// TypeScript inferred userAge as "number" from its initial value of 38,
+// so assigning a string violates that inferred type — exactly the same
+// protection you get from an explicit annotation, but without writing one.
 // userAge = '34';
 
 // Type annotations are removed during compilation — they do not exist
 // in the output JavaScript file. They serve purely as development-time
 // safety checks, which is why TypeScript requires a compilation step.
 
+// Annotations and inference also apply to function parameters.
+// Parameter "a" has an explicit annotation (: number).
+// Parameter "b" has a default value of 5, so TypeScript infers its type
+// as "number" from that default — no annotation needed, same inference
+// concept as with variables above.
 function add(a: number, b = 5) {
   return a + b;
 }
 
+// Valid: both arguments are numbers.
 add(10);
+// COMPILE ERROR: '10' is a string, but parameter "a" expects a number.
 // add('10');
+// Valid: explicitly providing both arguments as numbers.
 add(10, 6);
+// COMPILE ERROR: '6' is a string, but "b" was inferred as number.
 // add(10, '6');
 
