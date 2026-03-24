@@ -129,6 +129,26 @@ let user: {
   }
 };
 
+// THE {} TYPE — a deceptive syntax that does NOT mean "empty object."
+//
+// When {} appears as a VALUE (right side of "="), it creates an empty
+// object — that is standard JavaScript. But when {} appears as a TYPE
+// (left side of "=", after the colon), it means something very different:
+// "any value that is not null or undefined."
+//
+// This means strings, numbers, booleans, arrays, and objects are ALL
+// assignable to a variable typed as {}. Only null and undefined are
+// rejected. For example:
+//   let val: {} = false;       // valid
+//   let val: {} = 0;           // valid
+//   let val: {} = '';          // valid
+//   let val: {} = { a: 1 };   // valid
+//   let val: {} = null;        // COMPILE ERROR
+//   let val: {} = undefined;   // COMPILE ERROR
+//
+// This is one of TypeScript's most counterintuitive features. It is
+// mentioned here because it looks like it should relate to object types,
+// but it actually has nothing to do with describing object shapes.
 let val: {} = 'is a value';
 
 let data: Record<string, number | string>;
