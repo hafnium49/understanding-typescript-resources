@@ -55,23 +55,73 @@ function logAndThrow(errorMessage: string): never {
   throw new Error(errorMessage);
 }
 
+// ARROW FUNCTION SYNTAX — a JavaScript feature, not TypeScript-specific.
+//
+// Arrow functions are an alternative way to define functions using "=>"
+// instead of the "function" keyword. They behave slightly differently
+// with respect to "this" binding, but for typing purposes they work
+// identically — you annotate parameters and return types the same way.
 const logMsg = (msg: string) => {
   console.log(msg);
 };
 
+// FUNCTION TYPES — describing the shape of a function used as a value.
+//
+// In JavaScript, functions ARE values: you can store them in variables,
+// pass them as arguments, and return them from other functions. When a
+// parameter expects to receive a function, you need to tell TypeScript
+// what kind of function is acceptable.
+//
+// A FUNCTION TYPE uses the same arrow syntax as arrow functions, but in
+// a type position (after ":" on a parameter or variable). The left side
+// of the arrow lists expected parameters with their types; the right side
+// specifies the return type:
+//
+//   (paramName: paramType) => returnType
+//
+// This is NOT creating a function — it is defining a type. It appears
+// after the colon, in the same position where you would write "string"
+// or "number" for simpler types.
+//
+// PARAMETER NAMES in a function type (like "msg" below) are for developer
+// readability only. They do not need to match the parameter names of the
+// actual function passed in. What must match is the number of parameters,
+// their types, and the return type.
+//
+// TypeScript also has a built-in "Function" type (capital F), but it is
+// too broad — it accepts any function regardless of parameters or return
+// type. Prefer explicit function types for the same reason you prefer
+// specific types over "any".
 function performJob(cb: (msg: string) => void) {
   // ...
   cb('Job done!');
 }
 
+// Both "log" and "logMsg" satisfy the function type (msg: string) => void
+// because each accepts one string parameter and returns nothing. The
+// parameter being named "message" in log vs. "msg" in logMsg is irrelevant.
 performJob(log);
 
+// FUNCTION TYPES IN OBJECT TYPES — defining methods on type aliases.
+//
+// Object types can include properties whose type is a function type.
+// This is how you describe methods that an object must implement.
+// The syntax is the same arrow-based function type used above:
+//   propertyName: (params) => returnType
+//
+// When you later create an object satisfying this type, you can implement
+// the method using either arrow function syntax or JavaScript's shorthand
+// method syntax (methodName() { ... }) — both are valid.
 type User = {
   name: string;
   age: number;
   greet: () => string;
 };
 
+// This object satisfies the User type: it has all required properties
+// with the correct types, including a greet method that returns a string.
+// The method is written using shorthand method syntax (a standard
+// JavaScript feature), which is equivalent to "greet: function() { ... }".
 let user: User = {
   name: 'Max',
   age: 39,
