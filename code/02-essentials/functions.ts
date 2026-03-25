@@ -34,6 +34,22 @@ function log(message: string) {
   console.log(message);
 }
 
+// THE "never" RETURN TYPE — for functions that never finish executing.
+//
+// "void" means a function completes but returns no value. "never" is more
+// specific: it means the function will NEVER complete at all. This happens
+// when a function always throws an error (crashing or unwinding the call
+// stack) or enters an infinite loop.
+//
+// TypeScript infers "void" here by default, but explicitly annotating
+// "never" is more precise and has a practical benefit: if you accidentally
+// try to store the return value in a variable, that variable's type will
+// be "never", and any attempt to use it (access properties, pass it to
+// other functions) will produce a compile error — because TypeScript knows
+// the value can never actually exist.
+//
+// Note: "throw new Error(...)" is standard JavaScript for creating and
+// throwing error objects. It is not TypeScript-specific.
 function logAndThrow(errorMessage: string): never {
   console.log(errorMessage);
   throw new Error(errorMessage);
