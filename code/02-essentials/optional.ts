@@ -31,10 +31,28 @@ type User = {
 
 // NULLISH COALESCING (??) — a JavaScript operator for default values.
 //
-// The "??" operator returns the right-hand side only when the left-hand
-// side is null or undefined. Unlike "||", it does NOT treat empty strings,
-// 0, or false as "missing" — only null and undefined trigger the fallback.
-// This makes it useful alongside optional types, where absent values are
-// specifically undefined (not just any falsy value).
+// This operator is NOT TypeScript-specific — it works in standard modern
+// JavaScript as well — but it pairs naturally with optional types.
+//
+// PROBLEM: The logical OR operator (||) checks whether the left side is
+// FALSY. In JavaScript, falsy values include: false, null, undefined, 0,
+// "" (empty string), and NaN. So "input || false" would use the fallback
+// "false" for BOTH null AND an empty string — even though an empty string
+// might represent valid input the user intentionally submitted.
+//
+// SOLUTION: The "??" operator checks ONLY for null or undefined. All
+// other values — including empty strings, 0, and false — are kept as-is.
+//
+//   Example with input = '':
+//     input || false   →  false   (empty string is falsy, fallback used)
+//     input ?? false   →  ''      (empty string is not null/undefined)
+//
+//   Example with input = null:
+//     input || false   →  false   (null is falsy, fallback used)
+//     input ?? false   →  false   (null triggers ??, fallback used)
+//
+// Use ?? when you want a fallback specifically for "no value at all"
+// (null/undefined) without accidentally replacing legitimate values
+// like 0 or empty strings.
 let input = '';
 const didProvideInput = input ?? false;
