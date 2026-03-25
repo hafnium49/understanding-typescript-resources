@@ -5,10 +5,27 @@
 // infers this union automatically, so you must handle the null possibility
 // before using the result.
 //
-// The "as HTMLInputElement | null" below is a TYPE ASSERTION (covered in
-// more detail later). It tells TypeScript to treat the result as a more
-// specific type — HTMLInputElement instead of the generic HTMLElement —
-// so we can later access input-specific properties like ".value".
+// TYPE ASSERTION (TYPE CASTING) — overriding TypeScript's inferred type.
+//
+// The "as" keyword lets you tell TypeScript that a value is a more
+// specific type than what it inferred. Here, getElementById() returns the
+// generic HTMLElement, which does not include input-specific properties
+// like ".value". By casting to HTMLInputElement, we gain access to those
+// properties.
+//
+// TypeScript ships with many built-in types for HTML elements (e.g.,
+// HTMLInputElement, HTMLButtonElement, HTMLFormElement, etc.), so you
+// rarely need to define DOM types yourself.
+//
+// Using "as HTMLInputElement" without "| null" would also strip null from
+// the type entirely — effectively combining a type assertion with a
+// non-null assertion in one step.
+//
+// WARNING: Like the "!" operator, type assertions shift responsibility
+// from TypeScript to you. If the element is not actually an input (e.g.,
+// it is a paragraph), TypeScript will not complain, but accessing .value
+// at runtime would fail or produce unexpected results. Use assertions
+// only when you are confident about the actual type.
 //
 // NON-NULL ASSERTION OPERATOR (!) — silencing null warnings.
 //
