@@ -56,3 +56,4 @@ type User = {
 // like 0 or empty strings.
 let input = '';
 const didProvideInput = input ?? false;
+console.log(didProvideInput); // Output: '' (empty string, not replaced by false)
