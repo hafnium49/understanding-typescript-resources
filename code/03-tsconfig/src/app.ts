@@ -13,6 +13,12 @@
 //   4. Outputs .js (and .map) files to outDir (here: ./dist)
 //
 // This is the standard workflow for projects with a tsconfig.json.
+//
+// WATCH MODE: For active development, run "tsc --watch" (or "tsc -w").
+// This keeps the compiler running and automatically re-compiles whenever
+// you save a change to any source file under rootDir. The output in
+// outDir updates immediately, so you don't need to manually re-run tsc
+// after every edit.
 
 import fs from 'node:fs';
 
