@@ -1,4 +1,20 @@
 {
+  // TSCONFIG.JSON — the TypeScript project configuration file.
+  //
+  // Created by running: tsc --init
+  // This command generates a tsconfig.json with all available options
+  // listed (most commented out) along with brief descriptions.
+  //
+  // Once this file exists in a project folder, the TypeScript compiler
+  // (tsc) and your IDE (e.g., VS Code) automatically pick it up. It
+  // controls how type checking works, how code is compiled, and which
+  // files are included — for this folder and all its subfolders.
+  //
+  // Most options can be left at their defaults. The ones that matter
+  // most are uncommented below and explained in subsequent lessons.
+  //
+  // For the full reference of every option, see the official docs:
+  // https://www.typescriptlang.org/tsconfig (also linked below).
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
