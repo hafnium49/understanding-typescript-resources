@@ -1,8 +1,18 @@
-// data:
-// initial amount
-// annual contribution
-// expected return
-// duration
+// INVESTMENT CALCULATOR — a terminal-based demo project.
+//
+// This project applies essential TypeScript features (type aliases,
+// union types, object types, type narrowing, function return types)
+// in a practical context rather than isolated snippets.
+//
+// EXECUTION WORKFLOW:
+//   1. Compile:  tsc calculator.ts
+//   2. Run:      node calculator.js
+// Node.js executes the compiled JavaScript directly in the terminal —
+// no website or browser needed. This is a common approach for running
+// demo code throughout the course.
+//
+// INPUT DATA (hard-coded for simplicity):
+// initial amount, annual contribution, expected return, duration
 
 type InvestmentData = {
   initialAmount: number;
