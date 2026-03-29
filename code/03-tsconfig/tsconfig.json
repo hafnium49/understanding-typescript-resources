@@ -81,7 +81,22 @@
     // "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
 
     /* Modules */
+
+    // MODULE — controls how import/export statements are compiled.
+    //
+    // "NodeNext" supports modern ES module syntax (import/export) for
+    // Node.js projects. For projects using a bundler (Webpack, Vite),
+    // "preserve" is often a better choice since the bundler handles
+    // module resolution itself. This is typically configured for you
+    // by project setup tools.
     "module": "NodeNext",                                /* Specify what module code is generated. */
+
+    // ROOTDIR — tells the compiler where your source files live.
+    //
+    // When set, TypeScript looks for .ts files starting from this folder.
+    // The folder structure under rootDir is mirrored in the outDir. For
+    // example, with rootDir "./src" and outDir "./dist", the file
+    // src/app.ts compiles to dist/app.js, preserving the relative path.
     "rootDir": "./src",                                  /* Specify the root folder within your source files. */
     // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
     // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
@@ -99,20 +114,49 @@
     // "allowArbitraryExtensions": true,                 /* Enable importing files with any extension, provided a declaration file is present. */
     // "noResolve": true,                                /* Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project. */
 
-    /* JavaScript Support */
+    /* JavaScript Support — mixing .ts and .js files in the same project.
+     *
+     * ALLOWJS lets you include plain .js files alongside .ts files.
+     * The compiler will not complain about importing from .js files.
+     *
+     * CHECKJS goes further: it enables TypeScript's type checking even
+     * inside .js files. You won't have type annotations there, but
+     * TypeScript can still infer types and catch some errors — giving
+     * you partial TypeScript benefits without converting files to .ts. */
     "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     // "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
     // "maxNodeModuleJsDepth": 1,                        /* Specify the maximum folder depth used for checking JavaScript files from 'node_modules'. Only applicable with 'allowJs'. */
 
-    /* Emit */
+    /* Emit — controls what files the compiler produces. */
+
     // "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
     // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
     // "emitDeclarationOnly": true,                      /* Only output d.ts files and not JavaScript files. */
+
+    // SOURCEMAP — generates .map files alongside the compiled JavaScript.
+    // Source maps let browser dev tools and debuggers show your original
+    // TypeScript code instead of the compiled JavaScript, which makes
+    // debugging significantly easier.
     "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
     // "inlineSourceMap": true,                          /* Include sourcemap files inside the emitted JavaScript. */
+
+    // OUTFILE — bundles all compiled output into a single JavaScript file.
+    // In theory, this lets TypeScript act as a basic bundler. In practice,
+    // dedicated bundlers (Webpack, Vite) are preferred because they offer
+    // more features and better performance. Rarely used.
     // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
+
+    // OUTDIR — the folder where compiled .js files are written.
+    // Without this, output files land next to their source .ts files.
+    // Setting it to "./dist" keeps source and output cleanly separated.
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+
+    // REMOVECOMMENTS — strips all comments from the compiled output.
     // "removeComments": true,                           /* Disable emitting comments. */
+
+    // NOEMIT — runs type checking without producing any output files.
+    // Useful when another tool (e.g., Vite, Babel) handles compilation
+    // and you only want TypeScript for error checking.
     // "noEmit": true,                                   /* Disable emitting files from a compilation. */
     // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
     // "downlevelIteration": true,                       /* Emit more compliant, but verbose and less performant JavaScript for iteration. */
@@ -123,11 +167,23 @@
     // "newLine": "crlf",                                /* Set the newline character for emitting files. */
     // "stripInternal": true,                            /* Disable emitting declarations that have '@internal' in their JSDoc comments. */
     // "noEmitHelpers": true,                            /* Disable generating custom helper functions like '__extends' in compiled output. */
+
+    // NOEMITONERROR — prevents output when there are type errors.
+    //
+    // By default, TypeScript generates .js output files EVEN when there
+    // are type errors in your code. This can be surprising — your code
+    // has errors, yet new files are still produced. Setting this to true
+    // ensures that output is only created when compilation succeeds
+    // without any type checking errors.
     "noEmitOnError": true,                            /* Disable emitting files if any type checking errors are reported. */
     // "preserveConstEnums": true,                       /* Disable erasing 'const enum' declarations in generated code. */
     // "declarationDir": "./",                           /* Specify the output directory for generated declaration files. */
 
-    /* Interop Constraints */
+    /* Interop Constraints — settings for ES module / CommonJS compatibility.
+     *
+     * These handle differences between JavaScript's module systems. They
+     * are advanced and typically configured for you by project setup tools
+     * (Vite, Next.js, etc.). The most commonly used is esModuleInterop. */
     // "isolatedModules": true,                          /* Ensure that each file can be safely transpiled without relying on other imports. */
     // "verbatimModuleSyntax": true,                     /* Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the 'module' setting. */
     // "isolatedDeclarations": true,                     /* Require sufficient annotation on exports so other tools can trivially generate declaration files. */
