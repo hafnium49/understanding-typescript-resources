@@ -1,3 +1,19 @@
+// COMPILING WITH TSCONFIG.JSON — use "tsc" without a filename.
+//
+// IMPORTANT: When you run "tsc <filename>" (targeting a specific file),
+// the tsconfig.json settings are IGNORED. The file compiles with default
+// settings, output lands next to the source file, and options like
+// outDir, target, and strict have no effect.
+//
+// To use your tsconfig.json settings, run "tsc" with NO filename argument
+// from the same directory where tsconfig.json resides. The compiler then:
+//   1. Reads tsconfig.json for all configuration
+//   2. Finds all .ts files under rootDir (here: ./src)
+//   3. Compiles them with the configured target, strict mode, etc.
+//   4. Outputs .js (and .map) files to outDir (here: ./dist)
+//
+// This is the standard workflow for projects with a tsconfig.json.
+
 import fs from 'node:fs';
 
 // fs.readFileSync()
