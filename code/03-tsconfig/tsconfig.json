@@ -192,9 +192,46 @@
     // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
 
-    /* Type Checking */
+    /* Type Checking — the most important section for most developers.
+     *
+     * While the other sections above are often configured by project
+     * setup tools, this section is where YOU decide how strict TypeScript
+     * should be when analyzing your code. Stricter settings catch more
+     * potential bugs, but also produce more errors to address. */
+
+    // STRICT — the master switch for strict type checking.
+    //
+    // Setting this to true enables most of the individual strict options
+    // listed below (noImplicitAny, strictNullChecks, etc.) all at once.
+    // You do not need to uncomment the individual settings if "strict"
+    // is already true — they are included automatically.
+    //
+    // RECOMMENDED: Keep this set to true for most projects. A strict
+    // type checker forces you to write more explicit, less error-prone
+    // code and gives you the maximum benefit from using TypeScript.
+    // It can feel annoying at times (more errors to fix), but it
+    // ultimately prevents subtle bugs from reaching production.
     "strict": true,                                      /* Enable all strict type-checking options. */
+
+    // NOIMPLICITANY — requires explicit types where TypeScript cannot infer.
+    //
+    // Without this (or with strict: false), a function like:
+    //   function add(a, b) { return a + b; }
+    // would silently give parameters "a" and "b" the "any" type (a
+    // warning appears in the IDE, but no compile error). With this
+    // enabled, TypeScript produces an actual error, forcing you to
+    // either add explicit type annotations or set "any" intentionally.
+    // This prevents accidentally bypassing type checking by forgetting
+    // to annotate your parameters. (Included in strict: true.)
     // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+
+    // STRICTNULLCHECKS — prevents using potentially null/undefined values.
+    //
+    // When enabled, TypeScript treats null and undefined as distinct types
+    // that must be handled explicitly. This is the setting that causes
+    // errors like "Object is possibly 'null'" when using getElementById()
+    // without a null check — as seen earlier in the form.ts example.
+    // (Included in strict: true.)
     // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
     // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
     // "strictBindCallApply": true,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
