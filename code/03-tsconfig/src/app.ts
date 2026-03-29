@@ -20,8 +20,36 @@
 // outDir updates immediately, so you don't need to manually re-run tsc
 // after every edit.
 
+// TYPE DECLARATION PACKAGES (@types/*) — teaching TypeScript about
+// libraries and APIs whose types are not built in.
+//
+// TypeScript ships with type definitions for browser/DOM APIs (e.g.,
+// HTMLElement, document), but it does NOT include types for Node.js
+// APIs, or for third-party libraries like lodash, React, etc.
+//
+// Without type definitions, importing a module produces an error:
+//   "Cannot find module 'node:fs' or its corresponding type declarations."
+//
+// The solution is to install a TYPE DECLARATION PACKAGE from the
+// @types/* scope on npm. For Node.js APIs:
+//   npm install --save-dev @types/node
+//
+// The --save-dev flag installs it as a development-only dependency,
+// because type definitions are only needed during development and
+// compilation — the compiled JavaScript output does not use them.
+//
+// These packages come from the DefinitelyTyped project on GitHub
+// (github.com/DefinitelyTyped/DefinitelyTyped), a massive community-
+// driven repository that maintains type definitions for thousands of
+// JavaScript packages. Similar packages exist for other libraries:
+//   @types/react, @types/lodash, @types/express, etc.
+//
+// Once installed, the error disappears and your IDE provides full
+// autocompletion and type checking for the library's API.
 import fs from 'node:fs';
 
+// With @types/node installed, TypeScript knows the full signature of
+// fs.readFileSync — including parameter types and return type.
 // fs.readFileSync()
 
 let userName: string;
