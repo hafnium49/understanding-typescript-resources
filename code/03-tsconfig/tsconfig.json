@@ -239,6 +239,22 @@
     // "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
     // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
     // "alwaysStrict": true,                             /* Ensure 'use strict' is always emitted. */
+    // CODE QUALITY CHECKS — not about types, but about cleaner code.
+    //
+    // These options are NOT included in "strict: true". They must be
+    // enabled individually if you want them. They help catch common
+    // code quality issues that are unrelated to type correctness:
+    //
+    //   noUnusedLocals           — flags variables that are declared
+    //                              but never read anywhere in the code.
+    //   noUnusedParameters       — flags function parameters that are
+    //                              accepted but never used in the body.
+    //   noFallthroughCasesInSwitch — flags switch cases that fall through
+    //                              to the next case without a break or
+    //                              return statement, which is usually
+    //                              an accidental omission.
+    //
+    // These are optional but recommended for keeping code tidy.
     // "noUnusedLocals": true,                           /* Enable error reporting when local variables aren't read. */
     // "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
     // "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
