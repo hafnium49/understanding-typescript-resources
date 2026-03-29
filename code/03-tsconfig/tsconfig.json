@@ -18,7 +18,16 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
-    /* Projects */
+    /* Projects — advanced settings for multi-project setups (monorepos).
+     *
+     * These options control how TypeScript handles project references, where
+     * a repository contains multiple TypeScript sub-projects that depend on
+     * each other. For example, "disableReferencedProjectLoad" prevents
+     * TypeScript from loading ALL sub-project files into memory at once,
+     * which can dramatically speed up type checking in large monorepos.
+     *
+     * For single-project setups (like this one), these settings can be
+     * safely ignored. */
     // "incremental": true,                              /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
     // "composite": true,                                /* Enable constraints that allow a TypeScript project to be used with project references. */
     // "tsBuildInfoFile": "./.tsbuildinfo",              /* Specify the path to .tsbuildinfo incremental compilation file. */
@@ -27,8 +36,39 @@
     // "disableReferencedProjectLoad": true,             /* Reduce the number of projects loaded automatically by TypeScript. */
 
     /* Language and Environment */
+
+    // TARGET — controls which JavaScript version the compiled output uses.
+    //
+    // TypeScript can compile your code to older or newer JavaScript syntax.
+    // An older target (e.g., ES2016) produces code compatible with older
+    // browsers/runtimes — for example, "let" may be downleveled to "var".
+    // A newer target (e.g., ES2022) keeps modern syntax like "let", "const",
+    // optional chaining, and class fields intact.
+    //
+    // Choose based on your runtime environment:
+    //   - Frontend targeting old browsers → lower target (ES2016, ES2017)
+    //   - Frontend targeting modern browsers → ES2020+
+    //   - Node.js backend → match your Node version's ES support (ES2022+)
     "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+
+    // LIB — which built-in type libraries TypeScript should include.
+    //
+    // TypeScript ships with several pre-built type definition libraries
+    // (e.g., "DOM" for HTML element types like HTMLInputElement, "ES2022"
+    // for modern JS APIs). When this setting is commented out, TypeScript
+    // includes a default set of libraries based on the "target" value.
+    //
+    // You would only uncomment and configure this explicitly if you need
+    // to add or remove specific libraries — for example, excluding "DOM"
+    // in a pure Node.js project where browser types are irrelevant, or
+    // adding "WebWorker" for service worker code. The value is an array,
+    // so you can enable multiple libraries.
     // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+
+    // JSX — controls how JSX syntax (used in React) is compiled.
+    // In most React + TypeScript projects, this is configured for you
+    // automatically by build tools like Vite. Decorators (below) are
+    // covered in a later course section.
     // "jsx": "preserve",                                /* Specify what JSX code is generated. */
     // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
     // "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */
