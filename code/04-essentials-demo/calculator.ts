@@ -137,14 +137,38 @@ function calculateInvestment(data: InvestmentData): CalculationResult {
   return annualResults;
 }
 
+// REUSING A TYPE ALIAS — the CalculationResult type defined earlier is
+// used here as the parameter type. This is one of the key benefits of
+// type aliases: define the type once, use it in multiple places. Without
+// the alias, we would have to copy-paste "InvestmentResult[] | string"
+// into both the return type above and the parameter type here.
 function printResults(results: CalculationResult) {
+  // TYPE GUARD — using "typeof" to narrow a union type at runtime.
+  //
+  // Since results is of type CalculationResult (InvestmentResult[] | string),
+  // TypeScript does not know which branch we are in. The "typeof" operator
+  // (a standard JavaScript feature) checks the runtime type and lets
+  // TypeScript NARROW the union: inside this if-block, results is treated
+  // as "string"; after it, results is treated as "InvestmentResult[]".
+  //
+  // The early "return" ensures no further code runs if we got an error
+  // string — so TypeScript knows that everything below this block can
+  // only execute when results is the array type.
   if (typeof results === 'string') {
     console.log(results);
     return;
   }
 
+  // FOR-OF LOOP — iterates over each element in the results array.
+  // TypeScript knows results is InvestmentResult[] here (not string),
+  // thanks to the type guard above, so yearEndResult is automatically
+  // inferred as InvestmentResult — giving full access to its properties.
   for (const yearEndResult of results) {
     console.log(yearEndResult.year);
+    // toFixed() is a built-in JavaScript method on numbers that formats
+    // the value to a fixed number of decimal places (0 here = no decimals).
+    // TypeScript allows calling it because it knows totalAmount is a number
+    // from the InvestmentResult type definition.
     console.log(`Total: ${yearEndResult.totalAmount.toFixed(0)}`);
     console.log(`Total Contributions: ${yearEndResult.totalContributions.toFixed(0)}`);
     console.log(`Total Interest Earned: ${yearEndResult.totalInterestEarned.toFixed(0)}`);
