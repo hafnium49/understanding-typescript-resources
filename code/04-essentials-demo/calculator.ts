@@ -176,6 +176,14 @@ function printResults(results: CalculationResult) {
   }
 }
 
+// WIRING IT ALL TOGETHER — creating data, calculating, and printing.
+//
+// The explicit ": InvestmentData" annotation on investmentData is optional
+// here — TypeScript would infer the type from the object literal. However,
+// adding it provides an immediate error if any required property is missing
+// or has the wrong type, which is helpful while you are still building out
+// the object. Without the annotation, you would only discover a mismatch
+// later when passing it to calculateInvestment.
 const investmentData: InvestmentData = {
   initialAmount: 5000,
   annualContribution: 500,
@@ -183,6 +191,13 @@ const investmentData: InvestmentData = {
   duration: 10
 };
 
+// TypeScript infers "results" as CalculationResult (the return type of
+// calculateInvestment). No explicit annotation needed here — inference
+// from the function's return type is sufficient.
 const results = calculateInvestment(investmentData)
 
 printResults(results);
+
+// TO RUN: compile with "tsc" (uses tsconfig.json), then "node calculator.js".
+// The compiled JavaScript contains the same logic but with all type
+// annotations stripped — they served their purpose during development.
