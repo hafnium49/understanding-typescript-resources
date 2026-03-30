@@ -13,7 +13,28 @@
 //
 // INPUT DATA (hard-coded for simplicity):
 // initial amount, annual contribution, expected return, duration
+//
+// PROJECT SETUP:
+// This project was initialized with "tsc --init" to create a tsconfig.json.
+// The target was changed to ES2022, and strict mode is enabled. All other
+// settings use defaults. To compile, run "tsc" (no filename) from this
+// directory so tsconfig.json settings are applied.
+//
+// APPLICATION DESIGN — two functions with a clear data flow:
+//
+//   1. calculateInvestment(data) — receives investment parameters (initial
+//      amount, annual contribution, expected return rate, duration) and
+//      returns an array of per-year results showing the portfolio value,
+//      total contributions, and interest earned at each year-end.
+//
+//   2. printResults(results) — receives the array produced by
+//      calculateInvestment and outputs it to the terminal in a readable,
+//      multi-line format.
+//
+// The data flow is: hard-coded input → calculateInvestment → printResults.
 
+// TYPE ALIAS for the input — an object type describing the four pieces
+// of investment data the calculator needs.
 type InvestmentData = {
   initialAmount: number;
   annualContribution: number;
@@ -21,6 +42,8 @@ type InvestmentData = {
   duration: number;
 };
 
+// TYPE ALIAS for a single year's output — each entry in the results
+// array describes the portfolio state at one year-end.
 type InvestmentResult = {
   year: string;
   totalAmount: number;
@@ -28,6 +51,10 @@ type InvestmentResult = {
   totalInterestEarned: number;
 };
 
+// UNION TYPE for the return value — the function either succeeds and
+// returns an array of year-end results, or fails validation and returns
+// an error message string. This is a practical use of union types:
+// one type for the happy path, another for the error path.
 type CalculationResult = InvestmentResult[] | string;
 
 function calculateInvestment(data: InvestmentData): CalculationResult {
