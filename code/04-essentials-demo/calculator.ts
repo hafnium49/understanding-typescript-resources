@@ -35,6 +35,16 @@
 
 // TYPE ALIAS for the input — an object type describing the four pieces
 // of investment data the calculator needs.
+//
+// DESIGN DECISION: Rather than accepting four separate parameters
+// (initialAmount, annualContribution, expectedReturn, duration), the
+// function takes a single object parameter. This avoids a long parameter
+// list and eliminates the risk of passing arguments in the wrong order.
+//
+// The type is defined as a TYPE ALIAS (using the "type" keyword) rather
+// than inline (directly after the colon on the parameter). Either approach
+// is valid, but a named alias is easier to read and can be reused in
+// other places without copy-pasting the entire definition.
 type InvestmentData = {
   initialAmount: number;
   annualContribution: number;
