@@ -67,9 +67,22 @@ type InvestmentResult = {
 // one type for the happy path, another for the error path.
 type CalculationResult = InvestmentResult[] | string;
 
+// EXPLICIT RETURN TYPE — CalculationResult tells TypeScript (and readers)
+// exactly what this function can produce. TypeScript verifies that every
+// return path (error strings and the final array) matches this union type.
 function calculateInvestment(data: InvestmentData): CalculationResult {
+  // OBJECT DESTRUCTURING — a standard JavaScript feature that extracts
+  // properties from an object into individual local variables, making
+  // the calculation code below cleaner and shorter.
   const { initialAmount, annualContribution, expectedReturn, duration } = data;
 
+  // INPUT VALIDATION — returning early with an error string.
+  //
+  // These checks demonstrate the union return type in action: when input
+  // is invalid, the function returns a string (the error-path type).
+  // When input is valid, it eventually returns an InvestmentResult[]
+  // (the happy-path type). TypeScript is satisfied because both branches
+  // produce values that match the CalculationResult union.
   if (initialAmount < 0) {
     return 'Initial investment amount must be at least zero.'
   }
@@ -82,26 +95,45 @@ function calculateInvestment(data: InvestmentData): CalculationResult {
     return 'Expected return must be at least zero.'
   }
 
+  // TRACKING VARIABLES — updated each iteration of the loop below.
+  // "total" starts at the initial investment. Contributions and interest
+  // start at zero because no time has passed yet.
   let total = initialAmount;
   let totalContributions = 0;
   let totalInterestEarned = 0;
 
+  // TYPED ARRAY — explicitly annotated as InvestmentResult[] because it
+  // starts empty (TypeScript cannot infer the element type from []).
+  // Despite being a "const", its contents can change via push() — const
+  // only prevents reassigning the variable itself, not mutating the array.
   const annualResults: InvestmentResult[] = [];
 
   for (let i = 0; i < duration; i++) {
+    // Apply the expected return BEFORE adding this year's contribution,
+    // assuming contributions are made at the end of each year.
+    // expectedReturn is expected as a decimal (e.g., 0.08 for 8%).
     total = total * (1 + expectedReturn);
     totalInterestEarned = total - totalContributions - initialAmount;
     totalContributions = totalContributions + annualContribution;
     total = total + annualContribution;
 
     annualResults.push({
+      // TEMPLATE LITERAL — JavaScript's backtick syntax for embedding
+      // expressions inside strings using ${...}.
       year: `Year ${i + 1}`,
       totalAmount: total,
+      // SHORTHAND PROPERTY SYNTAX — a JavaScript feature (not TypeScript).
+      // When the property name and variable name are identical, you can
+      // omit the ": value" part. These two lines are equivalent to:
+      //   totalInterestEarned: totalInterestEarned,
+      //   totalContributions: totalContributions,
       totalInterestEarned,
       totalContributions
     });
   }
 
+  // HAPPY-PATH RETURN — an array of InvestmentResult objects, satisfying
+  // the other half of the CalculationResult union type.
   return annualResults;
 }
 
