@@ -20,7 +20,28 @@ age = 29;
 // curly braces AND the return keyword. The single expression's result
 // is implicitly returned. This makes common one-liner functions very
 // concise compared to the traditional "function" keyword form.
-const add = (a: number, b: number) => a + b;
+const add = (a: number, b: number = 1) => a + b;
+
+// DEFAULT FUNCTION PARAMETERS — providing fallback values (ES6).
+//
+// You can assign a default value to any parameter using "= value" in
+// the parameter list. The default must match the parameter's type.
+// When the function is called without that argument, the default is
+// used automatically. TypeScript recognizes default parameters and
+// makes them optional at call sites.
+//
+// IMPORTANT: Default parameters must come LAST in the parameter list.
+// JavaScript does NOT skip parameters — arguments are matched to
+// parameters strictly by position (left to right). If you put a
+// default on the first parameter and call with one argument, that
+// argument fills the first slot (overriding the default), and the
+// second parameter receives nothing — causing an error.
+//
+// CORRECT:  (a: number, b: number = 1)  → call with add(5) works
+// WRONG:    (a: number = 1, b: number)  → call with add(5) fills a, not b
+
+// With b defaulting to 1, calling add(5) returns 6 (5 + 1).
+// Calling add(5, 2) returns 7, overriding the default.
 
 // SINGLE-PARAMETER SHORTHAND:
 //
