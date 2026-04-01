@@ -108,6 +108,25 @@ max.lastName = '';
 // max._firstName = 'Max 2';
 console.log(max.fullName);
 
+// PARAMETER PROPERTIES — a TypeScript shortcut for declaring and
+// assigning class properties in one step.
+//
+// Without this shortcut, creating a property requires three things:
+//   1. Declare the property in the class body (e.g., jobTitle: string;)
+//   2. Accept a parameter in the constructor (e.g., jt: string)
+//   3. Assign the parameter to the property (e.g., this.jobTitle = jt;)
+//
+// With parameter properties, adding "public" (or "private", "protected",
+// or "readonly") in front of a constructor parameter tells TypeScript to
+// automatically: create a property of the same name, AND assign the
+// incoming argument to that property. The constructor body can be empty.
+//
+// This is a TypeScript-EXCLUSIVE shortcut — vanilla JavaScript does not
+// have this syntax. It results in more concise code than the equivalent
+// vanilla JavaScript class, which always requires manual assignment.
+//
+// Since the constructor is still a function, all function features apply:
+// default values, optional parameters (?), etc.
 class Employee extends User {
   constructor(public jobTitle: string) {
     super();
