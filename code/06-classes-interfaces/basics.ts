@@ -66,8 +66,8 @@ class BasicUser {
   // the class (e.g., basicMax.name = 'Anna' would work).
   //
   // TypeScript also supports "private" and "protected" keywords that
-  // restrict access, but those will be covered in a later lesson.
-  // For now, just know that omitting the keyword means "public".
+  // restrict access — see the AccessUser class below for details.
+  // Omitting the keyword means "public".
   name: string;
   age: number;
 
@@ -120,11 +120,11 @@ console.log(basicFred);  // BasicUser { name: 'Fred', age: 35 }
 // The constructor body can be completely empty. This is a TypeScript-
 // EXCLUSIVE shortcut — vanilla JavaScript does not have this syntax.
 //
-// NOTE: "public" here is used purely to trigger the shortcut. The
-// meaning of "public" (and alternatives like "private") will be
-// explained in a later lesson. For now, just know that adding it
-// before a constructor parameter activates this automatic property
-// creation and assignment behavior.
+// NOTE: "public" here serves double duty — it triggers the shortcut
+// AND declares the property's access level. The full meaning of
+// "public" vs "private" vs "protected" is explained in the AccessUser
+// class below. Using "private" or "protected" here would also trigger
+// the shortcut but restrict access accordingly.
 //
 // Since the constructor is still a function, all function features
 // apply: you can make parameters optional with "?", set default
@@ -145,3 +145,88 @@ const conciseFred = new ConciseUser('Fred', 35);
 
 console.log(conciseMax);   // ConciseUser { name: 'Max', age: 38 }
 console.log(conciseFred);  // ConciseUser { name: 'Fred', age: 35 }
+
+// =====================================================================
+// ACCESS MODIFIERS: public, private, protected — controlling property
+// access from outside the class.
+// =====================================================================
+//
+// The "public" keyword used in the parameter property shortcut above is
+// NOT just a shortcut enabler. Its primary purpose is to declare the
+// ACCESS LEVEL of a property — how it may be accessed on instances of
+// the class. The shortcut is a convenient side effect.
+//
+// TypeScript provides three access modifier keywords:
+//
+//   public    — the property can be read and written from anywhere:
+//               inside the class, outside via dot notation, and in
+//               subclasses. This is the DEFAULT if no keyword is given
+//               on a property declared outside the constructor.
+//
+//   private   — the property can ONLY be accessed from inside the class
+//               where it is defined. Attempting to read or write it from
+//               outside (e.g., instance.age) produces a compile error.
+//               Even subclasses cannot access private properties.
+//
+//   protected — like private, but ALSO accessible in classes that
+//               inherit from this class. Inheritance is covered in a
+//               later lesson.
+//
+// These keywords are TypeScript-EXCLUSIVE. They do not exist in vanilla
+// JavaScript. (Vanilla JS does have its own private property syntax
+// using a "#" prefix, e.g., #age, but in TypeScript you typically use
+// the "private" keyword instead.)
+//
+// IMPORTANT DISTINCTION — "public" on properties vs. in constructors:
+//
+//   Outside the constructor:  "public" is optional — omitting it still
+//   means public. Adding "private" is how you restrict access.
+//
+//   Inside the constructor parameter list:  "public" (or "private" /
+//   "protected") is REQUIRED to activate the parameter property shortcut.
+//   Omitting it means NO property is created — the parameter is just a
+//   regular function parameter.
+
+class AccessUser {
+  // "public" can be written explicitly on properties declared outside
+  // the constructor, but it is optional — the effect is identical to
+  // omitting it (as in BasicUser above).
+  public name: string;
+
+  // "private" restricts this property to the class body only.
+  // Outside code cannot read or write it via dot notation.
+  private age: number;
+
+  // EXPLICIT TYPE ON EMPTY ARRAY — when the initial value is an empty
+  // array, TypeScript cannot infer what types the array should hold.
+  // Adding ": string[]" tells TypeScript this will be an array of
+  // strings, even though it starts empty. Without the annotation,
+  // TypeScript would only know it is "any[]" (or "never[]").
+  public hobbies: string[] = [];
+
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+
+  // METHODS — functions defined inside a class that operate on the
+  // instance's data. They can access ALL properties of the class
+  // (including private ones) via the "this" keyword.
+  greet() {
+    // "this.age" is accessible here because we are inside the class.
+    console.log('Hi, I am ' + this.name + ' and I am ' + this.age);
+  }
+}
+
+const accessMax = new AccessUser('Max', 38);
+
+// Public property — accessible from outside the class.
+accessMax.name = 'Maximilian'; // valid: name is public
+console.log(accessMax.name);   // 'Maximilian'
+
+// Private property — NOT accessible from outside the class.
+// accessMax.age = 39;          // COMPILE ERROR: 'age' is private
+// console.log(accessMax.age);  // COMPILE ERROR: 'age' is private
+
+// But the method CAN access the private property from inside the class.
+accessMax.greet(); // "Hi, I am Maximilian and I am 38"
