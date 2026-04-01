@@ -46,6 +46,30 @@
 // For more on vanilla JavaScript classes:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes
 
+// CREATING A CLASS — the "class" keyword followed by a name.
+//
+// Convention: class names start with an uppercase character (e.g., User).
+// Inside the curly braces, you define PROPERTIES (fields) and METHODS.
+//
+// PROPERTIES IN TYPESCRIPT vs. VANILLA JAVASCRIPT:
+//
+// In vanilla JavaScript, properties are typically created inside the
+// constructor using "this.name = value". In TypeScript, properties must
+// be DECLARED directly in the class body with their types — outside of
+// the constructor. This is one of the key differences TypeScript
+// introduces for classes.
+//
+// Properties can be initialized with a default value (as shown below
+// with '' for both fields). If left uninitialized, they must receive
+// a value in the constructor — otherwise TypeScript flags an error
+// under strict mode (strictPropertyInitialization).
+//
+// THE CONSTRUCTOR:
+//
+// A special method called automatically when you create an instance
+// with "new User(...)". It receives arguments and can assign them to
+// properties using "this.propertyName = value". The parameter names
+// do not need to match the property names.
 class User {
   protected _firstName: string = '';
   private _lastName: string = '';
