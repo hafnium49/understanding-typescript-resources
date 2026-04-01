@@ -48,58 +48,37 @@
 // THE CONSTRUCTOR:
 //
 // A special method called automatically when you create an instance
-// with "new User(...)". It receives arguments and can assign them to
-// properties using "this.propertyName = value". The parameter names
-// do not need to match the property names.
+// with "new ClassName(...)". It receives arguments and can assign them
+// to properties using "this.propertyName = value". The parameter names
+// do not need to match the property names — below, "n" and "a" are
+// used as parameter names while the properties are "name" and "age".
 
-// --- Verbose approach: declare properties, then assign in constructor ---
-
-// class BasicUser {
-//   name: string;
-//   age: number;
-//
-//   constructor(n: string, a: number) {
-//     this.name = n;
-//     this.age = a;
-//   }
-// }
-
-// =====================================================================
-// PARAMETER PROPERTIES — a TypeScript shortcut for declaring and
-// assigning class properties in one step.
-// =====================================================================
-//
-// Without this shortcut, creating a property requires three things:
-//   1. Declare the property in the class body (e.g., name: string;)
-//   2. Accept a parameter in the constructor (e.g., n: string)
-//   3. Assign the parameter to the property (e.g., this.name = n;)
-//
-// With parameter properties, adding "public" (or "private", "protected",
-// or "readonly") in front of a constructor parameter tells TypeScript to
-// automatically: create a property of the same name, AND assign the
-// incoming argument to that property. The constructor body can be empty.
-//
-// This is a TypeScript-EXCLUSIVE shortcut — vanilla JavaScript does not
-// have this syntax. It results in more concise code than the equivalent
-// vanilla JavaScript class, which always requires manual assignment.
-//
-// Since the constructor is still a function, all function features apply:
-// default values, optional parameters (?), etc.
-
+// (Named "BasicUser" here to avoid conflict with the User class in
+// advanced.ts — in the course, both files use "User" but are compiled
+// together via tsconfig, so names must be unique.)
 class BasicUser {
-  constructor(public name: string, public age: number) {}
+  // Property declarations with types — required in TypeScript.
+  // These tell TypeScript that every BasicUser instance will have
+  // a "name" of type string and an "age" of type number.
+  name: string;
+  age: number;
+
+  // The constructor receives values and assigns them to the properties.
+  // "n" maps to this.name, "a" maps to this.age — the names do not
+  // need to match, but the types must be compatible.
+  constructor(n: string, a: number) {
+    this.name = n;
+    this.age = a;
+  }
 }
 
 // INSTANTIATION — creating objects from the class blueprint.
 //
 // Use "new ClassName(...)" to create an instance. The arguments are
-// passed to the constructor, which (via parameter properties above)
-// creates and populates the name and age properties automatically.
+// passed to the constructor, which assigns them to the declared
+// properties via "this.propertyName = value".
 //
 // Each instance is an independent object with its own data.
-// (Named "BasicUser" here to avoid conflict with the User class in
-// advanced.ts — in the course, both files use "User" but are compiled
-// separately. When compiled together via tsconfig, names must be unique.)
 const basicMax = new BasicUser('Max', 38);
 const basicFred = new BasicUser('Fred', 35);
 
