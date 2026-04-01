@@ -87,3 +87,46 @@ const basicFred = new BasicUser('Fred', 35);
 // with different constructor arguments.
 console.log(basicMax);   // BasicUser { name: 'Max', age: 38 }
 console.log(basicFred);  // BasicUser { name: 'Fred', age: 35 }
+
+// =====================================================================
+// PARAMETER PROPERTIES — a TypeScript shortcut for declaring and
+// assigning class properties in one step.
+// =====================================================================
+//
+// The verbose approach above (BasicUser) requires three things per
+// property:
+//   1. Declare the property in the class body (e.g., name: string;)
+//   2. Accept a parameter in the constructor (e.g., n: string)
+//   3. Assign the parameter to the property (e.g., this.name = n;)
+//
+// In vanilla JavaScript, the code is actually shorter because step 1
+// is not required — you can create properties on the fly in the
+// constructor. So TypeScript's stricter approach would make classes
+// MORE verbose, not less.
+//
+// To solve this, TypeScript offers a shortcut: add "public" (or
+// "private", "protected", or "readonly") in front of a constructor
+// parameter, and TypeScript will automatically:
+//   - Create a property of the same name in the class
+//   - Assign the incoming argument to that property
+//
+// The constructor body can be completely empty. This is a TypeScript-
+// EXCLUSIVE shortcut — vanilla JavaScript does not have this syntax.
+//
+// Since the constructor is still a function, all function features
+// apply: default values, optional parameters (?), etc. For example,
+// you could make age optional: (public name: string, public age?: number)
+
+class ConciseUser {
+  // No property declarations needed — "public" on the constructor
+  // parameters creates and assigns them automatically.
+  constructor(public name: string, public age: number) {}
+}
+
+// The result is identical: ConciseUser instances have name and age
+// properties, just like BasicUser — but with far less boilerplate.
+const conciseMax = new ConciseUser('Max', 38);
+const conciseFred = new ConciseUser('Fred', 35);
+
+console.log(conciseMax);   // ConciseUser { name: 'Max', age: 38 }
+console.log(conciseFred);  // ConciseUser { name: 'Fred', age: 35 }
