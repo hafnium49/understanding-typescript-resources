@@ -60,6 +60,14 @@ class BasicUser {
   // Property declarations with types — required in TypeScript.
   // These tell TypeScript that every BasicUser instance will have
   // a "name" of type string and an "age" of type number.
+  //
+  // ACCESS LEVEL: Properties declared without a keyword are "public"
+  // by default — they can be read and written from anywhere outside
+  // the class (e.g., basicMax.name = 'Anna' would work).
+  //
+  // TypeScript also supports "private" and "protected" keywords that
+  // restrict access, but those will be covered in a later lesson.
+  // For now, just know that omitting the keyword means "public".
   name: string;
   age: number;
 
@@ -125,6 +133,8 @@ console.log(basicFred);  // BasicUser { name: 'Fred', age: 35 }
 class ConciseUser {
   // No property declarations needed — "public" on the constructor
   // parameters creates and assigns them automatically.
+  // The resulting properties have the same "public" access level as
+  // the BasicUser properties above (which are public by default).
   constructor(public name: string, public age: number) {}
 }
 
