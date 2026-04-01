@@ -197,12 +197,26 @@ class AccessUser {
   // Outside code cannot read or write it via dot notation.
   private age: number;
 
+  // READONLY — a modifier that prevents reassignment after initialization.
+  //
+  // "readonly" can be used alone (implicitly public) or combined with
+  // "public", "private", or "protected". It allows the property to be
+  // READ but not REASSIGNED with "=".
+  //
+  // IMPORTANT NUANCE: "readonly" prevents reassignment of the property
+  // itself, but it does NOT prevent MUTATION of the value it holds.
+  // Since arrays are reference values (objects stored in memory), the
+  // property holds a pointer to the array — not the array itself.
+  // Calling .push() mutates the existing array in memory without
+  // changing the pointer, so it is allowed. Assigning a brand-new
+  // array (e.g., hobbies = ['Sports']) WOULD change the pointer and
+  // is therefore blocked by readonly.
+  //
   // EXPLICIT TYPE ON EMPTY ARRAY — when the initial value is an empty
   // array, TypeScript cannot infer what types the array should hold.
-  // Adding ": string[]" tells TypeScript this will be an array of
-  // strings, even though it starts empty. Without the annotation,
-  // TypeScript would only know it is "any[]" (or "never[]").
-  public hobbies: string[] = [];
+  // Adding ": string[]" tells TypeScript this will eventually hold
+  // only string values, even though it starts empty.
+  readonly hobbies: string[] = [];
 
   constructor(name: string, age: number) {
     this.name = name;
@@ -230,3 +244,11 @@ console.log(accessMax.name);   // 'Maximilian'
 
 // But the method CAN access the private property from inside the class.
 accessMax.greet(); // "Hi, I am Maximilian and I am 38"
+
+// Readonly property — can be read but NOT reassigned.
+console.log(accessMax.hobbies);    // valid: reading is allowed
+accessMax.hobbies.push('Sports');  // valid: mutation (push) is allowed —
+                                   // the pointer to the array is unchanged
+// accessMax.hobbies = ['Sports']; // COMPILE ERROR: cannot reassign a
+                                   // readonly property (this would change
+                                   // the pointer to a new array)
