@@ -104,18 +104,23 @@ console.log(basicFred);  // BasicUser { name: 'Fred', age: 35 }
 // constructor. So TypeScript's stricter approach would make classes
 // MORE verbose, not less.
 //
-// To solve this, TypeScript offers a shortcut: add "public" (or
-// "private", "protected", or "readonly") in front of a constructor
-// parameter, and TypeScript will automatically:
-//   - Create a property of the same name in the class
+// To solve this, TypeScript offers a shortcut: add the "public" keyword
+// in front of a constructor parameter, and TypeScript will automatically:
+//   - Create a property of the SAME NAME in the class
 //   - Assign the incoming argument to that property
 //
 // The constructor body can be completely empty. This is a TypeScript-
 // EXCLUSIVE shortcut — vanilla JavaScript does not have this syntax.
 //
+// NOTE: "public" here is used purely to trigger the shortcut. The
+// meaning of "public" (and alternatives like "private") will be
+// explained in a later lesson. For now, just know that adding it
+// before a constructor parameter activates this automatic property
+// creation and assignment behavior.
+//
 // Since the constructor is still a function, all function features
-// apply: default values, optional parameters (?), etc. For example,
-// you could make age optional: (public name: string, public age?: number)
+// apply: you can make parameters optional with "?", set default
+// values, etc. — just as you learned with regular functions.
 
 class ConciseUser {
   // No property declarations needed — "public" on the constructor
