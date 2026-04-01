@@ -1,3 +1,20 @@
+// CLASSES & INTERFACES — section overview.
+//
+// This section covers two related but distinct concepts:
+//
+// 1. CLASSES — a standard JavaScript feature (introduced in ES6) for
+//    creating objects with shared structure and behavior. TypeScript
+//    ENHANCES classes with extra features like access modifiers
+//    (public, private, protected), parameter properties, abstract
+//    classes, and stronger type checking.
+//
+// 2. INTERFACES — a TypeScript-EXCLUSIVE feature (no JavaScript
+//    equivalent). Interfaces define a contract: a shape that objects
+//    or classes must conform to. They are used in conjunction with
+//    classes but can also type plain objects and function parameters.
+//    Interfaces exist only at compile time — they produce no JavaScript
+//    output at all.
+
 class User {
   protected _firstName: string = '';
   private _lastName: string = '';
