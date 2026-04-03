@@ -108,3 +108,43 @@ max.lastName = '';
 
 // Accessing the getter — still works exactly as in lesson 73.
 console.log(max.fullName);
+
+// =====================================================================
+// INHERITANCE — building on an existing class with "extends".
+// =====================================================================
+//
+// The "extends" keyword creates a CHILD class that inherits ALL
+// properties and methods from a PARENT (base) class. The child can
+// then add its own properties and methods, or override inherited ones.
+// This is a standard JavaScript feature — not TypeScript-specific.
+//
+// Employee extends User, so every Employee automatically has everything
+// User has: _firstName, _lastName, the firstName/lastName setters,
+// the fullName getter, and the static eid and greet(). On top of that,
+// Employee adds its own jobTitle property and work() method.
+class Employee extends User {
+  // "public jobTitle" uses the parameter property shortcut to create
+  // a new property unique to Employee — not inherited from User.
+  constructor(public jobTitle: string) {
+    // SUPER() — required in any child class constructor.
+    //
+    // When a child class defines a constructor, it MUST call super()
+    // to invoke the parent class's constructor. This ensures the
+    // parent's initialization logic runs before the child adds its own.
+    //
+    // If the parent constructor accepted parameters, you would pass
+    // them here as arguments: super(param1, param2). In this case,
+    // User has no custom constructor, so super() takes no arguments.
+    super();
+
+    // The "super" keyword can also be used as an object reference to
+    // access parent class members from inside the child class:
+    // super.firstName = 'Max';  // would trigger User's firstName setter
+  }
+
+  work() {
+    // Employee-specific method — not inherited from User.
+    // Custom methods can do anything: call APIs, process data, etc.
+    console.log(this.jobTitle);
+  }
+}
