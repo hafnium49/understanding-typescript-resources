@@ -7,8 +7,21 @@
 // a common convention indicating they are intended for internal use
 // and should be accessed via getters/setters rather than directly.
 class User {
-  // "protected" — accessible inside this class AND in subclasses
-  // (see the Employee class below for an example).
+  // WHY "protected" AND NOT "private" OR "public"?
+  //
+  // The Employee subclass below needs to access _firstName in its
+  // work() method. Three access levels were considered:
+  //
+  //   private    → FAILS: Employee cannot access _firstName at all.
+  //                "private" restricts to the defining class only.
+  //   public     → WORKS but too permissive: _firstName becomes
+  //                accessible from outside the class (e.g.,
+  //                max._firstName = 'anything'), bypassing the setter
+  //                validation — defeating its purpose.
+  //   protected  → WORKS correctly: subclasses like Employee CAN
+  //                access it, but outside code CANNOT. This is the
+  //                sweet spot for properties that need to be shared
+  //                with child classes but hidden from external code.
   protected _firstName: string = '';
   // "private" — accessible ONLY inside this class.
   private _lastName: string = '';
