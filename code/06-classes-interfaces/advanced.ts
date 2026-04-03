@@ -3,44 +3,80 @@
 // access modifiers: public, private, protected, readonly).
 
 // =====================================================================
-// GETTERS — computed properties accessed like regular properties.
+// SETTERS — intercept assignment to run logic before storing a value.
 // =====================================================================
 //
-// This User class has two private properties created via the parameter
-// property shortcut in the constructor. Since both are private, they
-// cannot be read or written from outside the class.
-//
-// But what if you want to expose a COMBINED value — like a full name
-// built from first and last name — without exposing the individual
-// private properties? That is what a getter is for.
+// In lesson 73, this User class had a constructor with two private
+// parameters (firstName, lastName) and a fullName getter. Now the
+// instructor EVOLVES the class: the constructor is removed, properties
+// are declared directly in the class body, and SETTERS are added to
+// validate input before storing it.
 class User {
-  constructor(private firstName: string, private lastName: string) {}
+  // Properties declared directly in the class body, initialized to
+  // empty strings (no constructor needed for initialization).
+  //
+  // NAME CLASH AVOIDANCE: These backing properties use an underscore
+  // prefix (_firstName, _lastName). The setters below are named
+  // "firstName" and "lastName" (without underscore). If the property
+  // and setter shared the same name, assigning inside the setter
+  // (this.firstName = name) would trigger the setter again, creating
+  // an infinite loop. The underscore convention keeps the public-facing
+  // setter name clean while avoiding this conflict.
+  _firstName: string = '';
+  _lastName: string = '';
 
-  // A getter is created with the "get" keyword followed by a property
-  // name and parentheses (like a method). Inside, you MUST return a
-  // value — this is the value produced when the property is accessed.
+  // A setter is created with the "set" keyword followed by a property
+  // name. It is DEFINED like a method but USED like a property — you
+  // assign to it with "=" (no parentheses), just like a regular property:
+  //   max.firstName = 'Max';    ← correct (triggers the setter)
+  //   max.firstName('Max');     ← wrong (setters are not called like methods)
   //
-  // KEY DISTINCTION: Even though a getter is DEFINED like a method
-  // (with parentheses and a body), it is USED like a property — you
-  // access it with dot notation WITHOUT parentheses:
-  //   max.fullName     ← correct (property access)
-  //   max.fullName()   ← wrong (would be a method call)
+  // A setter must accept exactly ONE parameter — the value being assigned.
+  // Inside the setter body, you can validate, transform, or reject the
+  // value before storing it in the actual backing property.
   //
-  // No "private" keyword in front of the getter, so it is public —
-  // accessible from outside the class. This is how you expose a
-  // computed value while keeping the raw data private.
+  // VALIDATION: Here the setter trims whitespace and rejects empty
+  // strings by throwing an Error — a built-in JavaScript class for
+  // signaling problems. This means invalid data never reaches the
+  // backing property. Without a setter, any string (including empty)
+  // could be assigned directly.
+  set firstName(name: string) {
+    if (name.trim() === '') {
+      throw new Error('Invalid name.');
+    }
+    this._firstName = name;
+  }
+
+  set lastName(name: string) {
+    if (name.trim() === '') {
+      throw new Error('Invalid name.');
+    }
+    this._lastName = name;
+  }
+
+  // GETTER (from lesson 73) — now reads from the renamed backing
+  // properties (_firstName, _lastName) instead of the original
+  // constructor parameters. The getter itself works exactly the same:
+  // defined like a method, used like a property, must return a value.
   get fullName() {
-    return this.firstName + ' ' + this.lastName;
+    return this._firstName + ' ' + this._lastName;
   }
 }
 
-// Instantiation — passing values to the constructor's private parameters.
-const max = new User('Max', 'Schwarzmuller');
+// No constructor arguments — the constructor was removed. Properties
+// start with their default empty string values.
+const max = new User();
 
-// Private properties cannot be accessed from outside the class:
-// console.log(max.firstName);  // COMPILE ERROR: firstName is private
-// console.log(max.lastName);   // COMPILE ERROR: lastName is private
+// Using the setter — looks like a normal property assignment, but
+// behind the scenes the "set firstName" method runs, validates the
+// input, and stores it in _firstName.
+max.firstName = 'Max';
 
-// But the public getter CAN be accessed — no parentheses, just dot
-// notation like a regular property. The value is computed on the fly.
-console.log(max.fullName); // "Max Schwarzmuller"
+// This assignment triggers the lastName setter. Because an empty
+// string fails the trim() check, the setter throws an Error at
+// runtime: "Invalid name." This demonstrates the setter's value —
+// it prevents invalid data from ever reaching the backing property.
+max.lastName = '';
+
+// Accessing the getter — still works exactly as in lesson 73.
+console.log(max.fullName);
