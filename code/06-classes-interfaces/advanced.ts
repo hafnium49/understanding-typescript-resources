@@ -13,6 +13,29 @@ class User {
   // "private" — accessible ONLY inside this class.
   private _lastName: string = '';
 
+  // SETTERS — intercept assignment to run logic before storing a value.
+  //
+  // A setter is created with the "set" keyword followed by a property
+  // name. It is DEFINED like a method but USED like a property — you
+  // assign to it with "=" (no parentheses), just like a regular property:
+  //   user.firstName = 'Max';    ← correct (triggers the setter)
+  //   user.firstName('Max');     ← wrong (setters are not called like methods)
+  //
+  // A setter must accept exactly ONE parameter — the value being assigned.
+  // Inside the setter body, you can validate, transform, or reject the
+  // value before storing it in the actual backing property.
+  //
+  // NAME CLASH AVOIDANCE: The setter is named "firstName" but the
+  // backing property is "_firstName" (with underscore). If both had the
+  // same name, assigning inside the setter would trigger the setter
+  // again, creating an infinite loop. The underscore prefix convention
+  // keeps the public-facing name clean while avoiding this conflict.
+  //
+  // VALIDATION EXAMPLE: Here the setter trims whitespace and rejects
+  // empty strings by throwing an Error — a built-in JavaScript class
+  // for signaling problems. This means invalid data never reaches the
+  // backing property. Without a setter, any string (including empty)
+  // could be assigned directly to the property.
   set firstName(name: string) {
     if (name.trim() === '') {
       throw new Error('Invalid name.');
@@ -48,6 +71,23 @@ class User {
     return this._firstName + ' ' + this._lastName;
   }
 
+  // ===================================================================
+  // STATIC PROPERTIES & METHODS — belong to the class, not instances.
+  // ===================================================================
+  //
+  // Regular properties and methods belong to individual INSTANCES —
+  // each object created with "new User()" gets its own copy, and you
+  // access them via the instance (e.g., max.firstName).
+  //
+  // STATIC properties and methods belong to the CLASS ITSELF. They
+  // are accessed directly on the class name (e.g., User.eid) WITHOUT
+  // creating an instance first. You cannot access them on instances,
+  // and they cannot access instance-specific data like firstName or
+  // lastName (because no instance exists in that context).
+  //
+  // Use cases: utility methods that don't need instance data, shared
+  // constants, factory functions, or grouping related helpers under
+  // a class name (utility classes).
   static eid = 'USER';
 
   static greet() {
@@ -55,28 +95,77 @@ class User {
   }
 }
 
+// Static members are accessed on the class name — no "new" keyword,
+// no instance needed. This works even before any instance is created.
 console.log(User.eid);
 User.greet();
 
+// No constructor arguments — this class uses setters instead.
+// Properties start with their default empty string values and are
+// set individually afterward.
 const max = new User();
+
+// Using the setter — looks like a normal property assignment, but
+// behind the scenes the "set firstName" method runs, validates the
+// input, and stores it in _firstName.
 max.firstName = 'Max';
+
+// This assignment triggers the lastName setter. Because an empty
+// string fails the trim() check, the setter throws an Error at
+// runtime: "Invalid name." This demonstrates the setter's value —
+// it prevents invalid data from ever reaching the backing property.
 max.lastName = '';
+
 // max._firstName = 'Max 2';  // COMPILE ERROR: _firstName is protected
 
 // Accessing the getter — no parentheses, just dot notation like a
 // regular property. The value is computed on the fly each time.
 console.log(max.fullName);
 
+// =====================================================================
+// INHERITANCE — building on an existing class with "extends" (ES6).
+// =====================================================================
+//
+// The "extends" keyword lets a child class inherit ALL properties and
+// methods from a parent (base) class, then add or override its own.
+// This is a standard JavaScript feature — not TypeScript-specific.
+//
+// Employee extends User, so every Employee automatically has:
+//   - _firstName, _lastName (inherited properties)
+//   - firstName/lastName setters, fullName getter (inherited)
+//   - static eid and greet() (inherited on the class)
+// Plus its own additions: jobTitle and work().
+//
+// CONSTRUCTOR + SUPER:
+// When a child class defines its own constructor, it MUST call super()
+// as the first thing inside that constructor. super() invokes the
+// parent class's constructor, ensuring the parent's initialization
+// logic runs. If the parent constructor accepted parameters, you
+// would pass them as arguments to super(...).
+//
+// The "super" keyword can also be used as an object reference to
+// access the parent class — e.g., super.firstName = 'Max' would
+// trigger the parent's firstName setter from inside the child class.
+//
+// PROTECTED IN ACTION: _firstName was declared "protected" on User.
+// This means it is accessible here in Employee (a subclass) via
+// "this._firstName". If it were "private", this access would fail.
+// This is the key difference between private and protected.
 class Employee extends User {
+  // "public jobTitle" uses the parameter property shortcut — creates
+  // and assigns the jobTitle property automatically.
   constructor(public jobTitle: string) {
+    // super() calls User's constructor (which has no parameters here).
     super();
-    // super.firstName = 'Max';
+    // super.firstName = 'Max';  // would trigger User's setter
   }
 
   work() {
-    // ...
+    // "this._firstName" works because _firstName is "protected" on
+    // User — accessible in subclasses but not outside the class.
     console.log(this._firstName);
-    // super._firstName
+    // "this._lastName" would NOT work — it is "private" on User,
+    // so even subclasses cannot access it.
   }
 }
 
