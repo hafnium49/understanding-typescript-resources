@@ -22,8 +22,25 @@ class User {
   // (this.firstName = name) would trigger the setter again, creating
   // an infinite loop. The underscore convention keeps the public-facing
   // setter name clean while avoiding this conflict.
-  _firstName: string = '';
-  _lastName: string = '';
+  // WHY "protected" AND NOT "private" OR "public"?
+  //
+  // The Employee subclass needs to access _firstName in its work()
+  // method. Three access levels were considered:
+  //
+  //   private    → FAILS: Employee cannot access _firstName at all.
+  //                Even "super._firstName" does not work — private
+  //                restricts to the defining class only.
+  //   public     → WORKS but too permissive: _firstName becomes
+  //                accessible from outside the class (e.g.,
+  //                max._firstName = 'anything'), bypassing the setter
+  //                validation — defeating its purpose.
+  //   protected  → WORKS correctly: subclasses like Employee CAN
+  //                access it via "this._firstName", but outside code
+  //                CANNOT. This is the sweet spot for properties that
+  //                need to be shared with child classes but hidden
+  //                from external code.
+  protected _firstName: string = '';
+  private _lastName: string = '';
 
   // A setter is created with the "set" keyword followed by a property
   // name. It is DEFINED like a method but USED like a property — you
@@ -143,8 +160,14 @@ class Employee extends User {
   }
 
   work() {
-    // Employee-specific method — not inherited from User.
-    // Custom methods can do anything: call APIs, process data, etc.
-    console.log(this.jobTitle);
+    // PROTECTED IN ACTION: this._firstName works here because
+    // _firstName is "protected" on User — accessible in subclasses.
+    // If it were "private", this line would produce a compile error.
+    // If it were "public", it would work here BUT also from outside
+    // the class, which is undesirable.
+    console.log(this._firstName);
   }
 }
+
+// Protected property — NOT accessible from outside the class:
+// max._firstName = 'Max 2';  // COMPILE ERROR: _firstName is protected
