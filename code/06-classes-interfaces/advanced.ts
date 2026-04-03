@@ -122,50 +122,16 @@ max.lastName = '';
 // regular property. The value is computed on the fly each time.
 console.log(max.fullName);
 
-// =====================================================================
-// INHERITANCE — building on an existing class with "extends" (ES6).
-// =====================================================================
-//
-// The "extends" keyword lets a child class inherit ALL properties and
-// methods from a parent (base) class, then add or override its own.
-// This is a standard JavaScript feature — not TypeScript-specific.
-//
-// Employee extends User, so every Employee automatically has:
-//   - _firstName, _lastName (inherited properties)
-//   - firstName/lastName setters, fullName getter (inherited)
-//   - static eid and greet() (inherited on the class)
-// Plus its own additions: jobTitle and work().
-//
-// CONSTRUCTOR + SUPER:
-// When a child class defines its own constructor, it MUST call super()
-// as the first thing inside that constructor. super() invokes the
-// parent class's constructor, ensuring the parent's initialization
-// logic runs. If the parent constructor accepted parameters, you
-// would pass them as arguments to super(...).
-//
-// The "super" keyword can also be used as an object reference to
-// access the parent class — e.g., super.firstName = 'Max' would
-// trigger the parent's firstName setter from inside the child class.
-//
-// PROTECTED IN ACTION: _firstName was declared "protected" on User.
-// This means it is accessible here in Employee (a subclass) via
-// "this._firstName". If it were "private", this access would fail.
-// This is the key difference between private and protected.
 class Employee extends User {
-  // "public jobTitle" uses the parameter property shortcut — creates
-  // and assigns the jobTitle property automatically.
   constructor(public jobTitle: string) {
-    // super() calls User's constructor (which has no parameters here).
     super();
-    // super.firstName = 'Max';  // would trigger User's setter
+    // super.firstName = 'Max';
   }
 
   work() {
-    // "this._firstName" works because _firstName is "protected" on
-    // User — accessible in subclasses but not outside the class.
+    // ...
     console.log(this._firstName);
-    // "this._lastName" would NOT work — it is "private" on User,
-    // so even subclasses cannot access it.
+    // super._firstName
   }
 }
 
