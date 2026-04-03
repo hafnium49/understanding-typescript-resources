@@ -61,7 +61,35 @@ class User {
   get fullName() {
     return this._firstName + ' ' + this._lastName;
   }
+
+  // ===================================================================
+  // STATIC PROPERTIES & METHODS — belong to the class, not instances.
+  // ===================================================================
+  //
+  // Regular properties and methods belong to individual INSTANCES —
+  // each object created with "new User()" gets its own copy, and you
+  // access them via the instance (e.g., max.firstName).
+  //
+  // STATIC properties and methods belong to the CLASS ITSELF. They
+  // are accessed directly on the class name (e.g., User.eid) WITHOUT
+  // creating an instance first. You cannot access them on instances,
+  // and they cannot access instance-specific data like firstName or
+  // lastName (because no instance exists in that context).
+  //
+  // Use cases: utility methods that don't need instance data, shared
+  // constants, factory functions, or grouping related helpers under
+  // a class name (utility classes).
+  static eid = 'USER';
+
+  static greet() {
+    console.log('Hello!');
+  }
 }
+
+// Static members are accessed on the class name — no "new" keyword,
+// no instance needed. This works even before any instance is created.
+console.log(User.eid);
+User.greet();
 
 // No constructor arguments — the constructor was removed. Properties
 // start with their default empty string values.
