@@ -74,3 +74,48 @@ user = {
     // clear the session
   },
 };
+
+// =====================================================================
+// INTERFACE vs. TYPE ALIAS — when does it matter?
+// =====================================================================
+//
+// You could define the same object shape using a type alias:
+//
+//   type Authenticatable = {
+//     email: string;
+//     password: string;
+//     login(): void;
+//     logout(): void;
+//   }
+//
+// In most cases, both approaches work identically and the choice is
+// personal preference. You will see projects that use interfaces
+// everywhere and others that use type aliases exclusively.
+//
+// DECLARATION MERGING — one key difference.
+//
+// If you define the same interface name a second time, TypeScript
+// MERGES the two definitions into one — the interface gains the
+// properties from both declarations. This does NOT produce a "name
+// already taken" error. With type aliases, repeating the same name
+// IS an error.
+//
+// This is mostly useful when you need to extend an interface that
+// comes from a library or another file you don't directly control —
+// you can add properties to it without modifying the original source.
+
+// Uncomment the block below to see declaration merging in action:
+// TypeScript merges this with the Authenticatable interface above,
+// so now ALL Authenticatable objects must also have a "role" property.
+// The "user" object above would then produce a compile error because
+// it lacks "role".
+
+// interface Authenticatable {
+//   role: string;
+// }
+
+// With a type alias, the same thing would NOT work:
+// type Authenticatable = {
+//   role: string;
+// }
+// → COMPILE ERROR: Duplicate identifier 'Authenticatable'.
