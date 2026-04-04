@@ -119,3 +119,34 @@ user = {
 //   role: string;
 // }
 // → COMPILE ERROR: Duplicate identifier 'Authenticatable'.
+
+// =====================================================================
+// INTERFACES FOR FUNCTION TYPES — a lesser-known alternative.
+// =====================================================================
+//
+// Interfaces are typically used for object shapes, but they can also
+// define FUNCTION types. This is an alternative to the more common
+// type alias approach for function types.
+//
+// TYPE ALIAS approach (more common):
+//   type SumFn = (a: number, b: number) => number;
+//
+// INTERFACE approach (same result, different syntax):
+//   interface SumFn {
+//     (a: number, b: number): number;
+//   }
+//
+// The interface syntax uses a CALL SIGNATURE inside the braces — a
+// parameter list followed by a colon and the return type (not an arrow).
+// Both approaches produce identical behavior: they constrain the variable
+// to only hold functions matching that signature.
+//
+// You will encounter the type alias version more often in practice,
+// but it is worth knowing that the interface version exists.
+interface SumFn {
+  (a: number, b: number): number;
+}
+
+let sum: SumFn;
+
+sum = (a, b) => a + b;
