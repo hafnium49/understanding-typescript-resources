@@ -150,3 +150,44 @@ interface SumFn {
 let sum: SumFn;
 
 sum = (a, b) => a + b;
+
+// =====================================================================
+// IMPLEMENTING AN INTERFACE — using interfaces as class contracts.
+// =====================================================================
+//
+// The "implements" keyword forces a class to provide ALL properties
+// and methods declared in the interface. If any are missing or have
+// the wrong type, TypeScript produces a compile error.
+//
+// This is useful in larger projects or when building libraries — it
+// guarantees that a class has a certain minimal shape, regardless of
+// who writes the class. The class CAN have more properties and methods
+// than the interface requires (like userName below), but it MUST have
+// at least everything the interface defines.
+//
+// You can implement multiple interfaces on a single class by separating
+// them with commas: class Foo implements InterfaceA, InterfaceB { ... }
+//
+// "implements" is a TypeScript-exclusive keyword — it does not exist
+// in vanilla JavaScript.
+class AuthenticatableUser implements Authenticatable {
+  // The constructor provides the required email and password properties
+  // (from the interface) plus an extra userName property (not required
+  // by the interface, but allowed — a class can exceed the contract).
+  constructor(
+    public userName: string,
+    public email: string,
+    public password: string
+  ) {}
+
+  // Concrete implementations of the methods declared in the interface.
+  // The interface only defined the signatures (no logic); here the class
+  // provides the actual behavior.
+  login() {
+    // ...
+  }
+
+  logout() {
+    // ...
+  }
+}
