@@ -46,3 +46,31 @@ interface Authenticatable {
   login(): void;
   logout(): void;
 }
+
+// =====================================================================
+// USING AN INTERFACE AS AN OBJECT TYPE
+// =====================================================================
+//
+// One common way to use an interface is as a type annotation — exactly
+// like you would use a type alias. Declaring a variable as type
+// Authenticatable means the value assigned to it must be an object
+// that has ALL the properties and methods the interface describes.
+//
+// When you create the actual object, you DO add the concrete logic
+// inside the method bodies (curly braces, implementation code). The
+// interface only described the shape — the object provides the reality.
+let user: Authenticatable;
+
+user = {
+  email: 'test@example.com',
+  password: 'abc1',
+  // Here, unlike in the interface definition, the methods have bodies
+  // with actual logic — because this is a concrete object value, not
+  // a type description.
+  login() {
+    // reach out to a database, check credentials, create a session
+  },
+  logout() {
+    // clear the session
+  },
+};
