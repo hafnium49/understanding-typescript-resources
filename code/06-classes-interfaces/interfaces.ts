@@ -18,3 +18,31 @@
 //      missing, TypeScript produces a compile error.
 //
 // Both usages will be demonstrated in the following lessons.
+
+// DEFINING AN INTERFACE — the "interface" keyword followed by a name.
+//
+// The naming convention is flexible — choose a name that describes what
+// the interface represents. Here, "Authenticatable" describes objects
+// that support authentication (they have credentials and login/logout
+// capability). You will see different naming conventions in different
+// projects.
+//
+// Inside the curly braces, you describe ONLY the shape — the property
+// names and types, and method signatures. Unlike a class definition,
+// an interface contains NO values, NO logic, and NO method bodies.
+// Methods are declared with their parameter list and return type only
+// (no curly braces, no implementation code).
+//
+// Think of it as a blueprint for a blueprint: a class is a blueprint
+// for objects, and an interface is a blueprint for what a class (or
+// object) must look like — without dictating HOW it works internally.
+interface Authenticatable {
+  email: string;
+  password: string;
+
+  // Method signatures only — no curly braces, no logic.
+  // These declare that any object matching this interface must have
+  // login and logout methods that take no parameters and return nothing.
+  login(): void;
+  logout(): void;
+}
