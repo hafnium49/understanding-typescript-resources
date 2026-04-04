@@ -191,3 +191,28 @@ class AuthenticatableUser implements Authenticatable {
     // ...
   }
 }
+
+// =====================================================================
+// INTERFACES AS PARAMETER TYPES — guaranteeing object shape in functions.
+// =====================================================================
+//
+// One of the most practical uses of interfaces is as parameter types
+// on functions. When a function expects an object with a certain shape,
+// using an interface as the parameter type guarantees that any caller
+// must pass an object that satisfies the full interface contract.
+//
+// This is more robust than defining an inline object type (e.g.,
+// { login(): void }) because the interface may have many properties
+// and methods — and the function is guaranteed to receive ALL of them,
+// not just the one or two it happens to use internally.
+//
+// Any object that implements the Authenticatable interface (whether
+// via "implements" on a class or by manually matching the shape) is
+// accepted as a valid argument.
+function authenticate(user: Authenticatable) {
+  user.login();
+}
+
+// NOTE: All TypeScript features work inside interfaces — you can use
+// any types, nested object types, union types, optional properties
+// (with ?), and so on. Interfaces are not limited to simple shapes.
