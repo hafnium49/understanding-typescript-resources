@@ -216,3 +216,26 @@ function authenticate(user: Authenticatable) {
 // NOTE: All TypeScript features work inside interfaces — you can use
 // any types, nested object types, union types, optional properties
 // (with ?), and so on. Interfaces are not limited to simple shapes.
+
+// =====================================================================
+// EXTENDING INTERFACES — inheritance for interfaces with "extends".
+// =====================================================================
+//
+// Just like classes can extend other classes, interfaces can extend
+// other interfaces using the "extends" keyword. The child interface
+// inherits ALL properties and methods from the parent interface and
+// can add its own on top.
+//
+// KEY DIFFERENCE FROM DECLARATION MERGING:
+//   - Declaration merging modifies the ORIGINAL interface by adding
+//     properties to it (all objects of that type gain the new shape).
+//   - "extends" creates a NEW, SEPARATE interface that builds on the
+//     original without touching it. The original stays unchanged.
+//
+// This is useful when you have a base contract (Authenticatable) and
+// need a more specialized variant (AuthenticatableAdmin) that adds
+// extra requirements while keeping the base interface available for
+// other, less specialized uses.
+interface AuthenticatableAdmin extends Authenticatable {
+  role: 'admin' | 'superadmin';
+}
