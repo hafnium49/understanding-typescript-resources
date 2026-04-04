@@ -171,3 +171,48 @@ class Employee extends User {
 
 // Protected property — NOT accessible from outside the class:
 // max._firstName = 'Max 2';  // COMPILE ERROR: _firstName is protected
+
+// =====================================================================
+// ABSTRACT CLASSES — base classes that cannot be instantiated directly.
+// =====================================================================
+//
+// The "abstract" keyword marks a class as a BASE-ONLY class. You cannot
+// create instances of an abstract class with "new" — it exists solely
+// to be extended by other classes that inherit its properties and methods.
+//
+// This is useful when you have a generic concept (like a UI element)
+// that should never exist on its own, but should serve as a foundation
+// for more specialized classes (like a side drawer, a login form, tabs).
+//
+// TYPESCRIPT-EXCLUSIVE: The "abstract" keyword does not exist in vanilla
+// JavaScript. It is stripped from the compiled output — it serves purely
+// as a compile-time constraint enforced by TypeScript.
+abstract class UIElement {
+  // The constructor and methods work exactly like a regular class.
+  // The only difference is that "new UIElement(...)" is forbidden.
+  constructor(public identifier: string) {}
+
+  clone(targetLocation: string) {
+    // logic to duplicate the UI element
+  }
+}
+
+// COMPILE ERROR if uncommented: cannot create an instance of an abstract
+// class. Abstract classes are meant to be extended, not used directly.
+// let uiElement = new UIElement('main-element');
+
+// A concrete (non-abstract) class that EXTENDS the abstract base class.
+// SideDrawerElement inherits everything from UIElement (identifier
+// property, clone method) and adds its own position property.
+class SideDrawerElement extends UIElement {
+  // The constructor accepts identifier (needed by the base class) and
+  // position (new to this subclass). Both use the parameter property
+  // shortcut.
+  constructor(public identifier: string, public position: 'left' | 'right') {
+    // super(identifier) forwards the identifier to UIElement's
+    // constructor. This is required because the base class constructor
+    // expects one argument. Unlike the Employee example above (where
+    // User had no custom constructor), here we MUST pass a value.
+    super(identifier);
+  }
+}
