@@ -73,6 +73,82 @@ class LinkedList<T> {
     this.length++;
   }
 
+  // INSERTAT — inserts a new node at a specific position in the chain.
+  //
+  // The logic walks node by node from root until the target position
+  // is reached, then re-links the neighboring nodes to include the
+  // new node between them. Returns true if successful, false if the
+  // position is out of bounds.
+  //
+  // No new TypeScript features here — just classes, generics, and
+  // private properties applied to a more complex algorithm.
+  insertAt(value: T, pos: number) {
+    if (pos > -1 && pos < this.length && this.root) {
+      let current = this.root;
+      let index = 0;
+      let previous = current;
+      let node = new ListNode(value);
+
+      if (pos === 0) {
+        // Inserting at the start: the new node's next points to the
+        // current root, then the new node becomes the new root.
+        node.next = this.root;
+        this.root = node;
+      } else {
+        // Walk to the target position, tracking both the current node
+        // and the one before it (previous). The new node is inserted
+        // between previous and current by updating their links.
+        while (index++ < pos && current.next) {
+          previous = current;
+          current = current.next;
+        }
+        node.next = current;
+        previous.next = node;
+      }
+      this.length++;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // REMOVEAT — removes the node at a specific position and returns it.
+  //
+  // Similar walking logic to insertAt. The node at the target position
+  // is unlinked by connecting its predecessor directly to its successor.
+  // Returns the removed node (so the caller can access its value), or
+  // null if the position is out of bounds.
+  //
+  // NOTE: "previous: ListNode<T> = current" uses an explicit type
+  // annotation. This is needed because TypeScript must know the type
+  // of "previous" before the while loop assigns to it — a practical
+  // example of when explicit annotations help even with initialized
+  // variables.
+  removeAt(pos: number) {
+    if (pos > -1 && pos < this.length && this.root) {
+      let current = this.root;
+      let previous: ListNode<T> = current;
+      let index = 0;
+
+      if (pos === 0) {
+        // Removing the root: advance root to the next node.
+        this.root = current.next;
+      } else {
+        while (index++ < pos && current.next) {
+          previous = current;
+          current = current.next;
+        }
+        // Skip over the current node: previous now points directly
+        // to current's successor, effectively removing current.
+        previous.next = current.next;
+      }
+      this.length--;
+      return current;
+    } else {
+      return null;
+    }
+  }
+
   // GETNUMBEROFELEMENTS — a public method that exposes the private
   // length property. This is a common pattern: keep the property
   // private so it cannot be modified from outside the class, but
@@ -105,3 +181,17 @@ numberList.add(-3);
 
 console.log('Length: ' + numberList.getNumberOfElements());
 numberList.print();
+
+console.log('--- NOW REMOVING INDEX 1 ---');
+numberList.removeAt(1);
+console.log('Length: ' + numberList.getNumberOfElements());
+numberList.print();
+
+console.log('--- NOW INSERTING AT INDEX 1 ---');
+numberList.insertAt(100, 1);
+console.log('Length: ' + numberList.getNumberOfElements());
+numberList.print();
+
+// The same LinkedList class works with a completely different type —
+// this is the power of generics in action.
+const nameList = new LinkedList<string>();
