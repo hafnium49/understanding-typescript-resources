@@ -38,24 +38,29 @@
 class ListNode {}
 
 // LINKEDLIST — the main class that manages the chain of nodes.
-class LinkedList {
-  // The ROOT node is the entry point to the chain — the first node.
-  // Every other node is reached by following "next" links from root.
-  // Marked as optional (?) because the list starts empty — root is
-  // undefined until the first node is added.
+// MAKING LINKEDLIST GENERIC — the add() method needs a flexible value type.
+//
+// The add() method should accept any kind of value (number, string, object,
+// etc.), but using "any" loses type information and using "unknown" would
+// require type guards everywhere. A GENERIC class is the ideal solution:
+// the type is flexible when the class is defined, but concrete and precise
+// when the class is instantiated.
+class LinkedList<T> {
   private root?: ListNode;
-
-  // LENGTH tracks how many nodes are in the list. Without this, you
-  // would have to walk through every node and count them each time
-  // you wanted to know the size — inefficient for a common operation.
-  // Initialized to 0 because the list starts empty.
   private length = 0;
+
+  // ADD — accepts a value of the generic type T to be stored in the list.
+  // The actual logic for creating a node and linking it into the chain
+  // will be implemented in the next lesson.
+  add(value: T) {
+    // TODO: create a ListNode, store the value, link it into the chain
+  }
 }
 
-// Instantiation — creates an empty linked list.
-// root is undefined and length is 0.
-const list = new LinkedList();
+// Each instantiation chooses a concrete type for T:
+const numberList = new LinkedList<number>(); // T = number
+const nameList = new LinkedList<string>();   // T = string
 
-// Private properties cannot be accessed from outside the class:
-// list.root;    // COMPILE ERROR: 'root' is private
-// list.length;  // COMPILE ERROR: 'length' is private
+// numberList.add() now only accepts numbers.
+// nameList.add() now only accepts strings.
+// Same class, different types — determined at instantiation, not definition.
