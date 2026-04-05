@@ -127,3 +127,35 @@ function merge<T, U>(a: T, b: U) {
 // You COULD write merge<number, string>(1, 'Max') to be explicit,
 // but TypeScript's inference handles it automatically.
 const ids = merge(1, 'Max');
+
+// =====================================================================
+// GENERIC CONSTRAINTS — restricting which types a placeholder accepts.
+// =====================================================================
+//
+// By default, a type placeholder like <T> accepts ANY type — numbers,
+// strings, booleans, objects, anything. Sometimes that is too broad.
+// For example, a function that spreads two values into a new object
+// only makes sense if both values ARE objects — spreading a number
+// produces an empty object, which is probably not what you want.
+//
+// The "extends" keyword after a placeholder adds a CONSTRAINT:
+//   <T extends object>
+// This tells TypeScript: "T can be any type, AS LONG AS it is some
+// kind of object." Numbers, strings, booleans are rejected at compile
+// time. Any object shape qualifies — the constraint does not restrict
+// which properties the object must have, only that it must be an object.
+//
+// You can constrain to any type — not just "object". For example:
+//   <T extends number>    — T must be a number or number subtype
+//   <T extends string>    — T must be a string
+//   <T extends { length: number }> — T must have a length property
+//
+// Each placeholder can have its own independent constraint.
+function mergeObj<T extends object, U extends object>(a: T, b: U) {
+  return { ...a, ...b };
+}
+
+// Both arguments are objects — satisfies the "extends object" constraint.
+// TypeScript infers the merged return type with all properties from both.
+const merged = mergeObj({ userName: 'Max' }, { age: 35 });
+console.log(merged);
