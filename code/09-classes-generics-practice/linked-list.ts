@@ -72,8 +72,36 @@ class LinkedList<T> {
 
     this.length++;
   }
+
+  // GETNUMBEROFELEMENTS — a public method that exposes the private
+  // length property. This is a common pattern: keep the property
+  // private so it cannot be modified from outside the class, but
+  // provide a public method that returns its value for reading.
+  getNumberOfElements() {
+    return this.length;
+  }
+
+  // PRINT — walks the entire chain and outputs each node's value.
+  // Unlike the add method (which only needs the tail), printing
+  // requires visiting every node from root to the end.
+  //
+  // The loop checks "current" itself (not current.next) — this way
+  // the loop body runs for every node including the last one, then
+  // exits when current becomes undefined after the last node's next.
+  print() {
+    let current = this.root;
+    while (current) {
+      console.log(current.value);
+      current = current.next;
+    }
+  }
 }
 
-// Each instantiation chooses a concrete type for T:
 const numberList = new LinkedList<number>();
-const nameList = new LinkedList<string>();
+
+numberList.add(10);
+numberList.add(5);
+numberList.add(-3);
+
+console.log('Length: ' + numberList.getNumberOfElements());
+numberList.print();
