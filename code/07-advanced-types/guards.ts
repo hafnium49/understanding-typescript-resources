@@ -43,23 +43,39 @@ const dbSource: DBSource = {
 
 type Source = FileSource | DBSource;
 
-function loadData(source: Source) {
-  // DISCRIMINATED UNION TYPE GUARD:
-  //
-  // Since both FileSource and DBSource have a "type" property,
-  // source.type is ALWAYS safe to access — no matter which variant
-  // we received. TypeScript infers its type as 'file' | 'db' (a
-  // union of the two literal values).
-  //
-  // Checking source.type === 'file' narrows source to FileSource
-  // inside the if-block, giving access to source.path. After the
-  // return, TypeScript automatically narrows to DBSource, giving
-  // access to source.connectionUrl — same automatic narrowing as
-  // with the "in" operator approach from the previous lesson.
+// =====================================================================
+// TYPE PREDICATE FUNCTIONS — reusable type guard logic.
+// =====================================================================
+//
+// You can extract a type guard condition into a separate function so
+// it can be reused across multiple places in your code.
+//
+// In modern TypeScript, when a function returns the result of a type
+// check (like source.type === 'file'), TypeScript infers a TYPE
+// PREDICATE as the return type — not just a plain boolean. A type
+// predicate is a boolean with extra information: it tells TypeScript
+// that if the function returns true, the input parameter is of a
+// specific type.
+//
+// You can see the inferred return type by hovering over isFile in
+// your editor — it shows something like:
+//   (source: Source) => source is FileSource
+// This means: "if isFile returns true, source is FileSource."
+//
+// NOTE: In older TypeScript versions, this did not work — TypeScript
+// only knew the function returned true/false, without understanding
+// what that meant for the input's type. Modern TypeScript infers
+// type predicates automatically.
+function isFile(source: Source) {
+  return source.type === 'file';
+}
 
-  // Old approach (lesson 90): if ('path' in source) { ... }
-  // New approach: check the shared discriminant property instead.
-  if (source.type === 'file') {
+function loadData(source: Source) {
+  // Using the extracted type guard function instead of an inline check.
+  // Because isFile returns a type predicate, TypeScript narrows source
+  // to FileSource inside this if-block — exactly the same narrowing
+  // as the inline "source.type === 'file'" check from lesson 91.
+  if (isFile(source)) {
     source.path; // => use this to open and read the file
     return;
   }
