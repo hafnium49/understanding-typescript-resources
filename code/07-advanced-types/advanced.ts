@@ -44,6 +44,19 @@ store.isOpen = false;
 // string, but the VALUE must match the declared type.
 // store.name = 'Max';
 
+// INDEX TYPES vs. RECORD — the DataStore type above is essentially a
+// custom version of TypeScript's built-in Record type. These two
+// definitions are equivalent:
+//
+//   type DataStore = { [prop: string]: number | boolean };
+//   type DataStore = Record<string, number | boolean>;
+//
+// Record is a GENERIC type (generics are covered in depth later) that
+// takes two type arguments: the key type and the value type. It is a
+// more concise way to express the same thing as an index type.
+// You can use either approach — or mix and match — depending on your
+// preference and project conventions.
+
 // =====================================================================
 // AS CONST — narrowing inferred types to their most specific form.
 // =====================================================================
