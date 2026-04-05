@@ -33,7 +33,18 @@
 // the same pattern appears throughout TypeScript (Promise<T>, Map<K,V>,
 // Record<K,V>, etc.) and you can create your own generic types as well.
 
-// Both lines below are identical in effect — string[] is a shorthand
-// for Array<string>. The generic form makes the "type that works with
-// another type" relationship explicit.
+// WHAT MAKES A TYPE "GENERIC"?
+//
+// A generic type is the type IN FRONT of the angle brackets — here,
+// "Array" is the generic type. It is FLEXIBLE: it can describe arrays
+// of strings, arrays of numbers, arrays of objects, etc. The type
+// inside the angle brackets (the type argument) tells it what specific
+// kind of values the array will hold.
+//
+// So generics are about COMBINATIONS of types: the generic type
+// (Array) provides the structure, the type argument (string) provides
+// the specifics. Together they describe the full value type.
+//
+// With this understanding, you can now build your own generic types —
+// types that are flexible and reusable, parameterized by other types.
 let names: Array<string> = ['Max', 'Anna'];
