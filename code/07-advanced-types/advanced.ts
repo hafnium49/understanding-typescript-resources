@@ -87,3 +87,43 @@ let roles = ['admin', 'guest', 'editor'] as const;
 // not just any string — because "as const" preserved the exact value
 // at each index position.
 const firstRole = roles[0];
+
+// =====================================================================
+// SATISFIES — type validation with narrower inference.
+// =====================================================================
+//
+// When you assign a type with the colon notation (e.g., ": Record<...>"),
+// TypeScript uses THAT type as the variable's type — even if the actual
+// value is more specific. This means you lose access to properties that
+// exist on the value but are not guaranteed by the broad type.
+//
+// The "satisfies" keyword (placed AFTER the value, not before it) takes
+// a different approach:
+//   1. It VALIDATES the value against the given type — if the value does
+//      not match, you get a compile error.
+//   2. It then INFERS the most specific type possible from the actual
+//      value — so the variable's type is the narrow, concrete shape,
+//      not the broad type you validated against.
+//
+// This gives you both type safety (the value must satisfy the constraint)
+// AND narrow inference (TypeScript knows exactly which properties exist).
+//
+// USE CASES: Most useful in library code where you want to enforce a
+// structural contract but let consumers' actual values drive the type
+// inference for better downstream type support.
+
+const dataEntries = {
+  entry1: 0.51,
+  entry2: -1.23
+} satisfies Record<string, number>;
+
+// With "satisfies", TypeScript infers the concrete object shape:
+// { entry1: number; entry2: number } — NOT the broad Record type.
+// This means entry1 and entry2 are known, but entry3 is NOT allowed.
+
+// ... further code can safely use dataEntries ...
+
+// COMPILE ERROR if uncommented: 'entry3' does not exist on the inferred
+// concrete type. With a colon type (: Record<string, number>), this
+// would have been allowed because Record permits any string key.
+// dataEntries.entry3
