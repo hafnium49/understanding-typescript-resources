@@ -88,3 +88,34 @@ store.isInstructor = true;
 // This store accepts ONLY strings — T is string.
 // The same generic type, but with a different type argument.
 let nameStore: DataStore<string> = {};
+
+// =====================================================================
+// GENERIC FUNCTIONS — functions parameterized by type placeholders.
+// =====================================================================
+//
+// Just as you can create generic types (like DataStore<T>), you can
+// create GENERIC FUNCTIONS. The syntax is the same: add angle brackets
+// with a placeholder after the FUNCTION NAME.
+//
+// The placeholder can then be used as a type for parameters and the
+// return value. This lets the function work with any kind of value
+// while preserving the concrete type information — unlike "any", which
+// discards all type information.
+//
+// WHY NOT "any"?
+// Using "any" for parameters means the return type is also "any" (or
+// any[]). TypeScript then cannot provide autocompletion or type checks
+// on the returned value. With a generic placeholder, TypeScript tracks
+// the actual type through the function and infers a precise return type.
+
+// merge accepts two values of the same type T and returns them in an
+// array. T is determined by the arguments at the call site.
+function merge<T>(a: T, b: T) {
+  return [a, b];
+}
+
+// TypeScript INFERS that T is "number" from the arguments (1 and 2),
+// so ids is inferred as number[] — not any[].
+// You COULD write merge<number>(1, 2) to be explicit, but it is not
+// needed — TypeScript's inference handles it automatically.
+const ids = merge(1, 2);
