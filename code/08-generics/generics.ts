@@ -108,14 +108,22 @@ let nameStore: DataStore<string> = {};
 // on the returned value. With a generic placeholder, TypeScript tracks
 // the actual type through the function and infers a precise return type.
 
-// merge accepts two values of the same type T and returns them in an
-// array. T is determined by the arguments at the call site.
-function merge<T>(a: T, b: T) {
+// MULTIPLE TYPE PLACEHOLDERS — allowing different types per parameter.
+//
+// With a single placeholder (e.g., merge<T>(a: T, b: T)), both
+// parameters must be the SAME type — passing a number and a string
+// would produce an error because T can only be one type at a time.
+//
+// To allow different types, add more placeholders separated by commas:
+// <T, U>. Each placeholder is independent — T can be number while U
+// is string, or both can be the same type. You can add as many
+// placeholders as needed (<T, U, V, ...>).
+function merge<T, U>(a: T, b: U) {
   return [a, b];
 }
 
-// TypeScript INFERS that T is "number" from the arguments (1 and 2),
-// so ids is inferred as number[] — not any[].
-// You COULD write merge<number>(1, 2) to be explicit, but it is not
-// needed — TypeScript's inference handles it automatically.
-const ids = merge(1, 2);
+// T is inferred as "number", U is inferred as "string" — ids is
+// (number | string)[]. Both types are preserved, not lost to "any".
+// You COULD write merge<number, string>(1, 'Max') to be explicit,
+// but TypeScript's inference handles it automatically.
+const ids = merge(1, 'Max');
