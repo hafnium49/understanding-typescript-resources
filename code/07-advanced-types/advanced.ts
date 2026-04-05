@@ -43,3 +43,34 @@ store.isOpen = false;
 // only allows number | boolean values. The property NAME can be any
 // string, but the VALUE must match the declared type.
 // store.name = 'Max';
+
+// =====================================================================
+// AS CONST — narrowing inferred types to their most specific form.
+// =====================================================================
+//
+// By default, TypeScript infers broad types from initial values. An
+// array like ['admin', 'guest', 'editor'] is inferred as string[] —
+// meaning any number of any strings can be added or removed.
+//
+// Adding "as const" after the value tells TypeScript to infer the
+// NARROWEST possible type instead of a broad one. This is a TypeScript-
+// specific feature (not JavaScript).
+//
+// With "as const", the array becomes:
+//   - READONLY — you cannot push, pop, or otherwise mutate it
+//   - LITERAL TYPED — each element is its exact literal value, not
+//     just "string" (e.g., 'admin' instead of string)
+//   - FIXED LENGTH — it's a readonly tuple, not a resizable array
+//
+// This is useful when you want TypeScript to treat values as constants
+// with precise types rather than generic containers.
+let roles = ['admin', 'guest', 'editor'] as const;
+
+// COMPILE ERROR if uncommented: cannot push to a readonly array.
+// Without "as const", this would work fine (roles would be string[]).
+// roles.push('max');
+
+// TypeScript knows firstRole is specifically 'admin' (a literal type),
+// not just any string — because "as const" preserved the exact value
+// at each index position.
+const firstRole = roles[0];
