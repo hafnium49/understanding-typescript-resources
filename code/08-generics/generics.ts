@@ -170,3 +170,33 @@ function mergeObj<T extends object, U extends object>(a: T, b: U) {
 // precise type. Much cleaner and more useful.
 const merged = mergeObj({ userName: 'Max' }, { age: 35 });
 console.log(merged);
+
+// =====================================================================
+// GENERIC CLASSES — classes parameterized by type placeholders.
+// =====================================================================
+//
+// Just as you can create generic types and generic functions, you can
+// create GENERIC CLASSES. The syntax follows the same pattern: add
+// angle brackets with a placeholder after the CLASS NAME.
+//
+// The placeholder can be used anywhere inside the class — for property
+// types, method parameter types, return types, etc.
+//
+// This is useful when a class needs to work with a value whose type
+// is not known at the time the class is written, but will be known
+// when the class is instantiated. Instead of using a broad union type
+// (string | number | ...) or "any", a generic placeholder lets each
+// instance carry precise type information.
+//
+// Generic interfaces work the same way — add <T> after the interface
+// name and use T inside the definition. Essentially, anywhere in
+// TypeScript where you define a type (class, function, type alias,
+// interface), you can make it generic.
+class User<T> {
+  constructor(public id: T) {}
+}
+
+// TypeScript infers T as "string" from the argument 'i1'.
+// user.id is therefore typed as string — not a broad union.
+const user = new User('i1');
+user.id;
