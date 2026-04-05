@@ -35,38 +35,41 @@ class ListNode<T> {
 // with new LinkedList<number>(), T becomes number — the add() method
 // only accepts numbers, and every ListNode holds a number.
 class LinkedList<T> {
-  // ROOT — the entry point to the chain. Forwarding <T> to ListNode
-  // ensures the root node stores the same type as the list.
   private root?: ListNode<T>;
+
+  // TAIL — stores the LAST node in the chain. Without this, appending
+  // a new node requires walking the entire chain from root to the end
+  // (O(n) time). With tail, we can jump directly to the last node and
+  // link the new node in O(1) — a significant efficiency improvement
+  // as the list grows.
+  private tail?: ListNode<T>;
   private length = 0;
 
-  // ADD — creates a new node and appends it to the end of the chain.
   add(value: T) {
-    // Instantiate a new node. No need for new ListNode<T>(value) —
-    // TypeScript infers T from the value parameter, which already
-    // carries the concrete type from the LinkedList<T> class.
     const node = new ListNode(value);
 
-    if (!this.root) {
-      // FIRST ELEMENT: the list is empty (root is undefined).
-      // The new node becomes the root — no linking needed.
+    // Check both root AND tail — they should both be undefined when
+    // the list is empty. The extra "|| !this.tail" check tells
+    // TypeScript that tail is guaranteed to be defined in the else
+    // branch, avoiding a "possibly undefined" error on this.tail.next.
+    if (!this.root || !this.tail) {
+      // FIRST ELEMENT: the new node is both the root (start of chain)
+      // and the tail (end of chain) — it is the only node.
       this.root = node;
+      this.tail = node;
     } else {
-      // APPENDING: the list already has at least one node.
-      // Walk the chain from root to the last node (the one whose
-      // "next" is undefined). A while loop advances "current" one
-      // node at a time until current.next is falsy (undefined),
-      // meaning we reached the end.
-      let current = this.root;
-      while (current.next) {
-        current = current.next;
-      }
-      // Link the last node to the new node — this extends the chain.
-      current.next = node;
+      // APPENDING WITH TAIL: instead of walking the chain with a
+      // while loop (as in the previous lesson), we directly access
+      // the tail node and link the new node to it.
+      this.tail.next = node;
+
+      // Update tail to point to the newly added node — it is now
+      // the last node in the chain. The OLD tail's "next" property
+      // was just set to point to this node (the line above), so the
+      // chain is consistent.
+      this.tail = node;
     }
 
-    // Increment length regardless of whether it was the first or
-    // a subsequent addition — one node was added either way.
     this.length++;
   }
 }
