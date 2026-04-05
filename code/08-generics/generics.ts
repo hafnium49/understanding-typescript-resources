@@ -155,7 +155,18 @@ function mergeObj<T extends object, U extends object>(a: T, b: U) {
   return { ...a, ...b };
 }
 
-// Both arguments are objects — satisfies the "extends object" constraint.
-// TypeScript infers the merged return type with all properties from both.
+// WHY TWO PLACEHOLDERS (T, U) INSTEAD OF ONE (T)?
+//
+// If mergeObj used a single placeholder <T extends object> for BOTH
+// parameters, TypeScript would try to find one shared type that fits
+// both arguments. Since { userName: string } and { age: number } are
+// different shapes, the inferred "shared" type becomes a complex union
+// where every property is optional (string | undefined, number |
+// undefined) — messy and hard to work with.
+//
+// With two independent placeholders <T, U>, TypeScript tracks each
+// argument's type separately and infers the return as an INTERSECTION
+// of T & U — an object with all properties from both, each with its
+// precise type. Much cleaner and more useful.
 const merged = mergeObj({ userName: 'Max' }, { age: 35 });
 console.log(merged);
