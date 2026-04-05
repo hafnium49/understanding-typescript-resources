@@ -66,3 +66,57 @@ function loadData(source: Source) {
 
   source.connectionUrl; // => use this to reach out to the database
 }
+
+// =====================================================================
+// INSTANCEOF TYPE GUARD — for objects created from classes.
+// =====================================================================
+//
+// When dealing with classes (not plain object types), you can use the
+// "instanceof" operator as a type guard. This is a standard JavaScript
+// operator (not TypeScript-specific) that checks whether an object was
+// created from a particular class constructor.
+//
+// Unlike the "in" operator (checks for a property name) or discriminated
+// unions (checks a shared literal property), instanceof checks the
+// object's PROTOTYPE CHAIN — it asks "was this object created with
+// this class (or a class that extends it)?"
+
+class User {
+  constructor(public name: string) {}
+
+  join() {
+    // ...
+  }
+}
+
+class Admin {
+  constructor(permissions: string[]) {}
+
+  scan() {
+    // ...
+  }
+}
+
+const user = new User('Max');
+const admin = new Admin(['ban', 'restore']);
+
+// A union of two class types — entity is either a User or an Admin.
+type Entity = User | Admin;
+
+function init(entity: Entity) {
+  // INSTANCEOF AS A TYPE GUARD:
+  //
+  // "entity instanceof User" checks whether entity was created from
+  // the User class. If true, TypeScript narrows entity to User inside
+  // the if-block, making entity.join() safely accessible.
+  //
+  // After the return, TypeScript narrows to Admin automatically —
+  // the same return-based narrowing pattern used with "in" and
+  // discriminated unions above.
+  if (entity instanceof User) {
+    entity.join();
+    return;
+  }
+
+  entity.scan();
+}
