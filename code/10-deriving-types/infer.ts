@@ -43,3 +43,35 @@ type ReturnValueType<T> = T extends (...args: any[]) => infer RV ? RV : never;
 // type of add), and the result is "number" — exactly the piece we
 // wanted to extract from the bigger function type.
 type AddFnReturnValueType = ReturnValueType<AddFn>;
+
+// =====================================================================
+// BUILT-IN UTILITY TYPES — TypeScript already provides many of these.
+// =====================================================================
+//
+// The custom ReturnValueType above is so commonly needed that the
+// TypeScript team has built an equivalent right into the language:
+// "ReturnType". Under the hood, it uses the exact same features
+// covered in this section (conditional types, infer, etc.).
+//
+// For your own projects, prefer the built-in versions when they
+// exist — they are tested, well-documented, and globally available
+// without any imports.
+//
+// A few of the most useful built-in utility types:
+//   ReturnType<T>          — extracts a function's return type
+//   Parameters<T>          — extracts a function's parameter tuple
+//   Partial<T>             — makes all properties of T optional
+//   Required<T>            — makes all properties of T required
+//   Readonly<T>            — makes all properties of T readonly
+//   Pick<T, Keys>          — selects a subset of T's properties
+//   Omit<T, Keys>          — removes a subset of T's properties
+//   Record<Keys, Type>     — builds an object with given keys and value type
+//   NonNullable<T>         — strips null and undefined from T
+//   Awaited<T>             — unwraps the value of a Promise<T>
+//
+// See the full list at:
+// https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+// Using the built-in ReturnType — same result as our custom version
+// (number), but no custom type definition needed.
+type AddFnBuiltInReturn = ReturnType<AddFn>;
