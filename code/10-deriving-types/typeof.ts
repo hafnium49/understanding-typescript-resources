@@ -68,3 +68,40 @@ function loadData(s: typeof settings) {
 
 // The settings object trivially matches its own derived type.
 loadData(settings);
+
+// =====================================================================
+// typeof FOR FUNCTION TYPES — deriving the signature of a function.
+// =====================================================================
+//
+// typeof works on functions too, not just primitive values and objects.
+// This is useful when you have existing functions and need to type a
+// parameter (like a callback) that should accept those exact functions.
+//
+// Manually writing the function type would mean repeating the signature
+// in two places, which is duplication and a maintenance hazard. typeof
+// extracts the signature directly from the function definition.
+
+function sum(a: number, b: number) {
+  return a + b;
+}
+
+function subtract(a: number, b: number) {
+  return a - b;
+}
+
+// SumFn is now (a: number, b: number) => number — derived from sum's
+// signature. SubtractFn is identical because subtract has the same
+// signature, but the two aliases keep the relationship to the original
+// functions explicit.
+type SumFn = typeof sum;
+type SubtractFn = typeof subtract;
+
+// performMathAction accepts a callback that must be either sum or
+// subtract (or any function with a matching signature). The union
+// type combines the two derived function types.
+function performMathAction(cb: SumFn | SubtractFn) {
+  // some code...
+}
+
+performMathAction(sum);
+performMathAction(subtract);
