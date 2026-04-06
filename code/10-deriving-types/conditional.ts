@@ -49,3 +49,59 @@ type Example1 = GetElementType<StringArray>;
 // fallback type. Whether to fall back to "never", to T itself, or
 // to something else is a design choice.
 type Example2 = GetElementType<typeof text>;
+
+// =====================================================================
+// CONDITIONAL TYPES IN FUNCTION RETURN TYPES.
+// =====================================================================
+//
+// Conditional types are not just for utility types — they can shape
+// the return type of a regular function. The pattern: declare what
+// the function returns based on what kind of input it received.
+//
+// The function below builds a full name from a person object. If the
+// object has firstName and lastName, it returns a string. If not, it
+// throws an error and never produces a value. The conditional return
+// type lets callers see "string" when they pass a valid person and
+// "never" when they pass anything else — at compile time.
+
+// The shape that a "valid" person must have to produce a full name.
+type FullnamePerson = { firstName: string; lastName: string };
+
+// CONDITIONAL RETURN TYPE: if T fits the FullnamePerson shape, the
+// return type is "string". Otherwise it is "never" — signaling that
+// no meaningful value can be produced.
+type FullnameOrNothing<T> = T extends FullnamePerson ? string : never;
+
+// The function uses two TypeScript features together:
+//   - Generic constraint: T extends object (any object shape)
+//   - Conditional return: FullnameOrNothing<T> picks string vs never
+//     based on whether the actual object T has firstName/lastName.
+function getFullname<T extends object>(person: T): FullnameOrNothing<T> {
+  // Runtime checks: ensure both properties exist AND are truthy.
+  // The "in" operator and truthiness checks are standard JavaScript.
+  if (
+    'firstName' in person &&
+    'lastName' in person &&
+    person.firstName &&
+    person.lastName
+  ) {
+    // Type assertion is needed because TypeScript cannot prove at
+    // compile time that the runtime checks above match the conditional
+    // type's expectation. We tell it: "trust me, this branch produces
+    // a valid FullnameOrNothing<T> result."
+    return `${person.firstName} ${person.lastName}` as FullnameOrNothing<T>;
+  }
+
+  throw new Error('No first name and / or last name found.');
+}
+
+// EMPTY OBJECT: T = {}, which does NOT extend FullnamePerson, so the
+// false branch runs. name1 is typed as "never" — TypeScript knows
+// the function cannot produce a meaningful value here. (At runtime,
+// it throws an error.)
+const name1 = getFullname({});
+
+// PROPER PERSON OBJECT: T extends FullnamePerson, so the true branch
+// runs and name2 is typed as "string". The conditional type let
+// TypeScript pick the right return type per call site.
+const name2 = getFullname({ firstName: 'Max', lastName: 'Schwarzmüller' });
