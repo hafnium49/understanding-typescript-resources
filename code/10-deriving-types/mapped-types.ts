@@ -1,1 +1,59 @@
-// Mapped types will be covered in a later lesson in this section.
+// =====================================================================
+// MAPPED TYPES — transforming each property of an object type.
+// =====================================================================
+//
+// A mapped type creates a new object type by walking through the keys
+// of an existing object type and producing a property for each one.
+// You decide what type to assign to each new property.
+//
+// The syntax uses two TypeScript features together:
+//   - keyof T  — produces the union of T's property names
+//   - K in U   — iterates over each member of the union U
+//
+// Combined as "[Key in keyof T]", this means: "for every property name
+// in T, create a property in the new type with that same name."
+//
+// Mapped types let you define one object type that automatically tracks
+// the SHAPE of another, without manually duplicating keys. If the source
+// type changes, the mapped type updates with it.
+
+// A starting object type with two methods. The keys are "add" and
+// "subtract", and the values are functions returning numbers.
+type Operations = {
+  add: (a: number, b: number) => number;
+  subtract: (a: number, b: number) => number;
+};
+
+// MAPPED TYPE: takes any type T and creates a new object type with
+// the SAME property names as T, but with all values typed as number.
+// The "[Key in keyof T]" line is the mapping — it iterates over T's
+// keys and adds each one to the new type. The "Key" name is just a
+// label for the placeholder; you could call it K or anything else.
+type Results<T> = {
+  [Key in keyof T]: number;
+};
+
+// A concrete value matching the Operations type — methods that
+// actually perform the math.
+let mathOperations: Operations = {
+  add(a: number, b: number) {
+    return a + b;
+  },
+  subtract(a: number, b: number) {
+    return a - b;
+  },
+};
+
+// USING THE MAPPED TYPE: Results<Operations> produces a new object
+// type with the same keys as Operations (add, subtract), but each
+// value is now a number — the RESULT of calling the corresponding
+// operation, not the function itself.
+//
+// Without the mapped type, you would have to manually write
+// "type Results = { add: number; subtract: number; }" — and keep it
+// in sync whenever Operations changes. The mapped type does that
+// automatically.
+let mathResults: Results<Operations> = {
+  add: mathOperations.add(5, 1),
+  subtract: mathOperations.subtract(5, 2),
+};
