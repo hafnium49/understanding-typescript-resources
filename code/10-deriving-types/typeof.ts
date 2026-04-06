@@ -32,3 +32,39 @@ console.log(typeof userName);
 // instead, and UserName would equal 'Max' — because a const cannot
 // be reassigned to any other value.
 type UserName = typeof userName;
+
+// =====================================================================
+// A MORE PRACTICAL EXAMPLE — deriving an object type from a value.
+// =====================================================================
+//
+// The basic example above is trivial — you could just write "string"
+// instead of "typeof userName". But typeof becomes genuinely useful
+// when you have a complex value (like a settings object with many
+// properties) and you want a type that exactly matches its shape.
+//
+// Manually writing the matching object type is tedious, repetitive,
+// and error-prone — every property name and type must be retyped, and
+// any typo can cause confusing errors elsewhere in your code. With
+// typeof, TypeScript derives the type automatically from the value.
+
+const settings = {
+  difficulty: 'easy',
+  minLevel: 10,
+  didStart: false,
+  players: ['John', 'Jane']
+};
+
+// You COULD create a named type alias from the settings value:
+// type Settings = typeof settings;
+//
+// But you do not have to — typeof can also be used directly in a
+// parameter type or any other type position. Here, the function's
+// parameter type is derived from the settings constant on the fly.
+// Note that the parameter NAME (s) must differ from the value name
+// (settings) to avoid a name clash.
+function loadData(s: typeof settings) {
+  // ...
+}
+
+// The settings object trivially matches its own derived type.
+loadData(settings);
