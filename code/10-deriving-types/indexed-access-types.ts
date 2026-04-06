@@ -41,3 +41,31 @@ type AppUser = {
 // This is NOT JavaScript runtime code. The square brackets here operate
 // in TypeScript's type system, not on a value.
 type Perms = AppUser['permissions'];
+
+// =====================================================================
+// INDEXED ACCESS WITH "number" — extracting an array's element type.
+// =====================================================================
+//
+// Indexed access is not limited to property names. When the source
+// type is an ARRAY, you can use "number" inside the square brackets
+// to extract the type of the elements stored in the array.
+//
+//   SomeArrayType[number]  → the type of one element
+//
+// "number" here is not an actual index — it represents "any numeric
+// index", which TypeScript treats as "the type of values you would
+// get when accessing the array by index". The result is the element
+// type, with the array wrapper stripped away.
+
+// Perm is now the individual object type — just one permission, not
+// an array of them. The square brackets and "number" tell TypeScript:
+// "give me the type of what's stored at any index in this array".
+type Perm = Perms[number];
+
+// The same trick works for any array type, not just nested object
+// arrays. Here, Names is a simple string array.
+type Names = string[];
+
+// Name extracts the element type from Names — which is "string".
+// Same syntax, same result: an element type without the [] wrapper.
+type Name = Names[number];
