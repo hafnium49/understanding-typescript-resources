@@ -19,18 +19,36 @@
 
 // A starting object type with two methods. The keys are "add" and
 // "subtract", and the values are functions returning numbers.
+//
+// READONLY: Marking each method as "readonly" prevents reassigning
+// the function — once mathOperations.add is set, you cannot replace
+// it with a different function. This is a standard TypeScript modifier
+// available on any object type, not exclusive to mapped types.
 type Operations = {
-  add: (a: number, b: number) => number;
-  subtract: (a: number, b: number) => number;
+  readonly add: (a: number, b: number) => number;
+  readonly subtract: (a: number, b: number) => number;
 };
 
-// MAPPED TYPE: takes any type T and creates a new object type with
-// the SAME property names as T, but with all values typed as number.
-// The "[Key in keyof T]" line is the mapping — it iterates over T's
-// keys and adds each one to the new type. The "Key" name is just a
-// label for the placeholder; you could call it K or anything else.
+// MAPPED TYPE WITH MODIFIER ADJUSTMENTS:
+//
+// Mapped types support adding extra modifiers to each generated
+// property. Two common modifiers are "?" (optional) and "readonly".
+//
+// The "?" after the closing bracket makes EVERY mapped property
+// optional — even if it was required in the source type. This is how
+// you transform a "required" object type into a "partial" version of
+// itself.
+//
+// You can also REMOVE these modifiers using "-?" or "-readonly", which
+// is useful when the source type has them and you want to strip them.
+// Both forms — adding and removing — are mapped-type-exclusive syntax.
+//
+// MODIFIER INHERITANCE: By default, mapped types preserve the modifiers
+// from the source type. So Operations being readonly would normally
+// flow into Results, but the explicit "?" addition here only changes
+// optionality — readonly inheritance is independent.
 type Results<T> = {
-  [Key in keyof T]: number;
+  [Key in keyof T]?: number;
 };
 
 // A concrete value matching the Operations type — methods that
