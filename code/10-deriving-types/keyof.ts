@@ -1,24 +1,17 @@
-type User = { name: string; age: number };
-type UserKeys = keyof User;
-
-let validKey: UserKeys;
-
-validKey = 'name';
-validKey = 'age';
-
-function getProp<T extends object, U extends keyof T>(obj: T, key: U) {
-  const val = obj[key];
-
-  if (val === undefined || val === null) {
-    throw new Error('Accessing undefined or null value.');
-  }
-
-  return val;
-}
-
-const data = { id: 1, isStored: false, values: [1, -5, 10] };
-const isStored = getProp(data, 'isStored');
-
-const user = { name: 'Max', age: 35 };
-
-const val = getProp(user, 'age');
+// =====================================================================
+// DERIVING TYPES — building types from other types.
+// =====================================================================
+//
+// This section covers advanced TypeScript features for creating new
+// types that are derived from, manipulated from, or combined with
+// other types. These features let you express type relationships
+// more precisely and avoid duplicating type definitions.
+//
+// Topics covered in this section:
+//   - keyof — extracting property names from a type
+//   - typeof — extracting the type of a value
+//   - Indexed access types — looking up property types
+//   - Mapped types — transforming each property of a type
+//   - Conditional types — types that depend on other types
+//   - infer — extracting types from within other types
+//   - Template literal types — string-based type composition
