@@ -169,17 +169,31 @@ function logger<T extends new (...args: any[]) => any>(
   // class a name) is valid JavaScript: it creates a one-off subclass
   // on the spot, just to return it from this function.
   //
-  // Inside this anonymous class, we can add new fields, override
-  // methods, and so on. Here we add an "age" field set to 35 — a
-  // property that does not exist on the original Person class but
-  // becomes available on every Person instance after the decorator
-  // is applied.
-  //
   // IMPORTANT: This does not WIPE OUT the original class. Because the
-  // returned class extends target, both the original members (name,
-  // greet) AND the added members (age) end up on the final instance.
+  // returned class extends target, all original members (name, greet)
+  // AND any additions made here end up on the final instance.
+  //
+  // RUNNING CODE ON EACH INSTANTIATION — adding a constructor.
+  //
+  // The replacement class can define its own constructor. To preserve
+  // the original constructor's behavior, the first thing it must do is
+  // call "super(...args)" — forwarding all incoming arguments to the
+  // original class's constructor via the spread operator on the rest
+  // parameter "...args". After that, you can run any extra logic that
+  // should happen every time a new instance is created.
+  //
+  // Why this matters: the body of "logger" itself (above the return
+  // statement) executes ONCE — at the moment the class is defined.
+  // The replacement class's constructor, by contrast, executes EVERY
+  // TIME someone writes "new Person()". This timing difference is
+  // critical for a logger decorator: the outer logs describe the class
+  // shape, the inner logs describe individual instances.
   return class extends target {
-    age = 35;
+    constructor(...args: any[]) {
+      super(...args);
+      console.log('class constructor');
+      console.log(this);
+    }
   };
 }
 
@@ -203,13 +217,19 @@ class Person {
   }
 }
 
-// Instantiating Person now creates an instance of the REPLACEMENT
-// class returned by logger. Logging it shows BOTH the original "name"
-// property AND the added "age" property — proof that the decorator
-// merged the original class with the augmentation.
-const max = new Person();
-console.log(max);
-
-// The original method still works too: greet is inherited from the
-// original Person class via the "extends target" chain.
-max.greet();
+// Instantiating Person multiple times to demonstrate the timing of
+// the different log statements:
+//
+//   1. "logger decorator" + the class + the context object → printed
+//      ONCE, when the class definition is parsed (decorator setup time).
+//
+//   2. "class constructor" + the instance → printed ONCE PER "new"
+//      call (instantiation time). Two new Person() calls produce two
+//      pairs of logs.
+//
+// This makes the timing distinction concrete: code that lives directly
+// in the decorator function body runs at class-definition time, while
+// code inside the returned class's constructor runs whenever an
+// instance is created.
+new Person();
+new Person();
