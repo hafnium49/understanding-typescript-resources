@@ -307,6 +307,61 @@ function autobind(
   };
 }
 
+// =====================================================================
+// FIELD DECORATORS — decorating a class property (field).
+// =====================================================================
+//
+// Field decorators (also called property decorators) target instance
+// fields like the "name" property on Person. They follow the same
+// "function with two parameters" shape as class and method decorators,
+// but the parameter types are different — and there is one important
+// quirk to be aware of regarding "target".
+//
+// For an ECMAScript FIELD DECORATOR:
+//
+//   1. target — for fields, target is ALWAYS undefined. The decorator
+//      runs BEFORE the field is initialized, so there is no value to
+//      hand over yet. (Class decorators get the finished class; method
+//      decorators get the method function; field decorators get
+//      undefined.) That is why we type target as exactly "undefined".
+//
+//   2. ctx — a "ClassFieldDecoratorContext" object describing the
+//      field. Like the method context, it provides:
+//        - kind: 'field'
+//        - name: the field's name
+//        - static / private: visibility flags
+//        - access: an object exposing get/set helpers for indirect
+//          access to the field on instances
+//        - addInitializer: useful when you want to run code in the
+//          constructor's lifecycle for this field
+function fieldLogger(target: undefined, ctx: ClassFieldDecoratorContext) {
+  console.log(target);
+  console.log(ctx);
+
+  // RETURNING AN INITIALIZER FUNCTION — changing the field's value.
+  //
+  // A field decorator cannot simply "return a value" — that would
+  // raise a type error. Instead, to influence the stored value, you
+  // return a FUNCTION that JavaScript will call after the field has
+  // been initialized. The function receives the field's initial value
+  // and must return the value that should be stored in its place.
+  //
+  // This is the only way to read the actual field value inside a
+  // field decorator (since "target" is undefined). It is also where
+  // you can transform, normalize, or completely replace the value —
+  // useful for things like fetching defaults from a database, applying
+  // a default fallback, or sanitizing user-supplied data.
+  //
+  // Here, the initializer logs the original value (so we can see what
+  // was originally assigned), then returns an empty string to take
+  // its place. After this runs, every Person instance will start with
+  // an empty "name" no matter what value the class declared.
+  return (initialValue: any) => {
+    console.log(initialValue);
+    return '';
+  };
+}
+
 // ATTACHING THE DECORATOR with the @ symbol.
 //
 // To use a function as a decorator, place "@functionName" directly
@@ -331,6 +386,7 @@ function autobind(
 // @autobind on the greet method takes care of it automatically.
 @logger
 class Person {
+  @fieldLogger
   public name = 'Max';
 
   @autobind
@@ -349,7 +405,12 @@ class Person {
 // Now that @autobind is in place, the initializer it registers runs
 // during instance construction and replaces "greet" with a version
 // permanently bound to the new instance. As a result, the standalone
-// call below works without any errors and prints the expected greeting.
+// call below runs without errors.
+//
+// FIELD DECORATOR EFFECT — note that "Hi, I am" is followed by an
+// empty string, not "Max". The @fieldLogger decorator's initializer
+// returned an empty string, replacing the original 'Max' value of
+// the name field on every Person instance.
 const max = new Person();
 const greet = max.greet;
 greet();
