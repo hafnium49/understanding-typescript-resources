@@ -223,12 +223,53 @@ function logger<T extends new (...args: any[]) => any>(
 //        - access: an object exposing get/has helpers for indirect
 //          access to the method on instances
 //        - addInitializer: used for advanced behaviors (covered next)
+// IMPLEMENTING AUTOBIND — moving the manual bind workaround into a
+// reusable decorator.
+//
+// The previous lesson showed how to fix the "this" problem manually
+// by writing "this.greet = this.greet.bind(this)" inside the class's
+// constructor. This decorator moves that exact logic INTO the decorator
+// itself, so the user only needs to write "@autobind" above any
+// method that should have its "this" permanently bound.
+//
+// USING ctx.addInitializer:
+//
+// The context object's addInitializer method registers a callback
+// that runs as part of the class's instance initialization — in
+// effect, you get access to a piece of "constructor code" without
+// having to add a constructor to the user's class. This is exactly
+// what is needed to bind the method on each new instance.
+//
+// You MUST pass a regular function (declared with the "function"
+// keyword) to addInitializer, NOT an arrow function. The reason is
+// the same "this" rule from the previous lesson: arrow functions
+// inherit "this" from their surrounding scope, which here would NOT
+// be the new instance. A regular function, on the other hand, takes
+// its "this" from the call site — and addInitializer calls it on the
+// freshly constructed instance.
+//
+// Inside the initializer, "this" refers to the new instance. We use
+// "ctx.name" to look up the method by its name dynamically, so the
+// same decorator works for any method — not just "greet". The line
+//
+//   this[ctx.name] = this[ctx.name].bind(this);
+//
+// is the dynamic version of the manual fix from before.
+//
+// THE "this: any" PARAMETER:
+//
+// "this: any" is a TypeScript-specific syntax for declaring the type
+// of "this" inside a function. It is NOT a real argument — JavaScript
+// never sees it. It only tells TypeScript "treat this as type any
+// inside the body". Without it, TypeScript would complain because it
+// cannot infer the runtime type of "this" inside the initializer.
 function autobind(
   target: (...args: any[]) => any,
   ctx: ClassMethodDecoratorContext
 ) {
-  console.log(target);
-  console.log(ctx);
+  ctx.addInitializer(function (this: any) {
+    this[ctx.name] = this[ctx.name].bind(this);
+  });
 }
 
 // ATTACHING THE DECORATOR with the @ symbol.
@@ -251,32 +292,11 @@ function autobind(
 // Methods finish initializing before the surrounding class does — so
 // method decorators fire first, then the class decorator wraps up the
 // whole class definition.
+// The Person class no longer needs a manual binding constructor —
+// @autobind on the greet method takes care of it automatically.
 @logger
 class Person {
   public name = 'Max';
-
-  // MANUAL "this" BINDING — workaround for the problem demonstrated below.
-  //
-  // The constructor here exists ONLY to fix a JavaScript "this" binding
-  // problem that surfaces when methods are detached from their class.
-  // Without this line, the standalone call further down would fail.
-  //
-  // "bind" is a built-in JavaScript Function method. Calling
-  // someFunction.bind(value) returns a new function that, no matter
-  // how it is later invoked, will always have its "this" set to
-  // "value". Here, "this.greet.bind(this)" produces a version of
-  // greet whose "this" is permanently locked to the instance being
-  // constructed.
-  //
-  // The result is reassigned back to "this.greet", so the bound
-  // version replaces the original on this particular instance.
-  //
-  // This works, but it is verbose: every method that needs binding
-  // requires its own line in every constructor of every class. The
-  // @autobind decorator (next lesson) will eliminate this boilerplate.
-  constructor() {
-    this.greet = this.greet.bind(this);
-  }
 
   @autobind
   greet() {
@@ -284,28 +304,17 @@ class Person {
   }
 }
 
-// THE "this" PROBLEM — why methods sometimes lose their context.
+// THE "this" PROBLEM — fixed automatically by @autobind.
 //
-// In JavaScript, the value of "this" inside a function is determined
-// by HOW the function is called, not where it is defined.
+// As shown previously, calling "max.greet()" works because "this"
+// refers to max. But pulling the method out into a standalone variable
+// and then calling "greet()" would normally lose that context — "this"
+// becomes undefined.
 //
-// When you call "max.greet()", the dot notation tells JavaScript that
-// greet is being called ON max — so inside greet, "this" refers to max.
-// Everything works as expected.
-//
-// But when you do "const greet = max.greet" and then call "greet()"
-// directly, there is no longer an object on the left of the dot.
-// JavaScript no longer knows which instance the method belongs to,
-// so "this" becomes undefined inside the call. Trying to read
-// "this.name" then throws a runtime error.
-//
-// This pattern (storing a method in a variable to pass it as a
-// callback) is extremely common in event handlers and asynchronous
-// code, which is why losing "this" is such a frequent source of bugs.
-//
-// In this file the problem is fixed by the manual bind in the Person
-// constructor above. Without that constructor, the call below would
-// crash with "Cannot read properties of undefined".
+// Now that @autobind is in place, the initializer it registers runs
+// during instance construction and replaces "greet" with a version
+// permanently bound to the new instance. As a result, the standalone
+// call below works without any errors and prints the expected greeting.
 const max = new Person();
 const greet = max.greet;
 greet();
