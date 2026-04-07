@@ -334,31 +334,62 @@ function autobind(
 //          access to the field on instances
 //        - addInitializer: useful when you want to run code in the
 //          constructor's lifecycle for this field
-function fieldLogger(target: undefined, ctx: ClassFieldDecoratorContext) {
-  console.log(target);
-  console.log(ctx);
+// =====================================================================
+// DECORATOR FACTORIES — functions that PRODUCE decorators.
+// =====================================================================
+//
+// All the decorators above are used by writing "@decoratorName" — you
+// REFERENCE the function and JavaScript calls it for you. You never
+// invoke a decorator yourself with parentheses at the use site.
+//
+// But what if you want to PARAMETERIZE a decorator? For example, the
+// previous "fieldLogger" hard-coded the replacement value to ''. It
+// would be more flexible to choose the replacement value at the place
+// where you attach the decorator — something like:
+//
+//   @replacer('')
+//   public name = 'Max';
+//
+// You cannot do that directly, because "@replacer('')" calls
+// "replacer" with an argument. Decorators can only be REFERENCED, not
+// invoked, with @.
+//
+// The solution is a DECORATOR FACTORY: a regular function that takes
+// any arguments you want, and RETURNS a decorator function. When you
+// write "@replacer('')", JavaScript:
+//   1. Calls replacer('') — the factory — passing your argument.
+//   2. Receives the inner decorator function it returns.
+//   3. Uses that returned function as the decorator.
+//
+// In other words, the factory's job is to capture configuration via
+// its parameters and produce a customized decorator that closes over
+// those values.
+//
+// The same pattern works for class, method, and field decorators —
+// any kind of decorator can be wrapped in a factory.
 
-  // RETURNING AN INITIALIZER FUNCTION — changing the field's value.
-  //
-  // A field decorator cannot simply "return a value" — that would
-  // raise a type error. Instead, to influence the stored value, you
-  // return a FUNCTION that JavaScript will call after the field has
-  // been initialized. The function receives the field's initial value
-  // and must return the value that should be stored in its place.
-  //
-  // This is the only way to read the actual field value inside a
-  // field decorator (since "target" is undefined). It is also where
-  // you can transform, normalize, or completely replace the value —
-  // useful for things like fetching defaults from a database, applying
-  // a default fallback, or sanitizing user-supplied data.
-  //
-  // Here, the initializer logs the original value (so we can see what
-  // was originally assigned), then returns an empty string to take
-  // its place. After this runs, every Person instance will start with
-  // an empty "name" no matter what value the class declared.
-  return (initialValue: any) => {
-    console.log(initialValue);
-    return '';
+// The OUTER function is the factory. It accepts whatever configuration
+// the decorator should be customized with — here, a generic "initValue"
+// of type T. Using a generic instead of a concrete type lets the same
+// factory work with any value type (strings, numbers, objects, etc.).
+function replacer<T>(initValue: T) {
+  // The INNER function is the actual decorator. Its signature is
+  // exactly the same as the standalone field decorator from before:
+  // (target: undefined, ctx: ClassFieldDecoratorContext).
+  return function replacerDecorator(
+    target: undefined,
+    ctx: ClassFieldDecoratorContext
+  ) {
+    console.log(target);
+    console.log(ctx);
+
+    // The initializer captures "initValue" from the surrounding
+    // factory call via closure, and returns it as the new field
+    // value — replacing whatever the class had originally declared.
+    return (initialValue: any) => {
+      console.log(initialValue);
+      return initValue;
+    };
   };
 }
 
@@ -386,7 +417,10 @@ function fieldLogger(target: undefined, ctx: ClassFieldDecoratorContext) {
 // @autobind on the greet method takes care of it automatically.
 @logger
 class Person {
-  @fieldLogger
+  // @replacer('') is a decorator FACTORY CALL — note the parentheses.
+  // The factory runs first with the empty-string argument, returns the
+  // actual field decorator, and that decorator is what gets attached.
+  @replacer('')
   public name = 'Max';
 
   @autobind
@@ -408,9 +442,10 @@ class Person {
 // call below runs without errors.
 //
 // FIELD DECORATOR EFFECT — note that "Hi, I am" is followed by an
-// empty string, not "Max". The @fieldLogger decorator's initializer
-// returned an empty string, replacing the original 'Max' value of
-// the name field on every Person instance.
+// empty string, not "Max". The @replacer('') factory produced a
+// field decorator whose initializer returns the configured empty
+// string, replacing the original 'Max' value of the name field on
+// every Person instance.
 const max = new Person();
 const greet = max.greet;
 greet();
