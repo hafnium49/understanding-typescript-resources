@@ -1,3 +1,4 @@
+"use strict";
 // =====================================================================
 // DECORATORS — section overview.
 // =====================================================================
@@ -95,7 +96,40 @@
 // why TypeScript supports both — they serve different ecosystems. The
 // rest of THIS section focuses exclusively on the standard ECMAScript
 // flavor.
-
+var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
+    var useValue = arguments.length > 2;
+    for (var i = 0; i < initializers.length; i++) {
+        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    }
+    return useValue ? value : void 0;
+};
+var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
+    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
+    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
+    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
+    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
+    var _, done = false;
+    for (var i = decorators.length - 1; i >= 0; i--) {
+        var context = {};
+        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
+        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
+        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
+        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
+        if (kind === "accessor") {
+            if (result === void 0) continue;
+            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
+            if (_ = accept(result.get)) descriptor.get = _;
+            if (_ = accept(result.set)) descriptor.set = _;
+            if (_ = accept(result.init)) initializers.unshift(_);
+        }
+        else if (_ = accept(result)) {
+            if (kind === "field") initializers.unshift(_);
+            else descriptor[key] = _;
+        }
+    }
+    if (target) Object.defineProperty(target, contextIn.name, descriptor);
+    done = true;
+};
 // =====================================================================
 // BUILDING YOUR FIRST DECORATOR — a class decorator.
 // =====================================================================
@@ -104,7 +138,6 @@
 // enabled (it remains commented out). With that flag off, TypeScript
 // builds the modern, standard ECMAScript decorators — exactly what we
 // want for this section.
-
 // DECORATORS ARE JUST FUNCTIONS.
 //
 // A decorator is a regular function written in a specific shape that
@@ -128,7 +161,6 @@
 //
 // Without these two parameters, TypeScript would complain that the
 // function does not match a valid decorator signature.
-
 // PROPER TYPING FOR THE TARGET — using a generic constructor type.
 //
 // Originally we could type "target" as "any" to get the basic decorator
@@ -149,55 +181,50 @@
 // Using a generic T (instead of "any") preserves the connection
 // between the input class and the output class, so TypeScript can
 // verify that the replacement class is compatible.
-function logger<T extends new (...args: any[]) => any>(
-  target: T,
-  ctx: ClassDecoratorContext
-) {
-  console.log('logger decorator');
-  console.log(target);
-  console.log(ctx);
-
-  // RETURNING A REPLACEMENT CLASS — how a class decorator MODIFIES
-  // the class it is attached to.
-  //
-  // A class decorator can return a new class, and that new class will
-  // REPLACE the original class wherever it is used. To preserve all
-  // the original behavior while adding new pieces, return an anonymous
-  // class that extends "target" — the original class.
-  //
-  // The "class extends target { ... }" syntax (without giving the
-  // class a name) is valid JavaScript: it creates a one-off subclass
-  // on the spot, just to return it from this function.
-  //
-  // IMPORTANT: This does not WIPE OUT the original class. Because the
-  // returned class extends target, all original members (name, greet)
-  // AND any additions made here end up on the final instance.
-  //
-  // RUNNING CODE ON EACH INSTANTIATION — adding a constructor.
-  //
-  // The replacement class can define its own constructor. To preserve
-  // the original constructor's behavior, the first thing it must do is
-  // call "super(...args)" — forwarding all incoming arguments to the
-  // original class's constructor via the spread operator on the rest
-  // parameter "...args". After that, you can run any extra logic that
-  // should happen every time a new instance is created.
-  //
-  // Why this matters: the body of "logger" itself (above the return
-  // statement) executes ONCE — at the moment the class is defined.
-  // The replacement class's constructor, by contrast, executes EVERY
-  // TIME someone writes "new Person()". This timing difference is
-  // critical for a logger decorator: the outer logs describe the class
-  // shape, the inner logs describe individual instances.
-  return class extends target {
-    constructor(...args: any[]) {
-      super(...args);
-      this.age = 30;
-      console.log('class constructor');
-      console.log(this);
-    }
-  };
+function logger(target, ctx) {
+    console.log('logger decorator');
+    console.log(target);
+    console.log(ctx);
+    // RETURNING A REPLACEMENT CLASS — how a class decorator MODIFIES
+    // the class it is attached to.
+    //
+    // A class decorator can return a new class, and that new class will
+    // REPLACE the original class wherever it is used. To preserve all
+    // the original behavior while adding new pieces, return an anonymous
+    // class that extends "target" — the original class.
+    //
+    // The "class extends target { ... }" syntax (without giving the
+    // class a name) is valid JavaScript: it creates a one-off subclass
+    // on the spot, just to return it from this function.
+    //
+    // IMPORTANT: This does not WIPE OUT the original class. Because the
+    // returned class extends target, all original members (name, greet)
+    // AND any additions made here end up on the final instance.
+    //
+    // RUNNING CODE ON EACH INSTANTIATION — adding a constructor.
+    //
+    // The replacement class can define its own constructor. To preserve
+    // the original constructor's behavior, the first thing it must do is
+    // call "super(...args)" — forwarding all incoming arguments to the
+    // original class's constructor via the spread operator on the rest
+    // parameter "...args". After that, you can run any extra logic that
+    // should happen every time a new instance is created.
+    //
+    // Why this matters: the body of "logger" itself (above the return
+    // statement) executes ONCE — at the moment the class is defined.
+    // The replacement class's constructor, by contrast, executes EVERY
+    // TIME someone writes "new Person()". This timing difference is
+    // critical for a logger decorator: the outer logs describe the class
+    // shape, the inner logs describe individual instances.
+    return class extends target {
+        constructor(...args) {
+            super(...args);
+            this.age = 30;
+            console.log('class constructor');
+            console.log(this);
+        }
+    };
 }
-
 // =====================================================================
 // METHOD DECORATORS — decorating a single method instead of the class.
 // =====================================================================
@@ -264,50 +291,45 @@ function logger<T extends new (...args: any[]) => any>(
 // never sees it. It only tells TypeScript "treat this as type any
 // inside the body". Without it, TypeScript would complain because it
 // cannot infer the runtime type of "this" inside the initializer.
-function autobind(
-  target: (...args: any[]) => any,
-  ctx: ClassMethodDecoratorContext
-) {
-  ctx.addInitializer(function (this: any) {
-    this[ctx.name] = this[ctx.name].bind(this);
-  });
-
-  // RETURNING A REPLACEMENT FUNCTION — wrapping the original method.
-  //
-  // Just like a class decorator can return a new class to replace the
-  // original, a method decorator can return a new function to replace
-  // the original method. The returned function becomes the new "greet"
-  // (or whichever method the decorator was attached to).
-  //
-  // The wrapper pattern lets you run code BEFORE and AFTER the
-  // original method, send HTTP requests, log activity, write to files,
-  // and so on — without modifying the original implementation. This is
-  // exactly how cross-cutting concerns (logging, auth, caching, etc.)
-  // are typically added with decorators.
-  //
-  // CALLING "target" CORRECTLY — apply vs. plain invocation.
-  //
-  // Inside the wrapper, "target" is the ORIGINAL method as captured at
-  // decorator time — that is, BEFORE the addInitializer above replaced
-  // it with the bound version. Calling "target()" directly would lose
-  // its "this" context (the same problem the addInitializer was added
-  // to solve in the first place).
-  //
-  // The fix is to use "target.apply(this)" instead. Function.apply is
-  // a built-in JavaScript method that works like bind but executes the
-  // function IMMEDIATELY, after temporarily setting "this" to the
-  // value passed in as the first argument. So "target.apply(this)"
-  // invokes the original method with "this" pointing to the current
-  // instance — preserving the connection to "name", etc.
-  //
-  // (As before, "this: any" on the wrapper is a TypeScript-only hint
-  // for typing "this" inside the function body.)
-  return function (this: any) {
-    console.log('Executing original function');
-    target.apply(this);
-  };
+function autobind(target, ctx) {
+    ctx.addInitializer(function () {
+        this[ctx.name] = this[ctx.name].bind(this);
+    });
+    // RETURNING A REPLACEMENT FUNCTION — wrapping the original method.
+    //
+    // Just like a class decorator can return a new class to replace the
+    // original, a method decorator can return a new function to replace
+    // the original method. The returned function becomes the new "greet"
+    // (or whichever method the decorator was attached to).
+    //
+    // The wrapper pattern lets you run code BEFORE and AFTER the
+    // original method, send HTTP requests, log activity, write to files,
+    // and so on — without modifying the original implementation. This is
+    // exactly how cross-cutting concerns (logging, auth, caching, etc.)
+    // are typically added with decorators.
+    //
+    // CALLING "target" CORRECTLY — apply vs. plain invocation.
+    //
+    // Inside the wrapper, "target" is the ORIGINAL method as captured at
+    // decorator time — that is, BEFORE the addInitializer above replaced
+    // it with the bound version. Calling "target()" directly would lose
+    // its "this" context (the same problem the addInitializer was added
+    // to solve in the first place).
+    //
+    // The fix is to use "target.apply(this)" instead. Function.apply is
+    // a built-in JavaScript method that works like bind but executes the
+    // function IMMEDIATELY, after temporarily setting "this" to the
+    // value passed in as the first argument. So "target.apply(this)"
+    // invokes the original method with "this" pointing to the current
+    // instance — preserving the connection to "name", etc.
+    //
+    // (As before, "this: any" on the wrapper is a TypeScript-only hint
+    // for typing "this" inside the function body.)
+    return function () {
+        console.log('Executing original function');
+        target.apply(this);
+    };
 }
-
 // =====================================================================
 // FIELD DECORATORS — decorating a class property (field).
 // =====================================================================
@@ -368,32 +390,26 @@ function autobind(
 //
 // The same pattern works for class, method, and field decorators —
 // any kind of decorator can be wrapped in a factory.
-
 // The OUTER function is the factory. It accepts whatever configuration
 // the decorator should be customized with — here, a generic "initValue"
 // of type T. Using a generic instead of a concrete type lets the same
 // factory work with any value type (strings, numbers, objects, etc.).
-function replacer<T>(initValue: T) {
-  // The INNER function is the actual decorator. Its signature is
-  // exactly the same as the standalone field decorator from before:
-  // (target: undefined, ctx: ClassFieldDecoratorContext).
-  return function replacerDecorator(
-    target: undefined,
-    ctx: ClassFieldDecoratorContext
-  ) {
-    console.log(target);
-    console.log(ctx);
-
-    // The initializer captures "initValue" from the surrounding
-    // factory call via closure, and returns it as the new field
-    // value — replacing whatever the class had originally declared.
-    return (initialValue: any) => {
-      console.log(initialValue);
-      return initValue;
+function replacer(initValue) {
+    // The INNER function is the actual decorator. Its signature is
+    // exactly the same as the standalone field decorator from before:
+    // (target: undefined, ctx: ClassFieldDecoratorContext).
+    return function replacerDecorator(target, ctx) {
+        console.log(target);
+        console.log(ctx);
+        // The initializer captures "initValue" from the surrounding
+        // factory call via closure, and returns it as the new field
+        // value — replacing whatever the class had originally declared.
+        return (initialValue) => {
+            console.log(initialValue);
+            return initValue;
+        };
     };
-  };
 }
-
 // ATTACHING THE DECORATOR with the @ symbol.
 //
 // To use a function as a decorator, place "@functionName" directly
@@ -416,20 +432,42 @@ function replacer<T>(initValue: T) {
 // whole class definition.
 // The Person class no longer needs a manual binding constructor —
 // @autobind on the greet method takes care of it automatically.
-@logger
-class Person {
-  // @replacer('') is a decorator FACTORY CALL — note the parentheses.
-  // The factory runs first with the empty-string argument, returns the
-  // actual field decorator, and that decorator is what gets attached.
-  @replacer('')
-  public name = 'Max';
-
-  @autobind
-  greet() {
-    console.log('Hi, I am ' + this.name);
-  }
-}
-
+let Person = (() => {
+    let _classDecorators = [logger];
+    let _classDescriptor;
+    let _classExtraInitializers = [];
+    let _classThis;
+    let _instanceExtraInitializers = [];
+    let _name_decorators;
+    let _name_initializers = [];
+    let _name_extraInitializers = [];
+    let _greet_decorators;
+    var Person = class {
+        static { _classThis = this; }
+        static {
+            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+            _name_decorators = [replacer('')];
+            _greet_decorators = [autobind];
+            __esDecorate(this, null, _greet_decorators, { kind: "method", name: "greet", static: false, private: false, access: { has: obj => "greet" in obj, get: obj => obj.greet }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(null, null, _name_decorators, { kind: "field", name: "name", static: false, private: false, access: { has: obj => "name" in obj, get: obj => obj.name, set: (obj, value) => { obj.name = value; } }, metadata: _metadata }, _name_initializers, _name_extraInitializers);
+            __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
+            Person = _classThis = _classDescriptor.value;
+            if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
+            __runInitializers(_classThis, _classExtraInitializers);
+        }
+        // @replacer('') is a decorator FACTORY CALL — note the parentheses.
+        // The factory runs first with the empty-string argument, returns the
+        // actual field decorator, and that decorator is what gets attached.
+        name = (__runInitializers(this, _instanceExtraInitializers), __runInitializers(this, _name_initializers, 'Max'));
+        greet() {
+            console.log('Hi, I am ' + this.name);
+        }
+        constructor() {
+            __runInitializers(this, _name_extraInitializers);
+        }
+    };
+    return Person = _classThis;
+})();
 // THE "this" PROBLEM — fixed automatically by @autobind.
 //
 // As shown previously, calling "max.greet()" works because "this"
@@ -450,7 +488,6 @@ class Person {
 const max = new Person();
 const greet = max.greet;
 greet();
-
 // =====================================================================
 // SECTION SUMMARY — what was covered (and what comes next).
 // =====================================================================
