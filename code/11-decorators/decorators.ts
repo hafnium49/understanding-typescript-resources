@@ -255,25 +255,57 @@ function autobind(
 class Person {
   public name = 'Max';
 
+  // MANUAL "this" BINDING — workaround for the problem demonstrated below.
+  //
+  // The constructor here exists ONLY to fix a JavaScript "this" binding
+  // problem that surfaces when methods are detached from their class.
+  // Without this line, the standalone call further down would fail.
+  //
+  // "bind" is a built-in JavaScript Function method. Calling
+  // someFunction.bind(value) returns a new function that, no matter
+  // how it is later invoked, will always have its "this" set to
+  // "value". Here, "this.greet.bind(this)" produces a version of
+  // greet whose "this" is permanently locked to the instance being
+  // constructed.
+  //
+  // The result is reassigned back to "this.greet", so the bound
+  // version replaces the original on this particular instance.
+  //
+  // This works, but it is verbose: every method that needs binding
+  // requires its own line in every constructor of every class. The
+  // @autobind decorator (next lesson) will eliminate this boilerplate.
+  constructor() {
+    this.greet = this.greet.bind(this);
+  }
+
   @autobind
   greet() {
     console.log('Hi, I am ' + this.name);
   }
 }
 
-// Instantiating Person multiple times to demonstrate the timing of
-// the different log statements:
+// THE "this" PROBLEM — why methods sometimes lose their context.
 //
-//   1. "logger decorator" + the class + the context object → printed
-//      ONCE, when the class definition is parsed (decorator setup time).
+// In JavaScript, the value of "this" inside a function is determined
+// by HOW the function is called, not where it is defined.
 //
-//   2. "class constructor" + the instance → printed ONCE PER "new"
-//      call (instantiation time). Two new Person() calls produce two
-//      pairs of logs.
+// When you call "max.greet()", the dot notation tells JavaScript that
+// greet is being called ON max — so inside greet, "this" refers to max.
+// Everything works as expected.
 //
-// This makes the timing distinction concrete: code that lives directly
-// in the decorator function body runs at class-definition time, while
-// code inside the returned class's constructor runs whenever an
-// instance is created.
-new Person();
-new Person();
+// But when you do "const greet = max.greet" and then call "greet()"
+// directly, there is no longer an object on the left of the dot.
+// JavaScript no longer knows which instance the method belongs to,
+// so "this" becomes undefined inside the call. Trying to read
+// "this.name" then throws a runtime error.
+//
+// This pattern (storing a method in a variable to pass it as a
+// callback) is extremely common in event handlers and asynchronous
+// code, which is why losing "this" is such a frequent source of bugs.
+//
+// In this file the problem is fixed by the manual bind in the Person
+// constructor above. Without that constructor, the call below would
+// crash with "Cannot read properties of undefined".
+const max = new Person();
+const greet = max.greet;
+greet();
