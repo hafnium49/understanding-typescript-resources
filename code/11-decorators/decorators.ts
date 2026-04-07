@@ -449,3 +449,29 @@ class Person {
 const max = new Person();
 const greet = max.greet;
 greet();
+
+// =====================================================================
+// SECTION SUMMARY — what was covered (and what comes next).
+// =====================================================================
+//
+// This section introduced the modern, standard ECMAScript decorator
+// model and worked through:
+//
+//   - Class decorators (logger): how to log information about a class
+//     and how to return a replacement class to inject behavior into
+//     every constructor call.
+//   - Method decorators (autobind): how to register an initializer to
+//     fix the JavaScript "this" binding problem automatically, and
+//     how to return a replacement function to wrap the original.
+//   - Field decorators (replacer): how to inspect and replace a
+//     field's value via the returned initializer function.
+//   - Decorator factories: wrapping any of the above in an outer
+//     function so the decorator can be configured at the use site
+//     with arguments such as @replacer('').
+//
+// The next section moves on to the EXPERIMENTAL (LEGACY) decorators —
+// the older TypeScript-only flavor that requires the
+// "experimentalDecorators" flag in tsconfig.json. Even though the
+// modern ECMAScript decorators covered here are the future of the
+// feature, the legacy form remains important because most existing
+// TypeScript projects that use decorators today were built against it.
