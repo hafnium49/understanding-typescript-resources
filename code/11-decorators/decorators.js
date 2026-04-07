@@ -292,6 +292,9 @@ function logger(target, ctx) {
 // inside the body". Without it, TypeScript would complain because it
 // cannot infer the runtime type of "this" inside the initializer.
 function autobind(target, ctx) {
+    console.log('autobind decorator');
+    console.log(target);
+    console.log(ctx);
     ctx.addInitializer(function () {
         this[ctx.name] = this[ctx.name].bind(this);
     });

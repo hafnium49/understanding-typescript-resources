@@ -268,6 +268,9 @@ function autobind(
   target: (...args: any[]) => any,
   ctx: ClassMethodDecoratorContext
 ) {
+  console.log('autobind decorator');
+  console.log(target);
+  console.log(ctx);
   ctx.addInitializer(function (this: any) {
     this[ctx.name] = this[ctx.name].bind(this);
   });
