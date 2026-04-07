@@ -115,8 +115,7 @@
 //
 //   1. target — the thing the decorator is attached to. For a class
 //      decorator, this is the class itself (technically the constructor
-//      function). The proper type for this is more complex than "any";
-//      we will refine it later. For now, "any" keeps things simple.
+//      function).
 //
 //   2. ctx (the "context" object) — an object provided by the runtime
 //      that describes WHAT the decorator is attached to. Its type is
@@ -129,10 +128,59 @@
 //
 // Without these two parameters, TypeScript would complain that the
 // function does not match a valid decorator signature.
-function logger(target: any, ctx: ClassDecoratorContext) {
+
+// PROPER TYPING FOR THE TARGET — using a generic constructor type.
+//
+// Originally we could type "target" as "any" to get the basic decorator
+// working. But once a decorator RETURNS a new class to replace the
+// original (see below), TypeScript needs a more precise type so the
+// returned class is compatible with the original.
+//
+// The constraint "T extends new (...args: any[]) => any" reads as:
+// "T must be something that can be called with the 'new' keyword and
+// any combination of arguments." This is TypeScript's way of saying
+// "T is a class constructor."
+//
+//   - "new" tells TypeScript it must be constructible (i.e., a class)
+//   - "(...args: any[])" allows any number of constructor parameters
+//     of any types — we do not care which class we are decorating
+//   - "=> any" says the constructor produces any kind of instance
+//
+// Using a generic T (instead of "any") preserves the connection
+// between the input class and the output class, so TypeScript can
+// verify that the replacement class is compatible.
+function logger<T extends new (...args: any[]) => any>(
+  target: T,
+  ctx: ClassDecoratorContext
+) {
   console.log('logger decorator');
   console.log(target);
   console.log(ctx);
+
+  // RETURNING A REPLACEMENT CLASS — how a class decorator MODIFIES
+  // the class it is attached to.
+  //
+  // A class decorator can return a new class, and that new class will
+  // REPLACE the original class wherever it is used. To preserve all
+  // the original behavior while adding new pieces, return an anonymous
+  // class that extends "target" — the original class.
+  //
+  // The "class extends target { ... }" syntax (without giving the
+  // class a name) is valid JavaScript: it creates a one-off subclass
+  // on the spot, just to return it from this function.
+  //
+  // Inside this anonymous class, we can add new fields, override
+  // methods, and so on. Here we add an "age" field set to 35 — a
+  // property that does not exist on the original Person class but
+  // becomes available on every Person instance after the decorator
+  // is applied.
+  //
+  // IMPORTANT: This does not WIPE OUT the original class. Because the
+  // returned class extends target, both the original members (name,
+  // greet) AND the added members (age) end up on the final instance.
+  return class extends target {
+    age = 35;
+  };
 }
 
 // ATTACHING THE DECORATOR with the @ symbol.
@@ -143,15 +191,9 @@ function logger(target: any, ctx: ClassDecoratorContext) {
 // reference it. TypeScript will invoke it for you when the class is
 // being defined.
 //
-// Even though we never instantiate Person below (no "new Person()"
-// anywhere in this file), the decorator still runs at class-definition
-// time. Compiling and executing this file will produce three console
-// outputs from inside "logger" — the message string, the class itself,
-// and the context object — proving the decorator was called.
-//
-// Inspecting the printed context object reveals its shape: kind is
-// 'class', name is 'Person', metadata is empty, and addInitializer is
-// a function that becomes important in later lessons.
+// Inspecting the printed context object at runtime reveals its shape:
+// kind is 'class', name is 'Person', metadata is empty, and
+// addInitializer is a function that becomes important in later lessons.
 @logger
 class Person {
   public name = 'Max';
@@ -160,3 +202,14 @@ class Person {
     console.log('Hi, I am ' + this.name);
   }
 }
+
+// Instantiating Person now creates an instance of the REPLACEMENT
+// class returned by logger. Logging it shows BOTH the original "name"
+// property AND the added "age" property — proof that the decorator
+// merged the original class with the augmentation.
+const max = new Person();
+console.log(max);
+
+// The original method still works too: greet is inherited from the
+// original Person class via the "extends target" chain.
+max.greet();
