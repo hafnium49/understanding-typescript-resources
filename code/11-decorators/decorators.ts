@@ -270,6 +270,41 @@ function autobind(
   ctx.addInitializer(function (this: any) {
     this[ctx.name] = this[ctx.name].bind(this);
   });
+
+  // RETURNING A REPLACEMENT FUNCTION — wrapping the original method.
+  //
+  // Just like a class decorator can return a new class to replace the
+  // original, a method decorator can return a new function to replace
+  // the original method. The returned function becomes the new "greet"
+  // (or whichever method the decorator was attached to).
+  //
+  // The wrapper pattern lets you run code BEFORE and AFTER the
+  // original method, send HTTP requests, log activity, write to files,
+  // and so on — without modifying the original implementation. This is
+  // exactly how cross-cutting concerns (logging, auth, caching, etc.)
+  // are typically added with decorators.
+  //
+  // CALLING "target" CORRECTLY — apply vs. plain invocation.
+  //
+  // Inside the wrapper, "target" is the ORIGINAL method as captured at
+  // decorator time — that is, BEFORE the addInitializer above replaced
+  // it with the bound version. Calling "target()" directly would lose
+  // its "this" context (the same problem the addInitializer was added
+  // to solve in the first place).
+  //
+  // The fix is to use "target.apply(this)" instead. Function.apply is
+  // a built-in JavaScript method that works like bind but executes the
+  // function IMMEDIATELY, after temporarily setting "this" to the
+  // value passed in as the first argument. So "target.apply(this)"
+  // invokes the original method with "this" pointing to the current
+  // instance — preserving the connection to "name", etc.
+  //
+  // (As before, "this: any" on the wrapper is a TypeScript-only hint
+  // for typing "this" inside the function body.)
+  return function (this: any) {
+    console.log('Executing original function');
+    target.apply(this);
+  };
 }
 
 // ATTACHING THE DECORATOR with the @ symbol.
