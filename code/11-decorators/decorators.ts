@@ -44,11 +44,27 @@
 // other framework constructs.
 //
 // WHAT CAN YOU ATTACH DECORATORS TO?
-// Classes, methods, and properties (the specific targets covered in
-// later lessons of this section). Decorators are entirely OPTIONAL —
-// you can write substantial TypeScript applications without ever using
-// them. But they shine for cross-cutting concerns like validation,
-// logging, dependency injection, and framework integration.
+//
+// Decorators are an OBJECT-ORIENTED PROGRAMMING feature. That means
+// they only work with classes and their members. Specifically, you
+// can attach decorators to:
+//
+//   - Classes themselves
+//   - Methods inside a class
+//   - Fields (properties) inside a class
+//   - Getters and setters inside a class
+//
+// You CANNOT attach decorators to standalone functions, variables,
+// or any other non-class construct. There is no equivalent feature
+// for those. If you want decorator-like behavior outside of classes,
+// you have to wrap that code in a class first or use a different
+// pattern (e.g., higher-order functions).
+//
+// This section covers CLASS, METHOD, and FIELD decorators in detail.
+// Decorators are entirely OPTIONAL — you can write substantial
+// TypeScript applications without ever using them. But they shine
+// for cross-cutting concerns like validation, logging, dependency
+// injection, and framework integration.
 //
 // =====================================================================
 // TWO FLAVORS OF DECORATORS IN TYPESCRIPT:
