@@ -1,60 +1,31 @@
-function logger<T extends new (...args: any[]) => any>(
-  target: T,
-  ctx: ClassDecoratorContext
-) {
-  console.log('logger decorator');
-  console.log(target);
-  console.log(ctx);
-
-  return class extends target {
-    constructor(...args: any[]) {
-      super(...args);
-      console.log('class constructor');
-      console.log(this);
-    }
-  };
-}
-
-function autobind(
-  target: (...args: any[]) => any,
-  ctx: ClassMethodDecoratorContext
-) {
-  ctx.addInitializer(function (this: any) {
-    this[ctx.name] = this[ctx.name].bind(this);
-  });
-
-  return function (this: any) {
-    console.log('Executing original function');
-    target.apply(this);
-  };
-}
-
-function replacer<T>(initValue: T) {
-  return function replacerDecorator(
-    target: undefined,
-    ctx: ClassFieldDecoratorContext
-  ) {
-    console.log(target);
-    console.log(ctx);
-
-    return (initialValue: any) => {
-      console.log(initialValue);
-      return initValue;
-    };
-  };
-}
-
-@logger
-class Person {
-  @replacer('')
-  name = 'Max';
-
-  @autobind
-  greet() {
-    console.log('Hi, I am ' + this.name);
-  }
-}
-
-const max = new Person();
-const greet = max.greet;
-greet();
+// =====================================================================
+// DECORATORS — section overview.
+// =====================================================================
+//
+// This section explores DECORATORS — a feature for attaching reusable
+// behavior to classes, methods, and properties without modifying their
+// source. The lessons that follow cover:
+//
+//   - What decorators are and why they exist
+//   - How to write your own class, method, and property decorators
+//   - DECORATOR FACTORIES — functions that produce decorators, useful
+//     when you want to configure a decorator with arguments
+//
+// TWO FLAVORS OF DECORATORS IN TYPESCRIPT:
+//
+// TypeScript supports two distinct decorator implementations because
+// the JavaScript standard for decorators evolved over time:
+//
+//   1. Standard ECMAScript decorators — the modern, official version
+//      that follows the finalized JavaScript proposal. This is the
+//      default in newer TypeScript releases.
+//
+//   2. Experimental (legacy) decorators — an older implementation that
+//      predates the official standard. Many existing libraries (Angular,
+//      TypeORM, etc.) were built against this version, so it remains
+//      important to recognize. Enabled via the "experimentalDecorators"
+//      compiler option in tsconfig.json.
+//
+// The two flavors have different signatures and capabilities. Later
+// lessons in this section show how to write each kind and explain when
+// to use one over the other.
