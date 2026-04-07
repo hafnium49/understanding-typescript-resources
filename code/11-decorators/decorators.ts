@@ -95,3 +95,68 @@
 // why TypeScript supports both — they serve different ecosystems. The
 // rest of THIS section focuses exclusively on the standard ECMAScript
 // flavor.
+
+// =====================================================================
+// BUILDING YOUR FIRST DECORATOR — a class decorator.
+// =====================================================================
+//
+// Note on tsconfig.json: the "experimentalDecorators" setting is NOT
+// enabled (it remains commented out). With that flag off, TypeScript
+// builds the modern, standard ECMAScript decorators — exactly what we
+// want for this section.
+
+// DECORATORS ARE JUST FUNCTIONS.
+//
+// A decorator is a regular function written in a specific shape that
+// allows TypeScript to call it when the thing it is attached to is
+// being defined. The function name becomes the decorator name.
+//
+// For an ECMAScript CLASS DECORATOR, the function receives TWO arguments:
+//
+//   1. target — the thing the decorator is attached to. For a class
+//      decorator, this is the class itself (technically the constructor
+//      function). The proper type for this is more complex than "any";
+//      we will refine it later. For now, "any" keeps things simple.
+//
+//   2. ctx (the "context" object) — an object provided by the runtime
+//      that describes WHAT the decorator is attached to. Its type is
+//      "ClassDecoratorContext", a built-in TypeScript type. This object
+//      includes useful properties such as:
+//        - kind: describes the target type (e.g., 'class', 'method')
+//        - name: the name of the target (e.g., 'Person')
+//        - metadata: a slot for attaching extra information
+//        - addInitializer: a function used in advanced scenarios (later)
+//
+// Without these two parameters, TypeScript would complain that the
+// function does not match a valid decorator signature.
+function logger(target: any, ctx: ClassDecoratorContext) {
+  console.log('logger decorator');
+  console.log(target);
+  console.log(ctx);
+}
+
+// ATTACHING THE DECORATOR with the @ symbol.
+//
+// To use a function as a decorator, place "@functionName" directly
+// above (or in the same line as) the thing you want to decorate. Note
+// that you do NOT call the function with parentheses here — you just
+// reference it. TypeScript will invoke it for you when the class is
+// being defined.
+//
+// Even though we never instantiate Person below (no "new Person()"
+// anywhere in this file), the decorator still runs at class-definition
+// time. Compiling and executing this file will produce three console
+// outputs from inside "logger" — the message string, the class itself,
+// and the context object — proving the decorator was called.
+//
+// Inspecting the printed context object reveals its shape: kind is
+// 'class', name is 'Person', metadata is empty, and addInitializer is
+// a function that becomes important in later lessons.
+@logger
+class Person {
+  public name = 'Max';
+
+  greet() {
+    console.log('Hi, I am ' + this.name);
+  }
+}
