@@ -197,6 +197,40 @@ function logger<T extends new (...args: any[]) => any>(
   };
 }
 
+// =====================================================================
+// METHOD DECORATORS — decorating a single method instead of the class.
+// =====================================================================
+//
+// Class decorators are not the only kind. You can also write decorators
+// that target individual METHODS inside a class. The general shape is
+// the same — a regular function with two parameters — but the types of
+// those parameters differ.
+//
+// For an ECMAScript METHOD DECORATOR:
+//
+//   1. target — the method itself, which is just a function. You can
+//      type it as the built-in "Function" type, or as an explicit
+//      function type like "(...args: any[]) => any" to accept any
+//      method signature.
+//
+//   2. ctx — a "ClassMethodDecoratorContext" object describing the
+//      method being decorated. Compared to the class context, it
+//      carries extra method-specific properties:
+//        - kind: 'method'
+//        - name: the method's name (e.g., 'greet')
+//        - static: whether the method is declared with "static"
+//        - private: whether the method is private
+//        - access: an object exposing get/has helpers for indirect
+//          access to the method on instances
+//        - addInitializer: used for advanced behaviors (covered next)
+function autobind(
+  target: (...args: any[]) => any,
+  ctx: ClassMethodDecoratorContext
+) {
+  console.log(target);
+  console.log(ctx);
+}
+
 // ATTACHING THE DECORATOR with the @ symbol.
 //
 // To use a function as a decorator, place "@functionName" directly
@@ -208,10 +242,20 @@ function logger<T extends new (...args: any[]) => any>(
 // Inspecting the printed context object at runtime reveals its shape:
 // kind is 'class', name is 'Person', metadata is empty, and
 // addInitializer is a function that becomes important in later lessons.
+//
+// EXECUTION ORDER OBSERVATION:
+//
+// When this file runs, the @autobind logs appear BEFORE the @logger
+// logs from the class decorator. That is because each decorator runs
+// only after the thing it is attached to has finished initializing.
+// Methods finish initializing before the surrounding class does — so
+// method decorators fire first, then the class decorator wraps up the
+// whole class definition.
 @logger
 class Person {
   public name = 'Max';
 
+  @autobind
   greet() {
     console.log('Hi, I am ' + this.name);
   }
