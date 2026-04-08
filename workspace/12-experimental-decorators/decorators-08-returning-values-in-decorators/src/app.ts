@@ -125,14 +125,73 @@ console.log(pers);
 
 // ---
 
+// =====================================================================
+// LESSON 155: WHICH DECORATORS CAN RETURN VALUES?
+// =====================================================================
+//
+// The class decorator above (WithTemplate) showed that a decorator's
+// return value can REPLACE the thing it was attached to. That pattern
+// extends to some — but not all — of the other decorator positions.
+// Here is the complete picture:
+//
+//   POSITION                    CAN RETURN?    WHAT?
+//   ------------------------    ------------   --------------------------
+//   Class decorator             YES            New constructor function
+//   Method decorator            YES            New PropertyDescriptor
+//   Accessor decorator          YES            New PropertyDescriptor
+//   Property decorator          NO             Return value is ignored
+//   Parameter decorator         NO             Return value is ignored
+//
+// WHAT IS A PROPERTY DESCRIPTOR, REALLY?
+//
+// This is vanilla JavaScript, not TypeScript-specific. Every property
+// on an object is described by a PropertyDescriptor — an object with
+// fields that control how the property behaves. The descriptor comes
+// in two flavors:
+//
+//   Data descriptor (for value properties):
+//     - value       : the actual stored value
+//     - writable    : can it be reassigned with "="?
+//     - enumerable  : does it show up in for...in loops / Object.keys()?
+//     - configurable: can the descriptor itself be changed or deleted?
+//
+//   Accessor descriptor (for getter/setter properties):
+//     - get         : the getter function
+//     - set         : the setter function
+//     - enumerable  : same as above
+//     - configurable: same as above
+//
+// Methods use DATA descriptors where `value` is the function itself
+// and `writable` controls whether the method can be replaced. Getters
+// and setters use ACCESSOR descriptors where `get` and `set` hold the
+// respective functions.
+//
+// BY RETURNING A NEW DESCRIPTOR from a method/accessor decorator, you
+// can:
+//   - Wrap the original function (e.g., log every call, bind `this`,
+//     add caching — the autobind example comes in the next lesson)
+//   - Toggle writable/configurable/enumerable to lock down or expose
+//     the member
+//   - Replace the function entirely with your own implementation
+//   - Add a getter where there was only a setter before, or vice versa
+//
+// For more detail on property descriptors and their defaults:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+
 // (Log, Log2, Log3, Log4 and the Product class from lesson 152.
-// Included for context; none of these return replacement values in
-// this lesson — that pattern for methods/accessors comes next.)
+// None of them return replacement descriptors — this lesson is purely
+// conceptual. The concrete autobind example that USES the return
+// value comes in the next lesson.)
 function Log(target: any, propertyName: string | Symbol) {
   console.log('Property decorator!');
   console.log(target, propertyName);
 }
 
+// This accessor decorator COULD return a new PropertyDescriptor (note
+// that TypeScript would need the return type annotated as
+// `PropertyDescriptor` or inferred from a literal). Here it does not —
+// it just logs. A returned descriptor would replace the existing
+// get/set/configurable/enumerable configuration of the `price` setter.
 function Log2(target: any, name: string, descriptor: PropertyDescriptor) {
   console.log('Accessor decorator!');
   console.log(target);
@@ -140,6 +199,11 @@ function Log2(target: any, name: string, descriptor: PropertyDescriptor) {
   console.log(descriptor);
 }
 
+// This method decorator COULD also return a new PropertyDescriptor.
+// The returned descriptor replaces the method's existing descriptor,
+// which is how you wrap, replace, or otherwise modify the underlying
+// function. The Autobind decorator in the next lesson is a concrete
+// example of this pattern in action.
 function Log3(
   target: any,
   name: string | Symbol,
@@ -151,6 +215,10 @@ function Log3(
   console.log(descriptor);
 }
 
+// Parameter decorator — even if this function returned something,
+// TypeScript would ignore it. Parameter decorators exist primarily
+// for metadata registration (e.g., marking a parameter as injectable
+// in a dependency injection framework), not for replacement.
 function Log4(target: any, name: string | Symbol, position: number) {
   console.log('Parameter decorator!');
   console.log(target);
