@@ -191,6 +191,55 @@ interface ValidatorConfig {
 // this would be hidden from consumers inside a module.
 const registeredValidators: ValidatorConfig = {};
 
+// =====================================================================
+// LESSON 159: FIXING THE VALIDATOR BUG.
+// =====================================================================
+//
+// The registry writers from lesson 158 have a subtle bug: when more
+// than one validator decorator is applied to the SAME property, the
+// second decorator overwrites the first one's entry instead of
+// appending to it.
+//
+// Example: suppose you want a title to be both required AND short:
+//
+//   class Course {
+//     @Required
+//     @Maxlength        // hypothetical second validator
+//     title: string;
+//   }
+//
+// The lesson 158 code would first register ['maxlength'] for title,
+// then immediately replace it with ['required'] when @Required runs.
+// The final registry only remembers 'required' — the 'maxlength' rule
+// is lost. The last decorator silently wins.
+//
+// ROOT CAUSE:
+//   [propName]: ['required']   ← always produces a fresh one-element
+//                                 array, ignoring any existing array
+//                                 for this property.
+//
+// THE FIX:
+//   [propName]: [
+//     ...(registeredValidators[target.constructor.name]?.[propName] ?? []),
+//     'required'
+//   ]
+//
+// Read the bracketed value left to right:
+//   1. registeredValidators[target.constructor.name]
+//        → the inner map for this class, or undefined if not yet set
+//   2. ?.[propName]
+//        → optional chaining reaches through step 1 only if it exists,
+//          returning the existing array for this property, or undefined
+//   3. ?? []
+//        → nullish coalescing substitutes an empty array when step 2
+//          is null/undefined
+//   4. ...spread into a new array, then append the new validator key
+//
+// Result: existing validators are preserved, and the new one is added
+// at the end. Stacking @Required, @Maxlength, @Positive, etc., now
+// accumulates all their keys on the same property instead of trampling
+// each other.
+
 // PROPERTY DECORATOR: @Required
 //
 // Remember the signature: a property decorator gets (target, propName)
@@ -200,17 +249,17 @@ const registeredValidators: ValidatorConfig = {};
 // itself. From that constructor we can read its `.name` to get the
 // class name as a string ("Course" here).
 //
-// Writing into the registry:
-//   registeredValidators[className][propName] = [...existing, 'required']
-//
-// The SPREAD on the outer object is essential: without it, each new
-// @Required or @PositiveNumber call would REPLACE the entire inner
-// object for that class, wiping out any validators registered for
-// other properties. The spread preserves everything already there.
+// The OUTER spread (`...registeredValidators[target.constructor.name]`)
+// still preserves validators on OTHER properties of the same class.
+// The INNER spread + optional chaining pattern (new in this lesson)
+// additionally preserves existing validators on the SAME property.
 function Required(target: any, propName: string) {
   registeredValidators[target.constructor.name] = {
     ...registeredValidators[target.constructor.name],
-    [propName]: ['required']
+    [propName]: [
+      ...(registeredValidators[target.constructor.name]?.[propName] ?? []),
+      'required'
+    ]
   };
 }
 
@@ -222,7 +271,10 @@ function Required(target: any, propName: string) {
 function PositiveNumber(target: any, propName: string) {
   registeredValidators[target.constructor.name] = {
     ...registeredValidators[target.constructor.name],
-    [propName]: ['positive']
+    [propName]: [
+      ...(registeredValidators[target.constructor.name]?.[propName] ?? []),
+      'positive'
+    ]
   };
 }
 
