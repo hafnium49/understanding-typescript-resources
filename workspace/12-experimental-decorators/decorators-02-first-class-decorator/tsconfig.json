@@ -60,6 +60,10 @@
     // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
 
     /* Experimental Options */
+    // Lesson 147: This flag must be uncommented and set to true to use
+    // the older experimental decorators syntax (@Logger, @WithTemplate,
+    // etc.). It was commented out in the starting setup. Without it,
+    // TypeScript rejects the "@" decorator syntax entirely.
     "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
