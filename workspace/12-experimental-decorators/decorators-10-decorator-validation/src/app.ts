@@ -161,31 +161,114 @@ button.addEventListener('click', p.showMessage);
 //   'title' property has a 'required' rule." Later, when validate()
 //   runs, it looks up the registered rules for the instance's class
 //   and applies them to the instance's actual values.
+
+// =====================================================================
+// LESSON 158: IMPLEMENTING THE VALIDATION REGISTRY.
+// =====================================================================
 //
-// NOTE: This lesson focuses on the SETUP — the Course class, the form
-// wiring, and the stub decorators and validate() function that
-// establish the API surface. The storage mechanism that makes
-// @Required and @PositiveNumber actually do something is filled in
-// by a later lesson. For now, the stubs let the code compile and run
-// so you can interact with the form, and validate() simply returns
-// true so that the "happy path" still works.
-
-// Stub property decorator — establishes the API shape but does not
-// yet register any rules.
-function Required(_target: any, _propName: string) {
-  // Implementation (storage write) comes in the next lesson.
+// With the API sketched in the previous lesson, the job now is to
+// build the actual storage and check logic behind it.
+//
+// THE STORAGE SHAPE:
+//
+// ValidatorConfig is an index-signature type describing a nested map:
+//
+//   { className: { propertyName: [validatorKey, validatorKey, ...] } }
+//
+// The OUTER key is the class name (e.g., "Course"), and its value is
+// another map from property names to lists of validator identifiers.
+// Each property can carry multiple rules (e.g., a string might be both
+// 'required' AND match a certain pattern), so the innermost value is
+// an array of string keys rather than a single string.
+interface ValidatorConfig {
+  [property: string]: {
+    [validatableProp: string]: string[]; // e.g., ['required', 'positive']
+  };
 }
 
-// Stub property decorator for numeric positivity — same story as
-// Required.
-function PositiveNumber(_target: any, _propName: string) {
-  // Implementation (storage write) comes in the next lesson.
+// The global registry. It starts empty and is populated by the
+// property decorators as each class is defined. In a real library
+// this would be hidden from consumers inside a module.
+const registeredValidators: ValidatorConfig = {};
+
+// PROPERTY DECORATOR: @Required
+//
+// Remember the signature: a property decorator gets (target, propName)
+// — there is no descriptor for plain property positions. "target" for
+// an instance property is the CLASS PROTOTYPE, and every prototype in
+// JavaScript carries a `.constructor` property pointing at the class
+// itself. From that constructor we can read its `.name` to get the
+// class name as a string ("Course" here).
+//
+// Writing into the registry:
+//   registeredValidators[className][propName] = [...existing, 'required']
+//
+// The SPREAD on the outer object is essential: without it, each new
+// @Required or @PositiveNumber call would REPLACE the entire inner
+// object for that class, wiping out any validators registered for
+// other properties. The spread preserves everything already there.
+function Required(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ['required']
+  };
 }
 
-// Stub validator — always passes. The real version will read the
-// registered rules and check them against obj's values.
-function validate(_obj: any) {
-  return true;
+// PROPERTY DECORATOR: @PositiveNumber
+//
+// Same pattern as Required, but registers 'positive' instead. The
+// validator key is an arbitrary string — validate() just has to know
+// how to handle each key it encounters.
+function PositiveNumber(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ['positive']
+  };
+}
+
+// THE VALIDATOR FUNCTION:
+//
+// validate(obj) looks up the registry entry for obj's class, then
+// walks through every registered property and every validator key,
+// accumulating an overall isValid result.
+//
+// WHY ACCUMULATE INSTEAD OF RETURNING EARLY:
+//
+// A tempting first attempt is `return !!obj[prop];` inside the switch.
+// That works for the FAILURE path (the first invalid property can
+// short-circuit), but it also returns `true` the instant the first
+// VALID property is checked — leaving the remaining ones unverified.
+// The fix is to fold the per-check result into an accumulator with
+// boolean AND, and only return at the very end. Once any check fails,
+// `isValid` becomes false and can never flip back to true.
+function validate(obj: any) {
+  const objValidatorConfig = registeredValidators[obj.constructor.name];
+  // If nothing was registered for this class, there is nothing to
+  // check — treat it as valid by default.
+  if (!objValidatorConfig) {
+    return true;
+  }
+  let isValid = true;
+  // Outer loop: iterate over each property that has validators.
+  for (const prop in objValidatorConfig) {
+    // Inner loop: iterate over each validator key attached to that
+    // property. A property may have several.
+    for (const validator of objValidatorConfig[prop]) {
+      switch (validator) {
+        case 'required':
+          // Truthy check. Empty strings, 0, null, and undefined are
+          // all falsy and will fail the `required` rule. `!!` forces
+          // the value into a real boolean.
+          isValid = isValid && !!obj[prop];
+          break;
+        case 'positive':
+          // Strict greater-than-zero. Zero and negative values fail.
+          isValid = isValid && obj[prop] > 0;
+          break;
+      }
+    }
+  }
+  return isValid;
 }
 
 // The Course class models the data we want to validate. Deliberately
@@ -229,10 +312,10 @@ courseForm.addEventListener('submit', event => {
 
   const createdCourse = new Course(title, price);
 
-  // Validation gate. Until the next lesson implements validate() for
-  // real, this always returns true and the alert never fires — but
-  // the call site is already correctly wired, so flipping the switch
-  // later will not require changes here.
+  // Validation gate. validate() consults the registry populated by the
+  // @Required and @PositiveNumber decorators and returns false as
+  // soon as any rule fails. On failure we alert the user and abort
+  // before doing anything further with the invalid data.
   if (!validate(createdCourse)) {
     alert('Invalid input, please try again!');
     return;
