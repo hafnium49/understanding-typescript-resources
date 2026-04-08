@@ -46,7 +46,7 @@ function Log(target: any, propertyName: string | Symbol) {
 }
 
 // =====================================================================
-// ACCESSOR, METHOD, AND PARAMETER DECORATORS.
+// LESSON 152: ACCESSOR, METHOD, AND PARAMETER DECORATORS.
 // =====================================================================
 //
 // With property decorators covered, three more positions remain.
@@ -150,9 +150,49 @@ class Product {
   }
 }
 
-// Instantiating Product does NOT re-run any of the decorators above.
-// They already ran once, when the class definition was processed.
-// Creating instances is a separate runtime activity that only triggers
-// the constructor.
+// =====================================================================
+// LESSON 153: WHEN DO DECORATORS ACTUALLY RUN?
+// =====================================================================
+//
+// A common misconception about decorators is that they behave like
+// event listeners — that @Log on a property somehow fires every time
+// the property is read or written. This is NOT what decorators do.
+// The distinction is worth internalizing because it shapes how you
+// design with decorators.
+//
+// KEY RULE: Decorators execute ONCE, at class-definition time. They
+// do not re-run when instances are created, when methods are called,
+// when properties are read, or when setters are invoked. The two
+// lines below create TWO Product instances, yet the accessor/method/
+// parameter/property decorator logs will still only appear ONCE in
+// the console output — from the initial class definition.
 const p1 = new Product('Book', 19);
 const p2 = new Product('Book 2', 29);
+
+// DECORATORS ARE SETUP TOOLS, NOT EVENT HANDLERS.
+//
+// The mental model to adopt is: a decorator is a function that runs
+// once, during class setup, to perform BEHIND-THE-SCENES WORK. That
+// work could be:
+//
+//   - Registering metadata about the class or its members in some
+//     external data structure (a validator registry, a routing table,
+//     a dependency injection container, etc.)
+//   - Wrapping or replacing a method or accessor by returning a new
+//     descriptor (covered in the next lesson — this is how you can
+//     simulate event-listener-like behavior)
+//   - Modifying the class itself by returning a new constructor
+//   - Reading the class's structure to generate code elsewhere
+//
+// In the WithTemplate example earlier, the template rendering happens
+// when the class is defined, NOT when a Person is instantiated. If you
+// wanted rendering to happen per-instance, you would have to write
+// the decorator so that it STORES the template at definition time and
+// defers the rendering until something (a method call, a constructor
+// hook) triggers it later. The decorator itself still runs only once.
+//
+// This "one-time setup + stashed behavior" pattern is what frameworks
+// like Angular, NestJS, and TypeORM exploit — decorators register
+// classes, properties, and methods with the framework at definition
+// time, and the framework then uses that registered information at
+// runtime to do useful things.
