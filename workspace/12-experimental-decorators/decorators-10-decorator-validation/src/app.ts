@@ -374,3 +374,55 @@ courseForm.addEventListener('submit', event => {
   }
   console.log(createdCourse);
 });
+
+// =====================================================================
+// LESSON 160: DECORATORS IN THE REAL WORLD.
+// =====================================================================
+//
+// The tiny validator built in lessons 157–159 is an intentionally
+// naive version of something that already exists as a robust library.
+// A quick survey of popular decorator-based tools in the TypeScript
+// ecosystem shows the same ideas at a much larger scale.
+//
+// CLASS-VALIDATOR (npm: class-validator)
+//
+// A mature validation library that does exactly what we just built,
+// but with dozens of built-in rules (IsEmail, IsUrl, Length, Min, Max,
+// Matches, IsDate, ...) plus message customization, async validators,
+// and nested object support. You import decorators from the package,
+// attach them to class properties, and call validate(obj). The
+// internal registry and per-class metadata tracking are all hidden
+// behind the package — consumers just see the decorators and the
+// validate function.
+//
+// ANGULAR (@Component and friends)
+//
+// Angular's component system is fundamentally decorator-based. The
+// @Component decorator takes a configuration object with a template,
+// a selector, styles, and more — very similar in spirit to the
+// WithTemplate factory we wrote, but vastly more elaborate. Other
+// Angular decorators like @Injectable, @Input, @Output, @NgModule,
+// and @HostListener use the same class/property/method positions to
+// register components, services, DI bindings, and event handlers
+// with the framework runtime.
+//
+// NESTJS (server-side Node.js framework)
+//
+// NestJS is a server framework built around TypeScript decorators.
+// @Controller registers a class as an HTTP controller, @Get / @Post /
+// @Put / @Delete declare route handlers, @Body / @Param / @Query
+// extract request data into method parameters, and @UseGuards /
+// @UseInterceptors hook middleware into specific routes. The
+// framework walks the decorator metadata at startup to wire up the
+// entire HTTP routing table — again, the same "decorators register,
+// framework reads" pattern established in our validation example.
+//
+// COMMON THREAD
+//
+// In every case, the decorator itself does not DO the work at the
+// moment it runs. It records metadata, and a framework (or a
+// separate validate/compile/bootstrap step) acts on that metadata
+// later. Internalizing this pattern is the single most important
+// takeaway from this section — once you see it, the decorators used
+// by any library start to make sense as a configuration language
+// rather than as magic.
