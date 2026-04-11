@@ -55,13 +55,48 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
+// =====================================================================
+// LESSON 169: RENDERING THE PROJECT-LIST SECTION
+// =====================================================================
+//
+// Goal of this lesson: stop logging the gathered user input to the
+// console and instead render a real "Active Projects" and "Finished
+// Projects" section on the page. Each section comes from the
+// <template id="project-list"> element in index.html.
+//
+// A SINGLE CLASS, TWO INSTANCES:
+// Rather than duplicating the rendering code, we write ONE ProjectList
+// class and create two instances — one for "active" and one for
+// "finished". The class accepts a constructor argument that tells it
+// which variant to render, which is then used to build unique element
+// ids and heading text.
+//
+// Displaying actual project items inside these sections is deferred
+// to the next lessons; for now the lists are visible but empty.
+
 // ProjectList Class
 class ProjectList {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
+  // The template wraps a <section>, for which there is no dedicated
+  // HTMLSectionElement type. Every DOM element still fits the generic
+  // HTMLElement type, so we use that here.
   element: HTMLElement;
 
+  // PARAMETER PROPERTY — "private type" on a constructor parameter
+  // automatically creates a private field called "type" and assigns
+  // the incoming argument to it, in one step.
+  //
+  // LITERAL-UNION TYPE — 'active' | 'finished' restricts the allowed
+  // arguments to those two exact strings. Any other value (including
+  // any arbitrary string) would be a compile error at the call site.
+  // This pairs naturally with using the type to build element ids and
+  // headings below, because the values are both the discriminator
+  // (active vs finished) and the content (class names, h2 text).
   constructor(private type: 'active' | 'finished') {
+    // Selecting the template and the host container follows the same
+    // pattern used in ProjectInput: getElementById with a non-null
+    // assertion and a type cast to the specific subtype we know about.
     this.templateElement = document.getElementById(
       'project-list'
     )! as HTMLTemplateElement;
@@ -72,19 +107,43 @@ class ProjectList {
       true
     );
     this.element = importedNode.firstElementChild as HTMLElement;
+    // DYNAMIC ID via a template literal. For an "active" instance
+    // this produces "active-projects", for "finished" it produces
+    // "finished-projects". These ids correspond to CSS rules in
+    // app.css that style the two sections differently (e.g., the
+    // finished section uses a blue accent color via #finished-projects).
     this.element.id = `${this.type}-projects`;
+
+    // The order here is: first attach the element to the DOM, then
+    // fill in its content. Either order works as long as both run
+    // before the user sees the page.
     this.attach();
     this.renderContent();
   }
 
+  // RENDER CONTENT — fills the blanks inside the cloned template:
+  //   1. Give the <ul> a type-specific id so we can target it later.
+  //   2. Set the <h2> heading text to the uppercase type plus
+  //      " PROJECTS" (e.g., "ACTIVE PROJECTS").
+  //
+  // querySelector is used again here instead of getElementById because
+  // the lookup is scoped to this.element (the cloned section), not the
+  // whole document — and because tag selectors are the simplest way to
+  // reach the single <ul> and single <h2> inside the template.
   private renderContent() {
     const listId = `${this.type}-projects-list`;
     this.element.querySelector('ul')!.id = listId;
     this.element.querySelector('h2')!.textContent =
       this.type.toUpperCase() + ' PROJECTS';
-    
+
   }
 
+  // ATTACH — insert the rendered section into the host container.
+  //
+  // Position "beforeend" places the section as the LAST child of the
+  // host element. This matters because the form is inserted with
+  // "afterbegin" (first child), so the active and finished lists end
+  // up stacked below the form in the rendered order.
   private attach() {
     this.hostElement.insertAdjacentElement('beforeend', this.element);
   }
@@ -185,6 +244,10 @@ class ProjectInput {
   }
 }
 
+// Create the rendered instances. The form is rendered first, then the
+// two project sections. Passing a string other than 'active' or
+// 'finished' here would be rejected at compile time because of the
+// literal-union type on ProjectList's constructor parameter.
 const prjInput = new ProjectInput();
 const activePrjList = new ProjectList('active');
 const finishedPrjList = new ProjectList('finished');
