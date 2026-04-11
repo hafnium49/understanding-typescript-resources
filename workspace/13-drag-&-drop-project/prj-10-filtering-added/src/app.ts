@@ -131,6 +131,33 @@ class ProjectList {
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
 
+    // =================================================================
+    // LESSON 172: FILTER THE BROADCASTED PROJECTS BY STATUS
+    // =================================================================
+    //
+    // In the previous lesson, the listener stored every project it
+    // received. That is why the same project appeared in BOTH list
+    // sections. The fix is to filter the broadcast down to only the
+    // projects whose status matches this list's type before caching
+    // them in assignedProjects.
+    //
+    // Array.prototype.filter() is a built-in JavaScript method that
+    // creates a NEW array containing only the elements for which the
+    // given callback returns true. The original array is untouched,
+    // which is important here — ProjectState already hands us a
+    // defensive copy, but filter() still leaves that copy intact.
+    //
+    // The callback uses a regular function body (curly braces) rather
+    // than an implicit-return arrow, so there is room for a guard
+    // clause:
+    //   - If the enclosing list is the "active" list, return true
+    //     only for projects whose status equals ProjectStatus.Active.
+    //   - Otherwise the enclosing list is the "finished" list, so
+    //     return true only for projects whose status is Finished.
+    //
+    // Note: "this.type" holds the string-literal type ('active' /
+    // 'finished'), while "prj.status" holds the enum value. They are
+    // compared using their own types — no type juggling needed.
     projectState.addListener((projects: Project[]) => {
       const relevantProjects = projects.filter(prj => {
         if (this.type === 'active') {
@@ -146,10 +173,32 @@ class ProjectList {
     this.renderContent();
   }
 
+  // RENDER PROJECTS — paint the current assignedProjects into the list.
+  //
+  // The previous lesson had a subtle bug: every call to this method
+  // appended ALL current projects to the <ul> without clearing what
+  // was already there. Adding a second project therefore rendered
+  // the first one twice.
+  //
+  // The simplest fix is to wipe the list's innerHTML to an empty
+  // string on every render, then re-append every project in the
+  // current assignedProjects array. This is a "re-render everything
+  // from scratch" strategy — inefficient in theory, but completely
+  // fine for a demo application with at most a handful of items.
+  //
+  // A smarter approach would diff the existing DOM against the new
+  // list and only touch the elements that actually changed, but
+  // measuring what is already on screen costs its own time, and the
+  // complexity is not worth it at this scale. Framework libraries
+  // (React, Vue, Angular) automate that diffing for you — this is
+  // essentially a hand-rolled mini version of what they do under
+  // the hood, minus the smart diffing.
   private renderProjects() {
     const listEl = document.getElementById(
       `${this.type}-projects-list`
     )! as HTMLUListElement;
+    // Clear anything previously rendered before re-adding the full
+    // current list. Without this line, the duplication bug returns.
     listEl.innerHTML = '';
     for (const prjItem of this.assignedProjects) {
       const listItem = document.createElement('li');
