@@ -1,3 +1,32 @@
+// =====================================================================
+// LESSON 162: DECORATORS PRACTICE — SECTION INTRO & PROJECT SETUP
+// =====================================================================
+//
+// This section builds a drag-and-drop project management web app that
+// applies the experimental decorators syntax from the previous section.
+//
+// PROJECT STRUCTURE:
+//   - index.html        — the page served to the browser
+//   - app.css           — styling for the page
+//   - src/app.ts        — TypeScript source (where you write code)
+//   - dist/app.js       — compiled output loaded by index.html
+//   - tsconfig.json     — compiler configuration (experimentalDecorators on)
+//   - package.json      — includes lite-server as a dev dependency
+//
+// RUNNING THE PROJECT:
+//   1. npm install         → installs lite-server (the dev server)
+//   2. npm start           → starts lite-server on port 3000 and opens
+//                             the browser automatically
+//   3. In a SEPARATE terminal:
+//        tsc               → compile once
+//        tsc -w            → compile in watch mode (recompiles on save)
+//
+// The dev server serves index.html, which loads the compiled dist/app.js.
+// Keep both processes running side by side while working on this section.
+//
+// Code for the actual application is written below and will be built up
+// progressively across subsequent lessons.
+
 // Drag & Drop Interfaces
 interface Draggable {
   dragStartHandler(event: DragEvent): void;
