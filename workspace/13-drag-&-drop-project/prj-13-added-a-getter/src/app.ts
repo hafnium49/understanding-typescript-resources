@@ -159,6 +159,25 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
   private project: Project;
 
+  // =====================================================================
+  // LESSON 175: USING A GETTER TO TRANSFORM DATA ON RETRIEVAL
+  // =====================================================================
+  //
+  // The raw "people" property is a number (e.g., 1, 5). Displaying it
+  // directly as "5 assigned" is grammatically wrong when the count is 1
+  // ("1 persons assigned"). A GETTER solves this elegantly: it runs
+  // logic every time the property is accessed and returns the correctly
+  // formatted string — "1 person" for singular, "N persons" for plural.
+  //
+  // CONVENTION: Getters and setters are commonly placed right below the
+  // field declarations and above the constructor, though this is not a
+  // technical requirement.
+  //
+  // USAGE: A getter is accessed like a regular property (this.persons),
+  // NOT called like a method (this.persons()). Despite being defined
+  // with parentheses and a body, the "get" keyword makes it behave
+  // as a computed property — it transforms stored data into a more
+  // useful form at the point of retrieval.
   get persons() {
     if (this.project.people === 1) {
       return '1 person';
@@ -179,6 +198,10 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
 
   renderContent() {
     this.element.querySelector('h2')!.textContent = this.project.title;
+    // Uses the getter "this.persons" (no parentheses) instead of the raw
+    // number "this.project.people". The getter returns either "1 person"
+    // or "N persons", and " assigned" is appended here to complete the
+    // label (e.g., "1 person assigned" or "5 persons assigned").
     this.element.querySelector('h3')!.textContent = this.persons + ' assigned';
     this.element.querySelector('p')!.textContent = this.project.description;
   }
