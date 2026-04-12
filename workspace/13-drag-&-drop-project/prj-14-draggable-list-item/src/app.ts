@@ -1,9 +1,44 @@
-// Drag & Drop Interfaces
+// =====================================================================
+// LESSON 176: DRAG & DROP — INTERFACES AS CONTRACTS FOR CLASSES
+// =====================================================================
+//
+// Drag and drop in the browser requires a set of event listeners on
+// both the draggable element and the drop target. To enforce that the
+// right methods exist on the right classes, we define two interfaces
+// that act as CONTRACTS: any class that "implements" an interface MUST
+// provide every method declared in it, or TypeScript raises an error.
+//
+// This is a different use of interfaces from defining object shapes —
+// here they guarantee that classes have the correct event handler
+// methods, which is especially valuable in larger teams where multiple
+// developers might add draggable components independently.
+
+// DRAGGABLE — contract for any class whose rendered element can be
+// dragged. Forces two handler methods:
+//   dragStartHandler — fires when the user begins dragging the element.
+//   dragEndHandler   — fires when the drag operation ends (drop or cancel).
+//
+// DragEvent is a built-in browser type (available because tsconfig
+// includes the "dom" lib). It extends MouseEvent with drag-specific
+// properties like dataTransfer.
 interface Draggable {
   dragStartHandler(event: DragEvent): void;
   dragEndHandler(event: DragEvent): void;
 }
 
+// DRAGTARGET — contract for any class whose rendered element can
+// receive a drop. Forces three handler methods:
+//   dragOverHandler  — fires continuously while something is dragged
+//                      over the element. You MUST call event.preventDefault()
+//                      here to tell the browser this is a valid drop zone;
+//                      without it, dropping is blocked by default.
+//   dropHandler      — fires when the user releases the dragged element
+//                      over this target. This is where you update data
+//                      and UI to reflect the completed drop.
+//   dragLeaveHandler — fires when the dragged element leaves this target
+//                      without being dropped. Useful for reverting any
+//                      visual feedback (e.g., background color change)
+//                      that was applied during dragOver.
 interface DragTarget {
   dragOverHandler(event: DragEvent): void;
   dropHandler(event: DragEvent): void;
@@ -168,6 +203,22 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 }
 
 // ProjectItem Class
+//
+// IMPLEMENTS DRAGGABLE — the "implements" keyword after the class name
+// (and after any "extends") tells TypeScript this class signs the
+// Draggable contract. TypeScript will produce a compile error if the
+// class is missing any method declared in the Draggable interface.
+// This does not add any runtime behavior — it is purely a compile-time
+// check that the required handler methods exist.
+//
+// HTML REQUIREMENT: The <li> in the "single-project" template must also
+// have the attribute draggable="true" in index.html. Without it, the
+// browser will not recognize the element as draggable regardless of
+// what event listeners are attached in TypeScript.
+//
+// CSS NOTE: A "background: white" was added to .projects li in app.css
+// so that the dragged item has a visible background while floating
+// over other elements.
 class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   implements Draggable {
   private project: Project;
@@ -188,15 +239,28 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
     this.renderContent();
   }
 
+  // DRAGSTARTHANDLER — required by the Draggable interface.
+  // The @autobind decorator ensures "this" refers to the class instance
+  // when the browser calls this handler (event listeners normally rebind
+  // "this" to the DOM element that fired the event). Without @autobind,
+  // you would need .bind(this) when registering the listener.
   @autobind
   dragStartHandler(event: DragEvent) {
     console.log(event);
   }
 
+  // DRAGENDHANDLER — required by the Draggable interface.
+  // The underscore prefix on the parameter (_) tells TypeScript we
+  // intentionally do not use it, suppressing the "unused parameter"
+  // warning. For now, this handler just logs — a later lesson will
+  // add real drop-target handling.
   dragEndHandler(_: DragEvent) {
     console.log('DragEnd');
   }
 
+  // CONFIGURE — registers the two drag event listeners on the rendered
+  // <li> element. "dragstart" and "dragend" are standard browser DOM
+  // events that fire on the element being dragged.
   configure() {
     this.element.addEventListener('dragstart', this.dragStartHandler);
     this.element.addEventListener('dragend', this.dragEndHandler);
