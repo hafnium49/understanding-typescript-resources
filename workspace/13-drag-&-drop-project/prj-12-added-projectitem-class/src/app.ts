@@ -155,10 +155,37 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
-// ProjectItem Class
+// =====================================================================
+// LESSON 174: PROJECTITEM CLASS — rendering individual project entries
+// =====================================================================
+//
+// The same OOP pattern used for ProjectInput and ProjectList is now
+// applied to individual list items. Instead of manually creating <li>
+// elements with document.createElement inside renderProjects, we
+// create a ProjectItem class that extends Component. Instantiating it
+// handles all the template cloning, id assignment, and DOM attachment
+// automatically via the base class.
+//
+// GENERIC TYPE ARGUMENTS:
+//   - HTMLUListElement (T / host) — each project item is rendered
+//     inside the <ul> that lives within a ProjectList's <section>.
+//     This is NOT the <section> itself — that was a bug the instructor
+//     discovered and fixed during this lesson (see renderProjects below).
+//   - HTMLLIElement (U / element) — the cloned element is the <li>
+//     from the "single-project" template in index.html.
+//
+// The template was also updated in index.html to include <h2>, <h3>,
+// and <p> tags inside the <li>, so renderContent can fill in the
+// project title, number of people, and description.
 class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+  // Stores the Project data object that this rendered item represents.
+  // Marked private because outside code should not access it directly.
   private project: Project;
 
+  // The constructor receives the id of the host <ul> element and the
+  // Project data object. It forwards the host id, the template id
+  // ("single-project"), insertAtStart=false (new items go at the end
+  // of the list), and the project's own id as the new element's id.
   constructor(hostId: string, project: Project) {
     super('single-project', hostId, false, project.id);
     this.project = project;
@@ -167,8 +194,18 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
     this.renderContent();
   }
 
+  // No configuration needed for a static list item (no event listeners).
+  // The method must still exist to satisfy the abstract contract.
   configure() {}
 
+  // Fills the cloned <li> template with data from the stored Project.
+  // this.element is the <li> — querySelector reaches into its children
+  // to find the <h2>, <h3>, and <p> tags defined in the template.
+  // The "!" asserts these elements exist (they are part of our template,
+  // so we know with certainty they will be found).
+  //
+  // people is a number, so .toString() converts it for textContent.
+  // (The next lesson will improve this output further.)
   renderContent() {
     this.element.querySelector('h2')!.textContent = this.project.title;
     this.element.querySelector(
@@ -210,6 +247,23 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
       this.type.toUpperCase() + ' PROJECTS';
   }
 
+  // REFACTORED to use ProjectItem instead of manual DOM creation.
+  //
+  // Previously, this method created <li> elements with
+  // document.createElement and set textContent manually. Now it simply
+  // instantiates a ProjectItem for each project — the Component base
+  // class handles all DOM work internally.
+  //
+  // BUG FIX — host id must point to the <ul>, not the <section>.
+  //
+  // The first attempt used this.element.id as the host id, but
+  // this.element is the <section> (the outermost element of the
+  // project-list template). Project items should be children of the
+  // <ul> INSIDE that section. Using the section's id caused items to
+  // render outside the list, breaking CSS styling (e.g., bullet points
+  // appeared because the <li> was not inside a <ul>).
+  //
+  // The fix: query for the <ul> within this.element and use ITS id.
   private renderProjects() {
     const listEl = document.getElementById(
       `${this.type}-projects-list`
