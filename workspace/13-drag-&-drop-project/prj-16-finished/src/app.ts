@@ -65,6 +65,24 @@ class ProjectState extends State<Project> {
     this.updateListeners();
   }
 
+  // =====================================================================
+  // LESSON 179: MOVEPROJECT — completing the drag & drop data flow
+  // =====================================================================
+  //
+  // This method closes the loop started in lesson 178. The drop handler
+  // extracts the dragged project's id from dataTransfer and calls this
+  // method with that id plus the target list's status enum value.
+  //
+  // The method uses Array.find() to locate the project by id in the
+  // internal array. find() returns the matching element or undefined.
+  //
+  // OPTIMIZATION: The status is only changed (and listeners only
+  // notified) when the new status actually differs from the current
+  // one. This prevents an unnecessary rerender cycle when a user
+  // drops a project back into the SAME box it was already in.
+  // Without this guard, every drop — even a no-op — would trigger
+  // all listeners, causing every list item to be destroyed and
+  // recreated for no visual change.
   moveProject(projectId: string, newStatus: ProjectStatus) {
     const project = this.projects.find(prj => prj.id === projectId);
     if (project && project.status !== newStatus) {
@@ -73,6 +91,11 @@ class ProjectState extends State<Project> {
     }
   }
 
+  // UPDATELISTENERS — extracted into its own method to avoid code
+  // duplication. Both addProject and moveProject need to notify all
+  // subscribers after modifying the projects array. Each listener
+  // receives a shallow copy (.slice()) so it cannot mutate the
+  // original array.
   private updateListeners() {
     for (const listenerFn of this.listeners) {
       listenerFn(this.projects.slice());
@@ -244,6 +267,17 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
     }
   }
 
+  // DROPHANDLER — the final step in the drag & drop pipeline.
+  //
+  // 1. Extract the project id from the drag event's dataTransfer
+  //    (the same id that was attached in dragStartHandler).
+  // 2. Call projectState.moveProject() with that id and the status
+  //    that corresponds to THIS list's type.
+  //
+  // The ternary translates the string "active" or "finished" (stored
+  // in this.type) into the matching ProjectStatus enum value.
+  // @autobind is needed so "this.type" correctly refers to the
+  // ProjectList instance, not the DOM element that fired the event.
   @autobind
   dropHandler(event: DragEvent) {
     const prjId = event.dataTransfer!.getData('text/plain');
