@@ -300,6 +300,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
   // (The actual state update is implemented in the next lesson.)
   @autobind
   dropHandler(event: DragEvent) {
+    console.log(event);
     const prjId = event.dataTransfer!.getData('text/plain');
     console.log(prjId);
   }
