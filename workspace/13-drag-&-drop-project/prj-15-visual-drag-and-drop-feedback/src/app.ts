@@ -188,9 +188,37 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
     this.renderContent();
   }
 
+  // =====================================================================
+  // LESSON 178: TRANSFERRING DATA VIA THE DATATRANSFER API
+  // =====================================================================
+  //
+  // The browser's drag & drop system includes a DATA TRANSFER mechanism
+  // (event.dataTransfer) that lets you attach serialized data to a drag
+  // operation. You write data during dragstart and read it during drop.
+  //
+  // KEY CONSTRAINTS (from the HTML Drag and Drop API):
+  //   - setData() can ONLY be called inside a dragstart handler.
+  //   - getData() can ONLY be called inside a drop handler.
+  //   - You cannot transfer JavaScript objects directly — data must be
+  //     serialized as a string with a MIME type (e.g., "text/plain").
+  //
+  // STRATEGY: Instead of attaching the entire Project object, we attach
+  // only the project's id string. The drop handler can then look up
+  // the full project from the state using that id. This keeps the
+  // transferred payload small and avoids serialization complexity.
+  //
+  // For a full reference on the Drag and Drop API, see:
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
   @autobind
   dragStartHandler(event: DragEvent) {
-    console.log(event);
+    // dataTransfer could theoretically be null (not all drag-related
+    // events guarantee it), but dragstart always provides it — hence
+    // the "!" non-null assertion is safe here.
+    event.dataTransfer!.setData('text/plain', this.project.id);
+    // effectAllowed tells the browser our intention is to MOVE the
+    // element (remove from original location, add to new one). The
+    // alternative "copy" would signal duplication instead.
+    event.dataTransfer!.effectAllowed = 'move';
   }
 
   dragEndHandler(_: DragEvent) {
@@ -243,24 +271,38 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
     this.renderContent();
   }
 
-  // DRAGOVERHANDLER — adds the "droppable" CSS class to the <ul> to
-  // change its background color, signaling to the user that this box
-  // is a valid drop zone. @autobind ensures "this" refers to the
-  // ProjectList instance, not the DOM element that fired the event.
+  // DRAGOVERHANDLER — decides whether a drop is permitted here.
   //
-  // The underscore parameter (_) indicates the DragEvent is received
-  // but not used yet — a later lesson will add logic here to validate
-  // the drag data before permitting the drop.
+  // LESSON 178: The handler now checks whether the dragged data has
+  // the expected format ("text/plain") before allowing the drop. This
+  // prevents unrelated drag operations (e.g., dragging an image from
+  // another tab) from being accepted.
+  //
+  // CRITICAL: event.preventDefault() MUST be called inside dragOver
+  // to allow the drop event to fire. The browser's default behavior
+  // for drag & drop is to DENY drops — calling preventDefault()
+  // overrides that default and signals "yes, this element accepts
+  // drops." Without this call, releasing the mouse button would NOT
+  // trigger the drop event, and the dragged element would snap back.
   @autobind
-  dragOverHandler(_: DragEvent) {
-    const listEl = this.element.querySelector('ul')!;
-    listEl.classList.add('droppable');
+  dragOverHandler(event: DragEvent) {
+    if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
+      event.preventDefault();
+      const listEl = this.element.querySelector('ul')!;
+      listEl.classList.add('droppable');
+    }
   }
 
-  // DROPHANDLER — will handle the actual drop in a later lesson.
-  // For now it is empty but must exist to satisfy the DragTarget
-  // interface contract.
-  dropHandler(_: DragEvent) {}
+  // DROPHANDLER — extracts the transferred project id from the drag
+  // event's dataTransfer. getData('text/plain') retrieves the string
+  // that was stored during dragstart (the project id). This id can
+  // then be used to look up and update the project in the state.
+  // (The actual state update is implemented in the next lesson.)
+  @autobind
+  dropHandler(event: DragEvent) {
+    const prjId = event.dataTransfer!.getData('text/plain');
+    console.log(prjId);
+  }
 
   // DRAGLEAVEHANDLER — removes the "droppable" CSS class when the
   // dragged element leaves this box without being dropped, reverting
