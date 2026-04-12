@@ -209,6 +209,27 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   }
 }
 
+// =====================================================================
+// LESSON 177: VISUAL DRAG & DROP FEEDBACK — implementing DragTarget
+// =====================================================================
+//
+// The ProjectList boxes are the DROP TARGETS — the places where a
+// dragged project item can be released. To enable this, ProjectList
+// implements the DragTarget interface, which forces three handler
+// methods to exist: dragOverHandler, dropHandler, dragLeaveHandler.
+//
+// VISUAL FEEDBACK is achieved by toggling a CSS class ("droppable")
+// on the <ul> inside the box. The "droppable" class is defined in
+// app.css and changes the background color (light pink for active
+// projects, light blue for finished projects). Adding the class on
+// dragOver and removing it on dragLeave gives the user a visual cue
+// of where they can drop.
+//
+// NOTE: Some flickering may occur when the cursor moves from the
+// background area onto a rendered child element (like a list item),
+// because the browser fires dragLeave on the parent and dragOver
+// on the child. This is normal browser behavior and acceptable here.
+
 // ProjectList Class
 class ProjectList extends Component<HTMLDivElement, HTMLElement>
   implements DragTarget {
@@ -222,20 +243,37 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
     this.renderContent();
   }
 
+  // DRAGOVERHANDLER — adds the "droppable" CSS class to the <ul> to
+  // change its background color, signaling to the user that this box
+  // is a valid drop zone. @autobind ensures "this" refers to the
+  // ProjectList instance, not the DOM element that fired the event.
+  //
+  // The underscore parameter (_) indicates the DragEvent is received
+  // but not used yet — a later lesson will add logic here to validate
+  // the drag data before permitting the drop.
   @autobind
   dragOverHandler(_: DragEvent) {
     const listEl = this.element.querySelector('ul')!;
     listEl.classList.add('droppable');
   }
 
+  // DROPHANDLER — will handle the actual drop in a later lesson.
+  // For now it is empty but must exist to satisfy the DragTarget
+  // interface contract.
   dropHandler(_: DragEvent) {}
 
+  // DRAGLEAVEHANDLER — removes the "droppable" CSS class when the
+  // dragged element leaves this box without being dropped, reverting
+  // the background color back to its default.
   @autobind
   dragLeaveHandler(_: DragEvent) {
     const listEl = this.element.querySelector('ul')!;
     listEl.classList.remove('droppable');
   }
 
+  // Three new event listeners are registered alongside the existing
+  // state listener. Each drag event on the rendered <section> is
+  // forwarded to the corresponding handler method above.
   configure() {
     this.element.addEventListener('dragover', this.dragOverHandler);
     this.element.addEventListener('dragleave', this.dragLeaveHandler);
