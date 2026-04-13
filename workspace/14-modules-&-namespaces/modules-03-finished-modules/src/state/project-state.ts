@@ -1,6 +1,22 @@
 import { Project, ProjectStatus } from '../models/project.js';
 
-// Project State Management
+// LESSON 190 — ES MODULE EXECUTION: a file's top-level code runs
+// ONCE, the first time ANY file imports it.
+//
+// This file exports the projectState constant (created at the bottom).
+// Multiple files import it — both project-input.ts and project-list.ts.
+// You might expect the code here to execute once per import statement,
+// creating two separate instances. But that is NOT how ES modules work.
+//
+// The JavaScript runtime evaluates a module's top-level code exactly
+// once, on the first import. All subsequent imports from other files
+// receive a reference to the SAME already-evaluated exports. This means
+// the ProjectState singleton is created only once, and every file that
+// imports projectState gets the same shared instance.
+//
+// This behavior is essential for patterns like shared state management:
+// if each import created a new instance, project-input and project-list
+// would be working with separate, disconnected state objects.
 type Listener<T> = (items: T[]) => void;
 
 class State<T> {
