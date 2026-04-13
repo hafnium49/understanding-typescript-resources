@@ -27,6 +27,12 @@
 // one optimized bundle that works in all browsers and requires only a
 // single HTTP request. Webpack integration is covered in the next
 // course section.
+//
+// LESSON 193 — FURTHER READING:
+// - JS module systems overview (CommonJS, AMD, ES6):
+//   https://medium.com/computed-comparisons/commonjs-vs-amd-vs-requirejs-vs-es6-modules-2e814b114a0b
+// - MDN guide on ES Modules (import/export, dynamic imports, etc.):
+//   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
 import { ProjectInput } from './components/project-input.js';
 import { ProjectList } from './components/project-list.js';
 
