@@ -1,4 +1,27 @@
-import { DragTarget } from '../models/drag-drop.js';
+// LESSON 191 — TYPE-ONLY IMPORTS: annotating imports that are purely
+// TypeScript constructs (interfaces, type aliases).
+//
+// Interfaces and types have no JavaScript equivalent — they are erased
+// during compilation. You can mark such imports with the "type" keyword
+// to signal this to TypeScript and any build tools:
+//
+//   Single item:   import { type DragTarget } from '...';
+//   All items:     import type { DragTarget } from '...';
+//
+// The "type" keyword goes INSIDE the curly braces (per-item) or BEFORE
+// the curly braces (when everything imported is a type).
+//
+// In most projects, this annotation is OPTIONAL — TypeScript already
+// knows what is a type and what is a value. However, some build tools
+// (e.g., certain Babel or SWC configurations) benefit from this hint
+// because it helps them strip type-only imports without running a full
+// TypeScript analysis. Some project setups may even require it.
+//
+// If your project needs it, the setup documentation will say so.
+// Below, DragTarget is an interface (type-only), while Project and
+// ProjectStatus include a class and an enum (both produce JavaScript),
+// so only DragTarget gets the "type" annotation.
+import { type DragTarget } from '../models/drag-drop.js';
 import { Project, ProjectStatus } from '../models/project.js';
 import Component from './base-component.js';
 import { autobind } from '../decorators/autobind.js';
