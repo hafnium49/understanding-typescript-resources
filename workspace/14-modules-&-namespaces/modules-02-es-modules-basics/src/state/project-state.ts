@@ -1,6 +1,10 @@
+// LESSON 187 — In the namespace version, this file had NO reference to
+// the project model — it relied on another file importing it first.
+// That was the "dangerous behavior" the instructor warned about. With
+// ES modules, this dependency is now explicitly declared and would
+// produce a compile error if removed.
 import { Project, ProjectStatus } from '../models/project.js';
 
-// Project State Management
 type Listener<T> = (items: T[]) => void;
 
 class State<T> {

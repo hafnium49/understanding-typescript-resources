@@ -1,9 +1,12 @@
+// LESSON 187 — Each file imports exactly what it needs via ES modules.
+// Same-folder imports use "./" prefix; parent-folder imports use "../".
+// Multiple exports from one file can be imported in a single statement
+// (e.g., { Validatable, validate } from the same validation.js file).
 import { Component } from './base-component.js';
 import { Validatable, validate } from '../util/validation.js';
 import { autobind } from '../decorators/autobind.js';
 import { projectState } from '../state/project-state.js';
 
-// ProjectInput Class
 export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;

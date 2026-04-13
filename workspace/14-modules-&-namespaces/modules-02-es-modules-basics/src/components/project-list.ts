@@ -1,3 +1,8 @@
+// LESSON 187 — This file has the most imports because it depends on
+// models (DragTarget, Project, ProjectStatus), the base Component,
+// the autobind decorator, project state, AND the ProjectItem class.
+// With namespaces, a missing import here would only fail at RUNTIME.
+// With ES modules, omitting any of these produces a compile error.
 import { DragTarget } from '../models/drag-drop.js';
 import { Project, ProjectStatus } from '../models/project.js';
 import { Component } from './base-component.js';
@@ -5,7 +10,6 @@ import { autobind } from '../decorators/autobind.js';
 import { projectState } from '../state/project-state.js';
 import { ProjectItem } from './project-item.js';
 
-// ProjectList Class
 export class ProjectList extends Component<HTMLDivElement, HTMLElement>
   implements DragTarget {
   assignedProjects: Project[];

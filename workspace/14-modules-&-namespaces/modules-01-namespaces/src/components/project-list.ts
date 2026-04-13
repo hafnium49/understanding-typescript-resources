@@ -1,3 +1,8 @@
+// LESSON 186 — This file imports: base-component, autobind (decorator),
+// project-state (for projectState.moveProject and addListener),
+// project model (Project class, ProjectStatus enum), and drag-drop
+// interfaces (DragTarget). Each dependency is listed explicitly so
+// this file is self-contained and does not rely on app.ts imports.
 /// <reference path="base-component.ts" />
 /// <reference path="../decorators/autobind.ts" />
 /// <reference path="../state/project-state.ts" />
@@ -5,7 +10,6 @@
 /// <reference path="../models/drag-drop.ts" />
 
 namespace App {
-  // ProjectList Class
   export class ProjectList extends Component<HTMLDivElement, HTMLElement>
     implements DragTarget {
     assignedProjects: Project[];
