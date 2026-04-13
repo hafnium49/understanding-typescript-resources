@@ -1,131 +1,48 @@
 // LESSON 184 — NAMESPACES: splitting code across multiple files.
 //
-// This file currently holds ALL the project's code in a single file.
-// In this lesson, the instructor demonstrates how to split it into
-// multiple files using TypeScript's NAMESPACE feature:
+// STEP 1: Move related code into separate .ts files and wrap in a
+//         "namespace" block with the SAME name across all files.
 //
-// STEP 1: Move related code (e.g., interfaces, models) into separate
-//         .ts files and wrap them in a "namespace" block.
+// STEP 2: Add "export" in front of anything inside the namespace that
+//         needs to be accessible from other files.
 //
-// STEP 2: Add the "export" keyword in front of anything inside the
-//         namespace that needs to be accessible from other files.
-//         Without export, features inside a namespace are private to
-//         that namespace block.
+// STEP 3: Add triple-slash reference directives (/// <reference>) at
+//         the top of consuming files. THREE slashes required — this is
+//         special TypeScript syntax, not a regular comment.
 //
-// STEP 3: In the consuming file (e.g., app.ts), add a triple-slash
-//         reference directive at the top to import the namespace file:
-//           /// <reference path="drag-drop-interfaces.ts" />
-//         THREE slashes are required — this is a special TypeScript
-//         syntax, not a regular comment. TypeScript picks it up during
-//         compilation to resolve cross-file dependencies.
-//
-// STEP 4: Wrap the consuming code in a namespace with the SAME NAME
-//         as the one in the imported file. Namespaces with the same
-//         name are merged across files, allowing exported features
-//         to be used seamlessly.
+// STEP 4: Wrap the consuming code in a namespace with the SAME NAME.
 //
 // STEP 5: Enable "outFile" in tsconfig.json to bundle all namespace
-//         files into a single JavaScript output file. Without outFile,
-//         each .ts file compiles to its own .js file and the cross-file
-//         references are lost at runtime (JavaScript has no namespace
-//         equivalent). The "module" setting must also be changed to
-//         "amd" (or "system") — CommonJS does not support outFile.
+//         files into one JavaScript output. Change "module" to "amd"
+//         (required for outFile — CommonJS does not support it).
 //
-// STEP 6: Update index.html to import the bundled file (e.g.,
-//         bundle.js) instead of individual .js files.
+// STEP 6: Update index.html to import the bundled file (bundle.js).
 //
-// KEY INSIGHT: Namespaces are a TypeScript-only feature. They compile
-// to JavaScript objects where exported items become properties. The
-// triple-slash references and namespace merging exist only during
-// compilation — they are erased in the output. The outFile bundling
+// KEY INSIGHT: Namespaces are TypeScript-only. They compile to JS
+// objects where exported items become properties. The /// references
+// and namespace merging are erased in the output — outFile bundling
 // is what makes everything work at runtime.
 //
-// NOTE ON MODULE TYPES (see supporting info for details):
-// - CommonJS: synchronous, designed for Node.js (require/exports)
-// - AMD: asynchronous, designed for browsers (define/require)
-// - ES Modules: the modern standard (import/export)
-// outFile requires AMD or System because they support concatenation
-// into a single file; CommonJS and ES modules do not.
+// In this lesson, two files were extracted:
+//   - drag-drop-interfaces.ts (Draggable & DragTarget interfaces)
+//   - project-model.ts (ProjectStatus enum & Project class)
 //
-// The namespace-split version of this project is in:
-//   workspace/14-modules-&-namespaces/modules-01-namespaces/
-//
-// LESSON 185 — CONTINUING THE NAMESPACE SPLIT: full project refactor.
-//
-// This lesson continues splitting the single app.ts into focused files,
-// organized into subfolders for better readability:
-//
-//   src/
-//   ├── app.ts                          ← entry point (only instantiation)
-//   ├── models/
-//   │   ├── drag-drop.ts                ← Draggable & DragTarget interfaces
-//   │   └── project.ts                  ← ProjectStatus enum & Project class
-//   ├── state/
-//   │   └── project-state.ts            ← Listener, State, ProjectState, instance
-//   ├── util/
-//   │   └── validation.ts               ← Validatable interface & validate()
-//   ├── decorators/
-//   │   └── autobind.ts                 ← autobind decorator function
-//   └── components/
-//       ├── base-component.ts           ← abstract Component base class
-//       ├── project-input.ts            ← ProjectInput class
-//       ├── project-item.ts             ← ProjectItem class
-//       └── project-list.ts             ← ProjectList class
-//
-// EXPORT RULES: Only export what is needed by OTHER files. For example,
-// the Listener type and State base class in project-state.ts are only
-// used within that file, so they do NOT need to be exported. But the
-// ProjectState class and the projectState instance constant DO need
-// exporting because other files reference them.
-//
-// IMPORT RULES: Each file that uses something from another namespace
-// file must add a /// <reference path="..."> at the top. Paths are
-// RELATIVE to the importing file — so project-item.ts importing
-// base-component.ts (in the same folder) uses just the filename,
-// not "components/base-component.ts".
-//
-// SUBFOLDER ORGANIZATION: Files are renamed to drop redundant prefixes
-// once they are inside a descriptive folder (e.g., "autobind-decorator.ts"
-// becomes just "autobind.ts" inside the "decorators/" folder).
-//
-// After the refactor, app.ts shrinks to just reference imports and
-// instantiation code. All the actual logic lives in focused, small files.
-// The result compiles to a single bundle.js via outFile — the same
-// output as before, but with a much more manageable source structure.
+// LESSON 185 will continue splitting the remaining code into subfolders.
 
-// ── MOVES TO: models/drag-drop.ts ──────────────────────────────────
-// Exported: both interfaces (needed by ProjectItem, ProjectList)
-interface Draggable {
-  dragStartHandler(event: DragEvent): void;
-  dragEndHandler(event: DragEvent): void;
-}
+// TRIPLE-SLASH REFERENCE DIRECTIVES — tell TypeScript where to find
+// the namespace files this file depends on. Paths are relative to
+// this file's location.
+/// <reference path="drag-drop-interfaces.ts" />
+/// <reference path="project-model.ts" />
 
-interface DragTarget {
-  dragOverHandler(event: DragEvent): void;
-  dropHandler(event: DragEvent): void;
-  dragLeaveHandler(event: DragEvent): void;
-}
+// All remaining code is wrapped in namespace App — the same name as
+// the namespaces in the imported files. This merging is what allows
+// the exported interfaces, enum, and class to be used here.
+namespace App {
 
-// ── MOVES TO: models/project.ts ────────────────────────────────────
-// Exported: ProjectStatus enum and Project class (used across many files)
-enum ProjectStatus {
-  Active,
-  Finished
-}
+// ── Lesson 185 will move these remaining sections to separate files ──
 
-class Project {
-  constructor(
-    public id: string,
-    public title: string,
-    public description: string,
-    public people: number,
-    public status: ProjectStatus
-  ) {}
-}
-
-// ── MOVES TO: state/project-state.ts ───────────────────────────────
-// Exported: ProjectState class and projectState instance constant
-// NOT exported: Listener type and State base class (only used internally)
+// Project State Management
 type Listener<T> = (items: T[]) => void;
 
 class State<T> {
@@ -181,8 +98,7 @@ class ProjectState extends State<Project> {
 
 const projectState = ProjectState.getInstance();
 
-// ── MOVES TO: util/validation.ts ───────────────────────────────────
-// Exported: Validatable interface and validate() function
+// Validation
 interface Validatable {
   value: string | number;
   required?: boolean;
@@ -226,8 +142,7 @@ function validate(validatableInput: Validatable) {
   return isValid;
 }
 
-// ── MOVES TO: decorators/autobind.ts ───────────────────────────────
-// Exported: autobind function
+// autobind decorator
 function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   const adjDescriptor: PropertyDescriptor = {
@@ -240,8 +155,7 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
-// ── MOVES TO: components/base-component.ts ─────────────────────────
-// Exported: Component abstract class
+// Component Base Class
 abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
   hostElement: T;
@@ -281,10 +195,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
-// ── MOVES TO: components/project-item.ts ───────────────────────────
-// Exported: ProjectItem class
-// Imports: /// <reference path="base-component.ts" />
-//          (relative — same folder, so no "components/" prefix needed)
+// ProjectItem Class
 class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   implements Draggable {
   private project: Project;
@@ -327,9 +238,7 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   }
 }
 
-// ── MOVES TO: components/project-list.ts ───────────────────────────
-// Exported: ProjectList class
-// Imports: /// <reference path="base-component.ts" />
+// ProjectList Class
 class ProjectList extends Component<HTMLDivElement, HTMLElement>
   implements DragTarget {
   assignedProjects: Project[];
@@ -401,9 +310,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
   }
 }
 
-// ── MOVES TO: components/project-input.ts ──────────────────────────
-// Exported: ProjectInput class
-// Imports: /// <reference path="base-component.ts" />
+// ProjectInput Class
 class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;
@@ -480,12 +387,9 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   }
 }
 
-// ── STAYS IN: app.ts (entry point) ─────────────────────────────────
-// After the refactor, app.ts contains ONLY these instantiation lines
-// plus /// <reference> imports for all the files above. Everything
-// else lives in focused, single-purpose files under subfolders.
-// All code is wrapped in "namespace App { ... }" and compiled to
-// a single bundle.js via outFile.
-const prjInput = new ProjectInput();
-const activePrjList = new ProjectList('active');
-const finishedPrjList = new ProjectList('finished');
+// Entry point — instantiation only.
+new ProjectInput();
+new ProjectList('active');
+new ProjectList('finished');
+
+} // end namespace App

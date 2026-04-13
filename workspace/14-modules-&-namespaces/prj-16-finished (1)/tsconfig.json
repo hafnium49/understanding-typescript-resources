@@ -1,8 +1,14 @@
 {
   "compilerOptions": {
+    // AMD and outFile are deprecated in TypeScript 6+ but are the correct
+    // settings for namespace bundling as taught in this lesson.
+    "ignoreDeprecations": "6.0",
     /* Basic Options */
     "target": "es6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
-    "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
+    // LESSON 184 — Changed from "commonjs" to "amd" because outFile
+    // (below) requires AMD or System. CommonJS does not support bundling
+    // multiple namespace files into a single output.
+    "module": "amd" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
     "lib": [
       "dom",
       "es6",
@@ -15,7 +21,10 @@
     // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
     "sourceMap": true /* Generates corresponding '.map' file. */,
-    // "outFile": "./",                       /* Concatenate and emit output to single file. */
+    // LESSON 184 — outFile bundles all namespace files into one JS file.
+    // Without this, each .ts compiles to its own .js and cross-file
+    // namespace references break at runtime.
+    "outFile": "./dist/bundle.js",             /* Concatenate and emit output to single file. */
     "outDir": "./dist" /* Redirect output structure to the directory. */,
     "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
     // "composite": true,                     /* Enable project compilation */
