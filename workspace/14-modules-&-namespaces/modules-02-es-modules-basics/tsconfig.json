@@ -1,4 +1,16 @@
 {
+  // LESSON 188 — TSCONFIG FOR ES MODULES
+  //
+  // The "module" setting controls how TypeScript compiles import/export
+  // statements. Recommended values for ES modules:
+  //
+  //   "NodeNext"  — when building a Node.js application
+  //   "ESNext"    — when building for the browser
+  //   "es2015"    — also valid for browser projects (used here)
+  //
+  // The exact choice depends on your project setup, build tool, and
+  // target environment. Other settings may vary, but "module" is the
+  // most critical one to get right for ES modules to work correctly.
   "compilerOptions": {
     /* Basic Options */
     "target": "es6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
