@@ -1,10 +1,14 @@
+// LESSON 186 — This file imports everything it uses directly:
+// base-component (for the Component base class), autobind (decorator),
+// validation (Validatable interface + validate function), and
+// project-state (projectState instance for adding projects).
+// Paths use "../" to go up one level from components/ to src/.
 /// <reference path="base-component.ts" />
 /// <reference path="../decorators/autobind.ts" />
 /// <reference path="../util/validation.ts" />
 /// <reference path="../state/project-state.ts" />
 
 namespace App {
-  // ProjectInput Class
   export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     titleInputElement: HTMLInputElement;
     descriptionInputElement: HTMLInputElement;

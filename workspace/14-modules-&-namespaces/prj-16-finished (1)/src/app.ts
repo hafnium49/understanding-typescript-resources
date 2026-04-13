@@ -49,8 +49,52 @@
 //
 // The namespace-split version of this project is in:
 //   workspace/14-modules-&-namespaces/modules-01-namespaces/
+//
+// LESSON 185 — CONTINUING THE NAMESPACE SPLIT: full project refactor.
+//
+// This lesson continues splitting the single app.ts into focused files,
+// organized into subfolders for better readability:
+//
+//   src/
+//   ├── app.ts                          ← entry point (only instantiation)
+//   ├── models/
+//   │   ├── drag-drop.ts                ← Draggable & DragTarget interfaces
+//   │   └── project.ts                  ← ProjectStatus enum & Project class
+//   ├── state/
+//   │   └── project-state.ts            ← Listener, State, ProjectState, instance
+//   ├── util/
+//   │   └── validation.ts               ← Validatable interface & validate()
+//   ├── decorators/
+//   │   └── autobind.ts                 ← autobind decorator function
+//   └── components/
+//       ├── base-component.ts           ← abstract Component base class
+//       ├── project-input.ts            ← ProjectInput class
+//       ├── project-item.ts             ← ProjectItem class
+//       └── project-list.ts             ← ProjectList class
+//
+// EXPORT RULES: Only export what is needed by OTHER files. For example,
+// the Listener type and State base class in project-state.ts are only
+// used within that file, so they do NOT need to be exported. But the
+// ProjectState class and the projectState instance constant DO need
+// exporting because other files reference them.
+//
+// IMPORT RULES: Each file that uses something from another namespace
+// file must add a /// <reference path="..."> at the top. Paths are
+// RELATIVE to the importing file — so project-item.ts importing
+// base-component.ts (in the same folder) uses just the filename,
+// not "components/base-component.ts".
+//
+// SUBFOLDER ORGANIZATION: Files are renamed to drop redundant prefixes
+// once they are inside a descriptive folder (e.g., "autobind-decorator.ts"
+// becomes just "autobind.ts" inside the "decorators/" folder).
+//
+// After the refactor, app.ts shrinks to just reference imports and
+// instantiation code. All the actual logic lives in focused, small files.
+// The result compiles to a single bundle.js via outFile — the same
+// output as before, but with a much more manageable source structure.
 
-// Drag & Drop Interfaces
+// ── MOVES TO: models/drag-drop.ts ──────────────────────────────────
+// Exported: both interfaces (needed by ProjectItem, ProjectList)
 interface Draggable {
   dragStartHandler(event: DragEvent): void;
   dragEndHandler(event: DragEvent): void;
@@ -62,7 +106,8 @@ interface DragTarget {
   dragLeaveHandler(event: DragEvent): void;
 }
 
-// Project Type
+// ── MOVES TO: models/project.ts ────────────────────────────────────
+// Exported: ProjectStatus enum and Project class (used across many files)
 enum ProjectStatus {
   Active,
   Finished
@@ -78,7 +123,9 @@ class Project {
   ) {}
 }
 
-// Project State Management
+// ── MOVES TO: state/project-state.ts ───────────────────────────────
+// Exported: ProjectState class and projectState instance constant
+// NOT exported: Listener type and State base class (only used internally)
 type Listener<T> = (items: T[]) => void;
 
 class State<T> {
@@ -134,7 +181,8 @@ class ProjectState extends State<Project> {
 
 const projectState = ProjectState.getInstance();
 
-// Validation
+// ── MOVES TO: util/validation.ts ───────────────────────────────────
+// Exported: Validatable interface and validate() function
 interface Validatable {
   value: string | number;
   required?: boolean;
@@ -178,7 +226,8 @@ function validate(validatableInput: Validatable) {
   return isValid;
 }
 
-// autobind decorator
+// ── MOVES TO: decorators/autobind.ts ───────────────────────────────
+// Exported: autobind function
 function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   const adjDescriptor: PropertyDescriptor = {
@@ -191,7 +240,8 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
-// Component Base Class
+// ── MOVES TO: components/base-component.ts ─────────────────────────
+// Exported: Component abstract class
 abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
   hostElement: T;
@@ -231,7 +281,10 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   abstract renderContent(): void;
 }
 
-// ProjectItem Class
+// ── MOVES TO: components/project-item.ts ───────────────────────────
+// Exported: ProjectItem class
+// Imports: /// <reference path="base-component.ts" />
+//          (relative — same folder, so no "components/" prefix needed)
 class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   implements Draggable {
   private project: Project;
@@ -274,7 +327,9 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
   }
 }
 
-// ProjectList Class
+// ── MOVES TO: components/project-list.ts ───────────────────────────
+// Exported: ProjectList class
+// Imports: /// <reference path="base-component.ts" />
 class ProjectList extends Component<HTMLDivElement, HTMLElement>
   implements DragTarget {
   assignedProjects: Project[];
@@ -346,7 +401,9 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>
   }
 }
 
-// ProjectInput Class
+// ── MOVES TO: components/project-input.ts ──────────────────────────
+// Exported: ProjectInput class
+// Imports: /// <reference path="base-component.ts" />
 class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;
@@ -423,6 +480,12 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   }
 }
 
+// ── STAYS IN: app.ts (entry point) ─────────────────────────────────
+// After the refactor, app.ts contains ONLY these instantiation lines
+// plus /// <reference> imports for all the files above. Everything
+// else lives in focused, single-purpose files under subfolders.
+// All code is wrapped in "namespace App { ... }" and compiled to
+// a single bundle.js via outFile.
 const prjInput = new ProjectInput();
 const activePrjList = new ProjectList('active');
 const finishedPrjList = new ProjectList('finished');

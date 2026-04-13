@@ -1,10 +1,13 @@
+// LESSON 186 — This file imports its own dependencies: base-component,
+// autobind (for the @autobind decorator), project model (Project class),
+// and drag-drop interfaces (Draggable). It does NOT need validation or
+// project-state because it does not use them directly.
 /// <reference path="base-component.ts" />
 /// <reference path="../decorators/autobind.ts" />
 /// <reference path="../models/project.ts" />
 /// <reference path="../models/drag-drop.ts" />
 
 namespace App {
-  // ProjectItem Class
   export class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>
     implements Draggable {
     private project: Project;
