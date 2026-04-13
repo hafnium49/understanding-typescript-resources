@@ -1,3 +1,55 @@
+// LESSON 184 — NAMESPACES: splitting code across multiple files.
+//
+// This file currently holds ALL the project's code in a single file.
+// In this lesson, the instructor demonstrates how to split it into
+// multiple files using TypeScript's NAMESPACE feature:
+//
+// STEP 1: Move related code (e.g., interfaces, models) into separate
+//         .ts files and wrap them in a "namespace" block.
+//
+// STEP 2: Add the "export" keyword in front of anything inside the
+//         namespace that needs to be accessible from other files.
+//         Without export, features inside a namespace are private to
+//         that namespace block.
+//
+// STEP 3: In the consuming file (e.g., app.ts), add a triple-slash
+//         reference directive at the top to import the namespace file:
+//           /// <reference path="drag-drop-interfaces.ts" />
+//         THREE slashes are required — this is a special TypeScript
+//         syntax, not a regular comment. TypeScript picks it up during
+//         compilation to resolve cross-file dependencies.
+//
+// STEP 4: Wrap the consuming code in a namespace with the SAME NAME
+//         as the one in the imported file. Namespaces with the same
+//         name are merged across files, allowing exported features
+//         to be used seamlessly.
+//
+// STEP 5: Enable "outFile" in tsconfig.json to bundle all namespace
+//         files into a single JavaScript output file. Without outFile,
+//         each .ts file compiles to its own .js file and the cross-file
+//         references are lost at runtime (JavaScript has no namespace
+//         equivalent). The "module" setting must also be changed to
+//         "amd" (or "system") — CommonJS does not support outFile.
+//
+// STEP 6: Update index.html to import the bundled file (e.g.,
+//         bundle.js) instead of individual .js files.
+//
+// KEY INSIGHT: Namespaces are a TypeScript-only feature. They compile
+// to JavaScript objects where exported items become properties. The
+// triple-slash references and namespace merging exist only during
+// compilation — they are erased in the output. The outFile bundling
+// is what makes everything work at runtime.
+//
+// NOTE ON MODULE TYPES (see supporting info for details):
+// - CommonJS: synchronous, designed for Node.js (require/exports)
+// - AMD: asynchronous, designed for browsers (define/require)
+// - ES Modules: the modern standard (import/export)
+// outFile requires AMD or System because they support concatenation
+// into a single file; CommonJS and ES modules do not.
+//
+// The namespace-split version of this project is in:
+//   workspace/14-modules-&-namespaces/modules-01-namespaces/
+
 // Drag & Drop Interfaces
 interface Draggable {
   dragStartHandler(event: DragEvent): void;
