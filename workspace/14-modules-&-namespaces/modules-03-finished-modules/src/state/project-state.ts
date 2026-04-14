@@ -70,4 +70,6 @@ export class ProjectState extends State<Project> {
   }
 }
 
+console.log('ProjectState module evaluated. Singleton instance created.');
+
 export const projectState = ProjectState.getInstance();
