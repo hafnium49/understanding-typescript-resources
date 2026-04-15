@@ -1,4 +1,5 @@
 {
+  "//": "LESSON 195 — The 'build' script runs tsc and compiles only the TypeScript files in ./src. HTML and CSS assets are NOT copied to ./dist. Invoke via: npm run build. Section 15 replaces this with a proper build tool (Vite).",
   "name": "build",
   "version": "1.0.0",
   "main": "index.js",

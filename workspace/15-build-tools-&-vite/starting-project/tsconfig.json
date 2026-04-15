@@ -1,4 +1,16 @@
 {
+  // LESSON 195 — TSCONFIG FOR A FRONTEND PROJECT.
+  //
+  // This config tells tsc to read TypeScript source files from "./src"
+  // and emit compiled JavaScript to "./dist". That works for .ts → .js
+  // translation but NOT for the rest of the project: the HTML and CSS
+  // files in src/ are simply ignored by tsc and never reach the dist
+  // folder.
+  //
+  // A deploy that ships only the dist folder would be incomplete —
+  // the browser would have no HTML entry point and no stylesheet.
+  // This is the core limitation that motivates using a dedicated build
+  // tool (see later lessons in this section).
   "compilerOptions": {
     "target": "ES2022" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "module": "commonjs" /* Specify what module code is generated. */,

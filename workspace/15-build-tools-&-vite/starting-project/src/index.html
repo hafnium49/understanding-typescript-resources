@@ -1,3 +1,12 @@
+<!--
+  LESSON 195 — This HTML file is an essential part of the frontend
+  project, but running `npm run build` (which calls `tsc`) does NOT
+  copy it into the dist folder. The script tag below references
+  app.js, which tsc DOES produce, but without this index.html being
+  present alongside it in the deployed output, the browser has no
+  entry point to load. The same applies to styles.css. Fixing this
+  requires a dedicated build tool (covered later in section 15).
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>

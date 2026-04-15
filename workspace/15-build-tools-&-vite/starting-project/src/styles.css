@@ -1,3 +1,11 @@
+/*
+  LESSON 195 — Like the HTML file, this stylesheet is not copied to
+  the dist folder by tsc. The TypeScript compiler only processes .ts
+  (and optionally .js) files; it ignores every other asset type. A
+  real build tool will handle copying and bundling CSS as part of the
+  full project pipeline.
+*/
+
 * {
   box-sizing: border-box;
 }
