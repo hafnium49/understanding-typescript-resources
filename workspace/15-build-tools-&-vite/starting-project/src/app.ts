@@ -30,6 +30,32 @@
 // copy, bundle, or optimize other asset types. Section 15 will address
 // this gap by introducing build tools (primarily Vite) that handle the
 // full project pipeline.
+//
+// LESSON 196 — SOLUTIONS LANDSCAPE: FROM MANUAL SCRIPTS TO BUILD TOOLS.
+//
+// There are several ways to solve the "tsc doesn't copy HTML/CSS" gap:
+//
+// 1. A CUSTOM BUILD SCRIPT (JavaScript or shell) invoked alongside tsc
+//    from the package.json "build" script. The script would copy HTML,
+//    CSS, and other non-TS assets from ./src to ./dist. This works for
+//    small projects but becomes brittle as projects grow.
+//
+// 2. WEBPACK — a long-established bundler that handles every asset type
+//    (TS, JS, CSS, images, fonts, etc.), transforming and optimizing
+//    them into a deployable output folder. Configuring Webpack is an
+//    entire discipline on its own, but as a TypeScript developer you
+//    typically work with a pre-configured setup rather than writing it
+//    from scratch.
+//
+// 3. ESBUILD — a newer alternative to Webpack, written in Go, known
+//    for dramatic build-speed improvements. It also handles TypeScript
+//    compilation directly, so it can replace tsc as part of the build
+//    pipeline. Popular as the engine inside modern meta-tools.
+//
+// The recurring theme: you rarely configure these tools yourself.
+// Instead, you use project scaffolds that set them up for you. The
+// next lesson introduces Vite — a widely used, pre-configured build
+// tool that takes care of this entire pipeline in one package.
 
 const btn = document.querySelector('button')!;
 
