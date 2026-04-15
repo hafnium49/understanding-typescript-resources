@@ -1,4 +1,5 @@
 {
+  "//lesson-208": "Added the 'build' script that runs 'webpack'. npm automatically finds the webpack CLI inside node_modules/.bin/, so you do NOT need webpack installed globally. Run it with 'npm run build' from the project root. 'start' still uses lite-server for now — a later lesson will replace it with webpack-dev-server.",
   "name": "understanding-typescript",
   "version": "1.0.0",
   "description": "Understanding TypeScript Course Setup",

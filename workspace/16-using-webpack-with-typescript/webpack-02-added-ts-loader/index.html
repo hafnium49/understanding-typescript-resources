@@ -6,6 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>ProjectManager</title>
     <link rel="stylesheet" href="app.css" />
+    <!--
+      LESSON 208 — The script tag now points to the single bundled
+      output produced by Webpack (dist/bundle.js), not to multiple
+      per-module .js files. Everything the app needs is contained
+      in this one request. The browser no longer fetches the entire
+      dependency graph piece by piece.
+    -->
     <script type="module" src="dist/bundle.js"></script>
   </head>
   <body>
