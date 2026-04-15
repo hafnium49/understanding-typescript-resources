@@ -1,3 +1,24 @@
+// LESSON 198 — Vite-tuned tsconfig.
+//
+// These settings are pre-configured by the Vite scaffolder and most
+// should stay as-is. The "target" can be bumped (e.g., to a newer
+// ECMAScript version) if you know you are only targeting modern
+// browsers. Key settings:
+//
+//   - "types": ["vite/client"] — adds type definitions for Vite-
+//     specific features (e.g., import.meta.env, asset imports).
+//   - "moduleResolution": "bundler" — tells TypeScript to resolve
+//     imports the way Vite does, not the way Node.js does.
+//   - "noEmit": true — TypeScript does NOT produce .js files here;
+//     it only checks types. Vite (via esbuild) handles the actual
+//     TypeScript-to-JavaScript compilation during build.
+//   - "allowImportingTsExtensions": true — lets imports include the
+//     ".ts" extension (e.g., import './counter.ts'), which Vite
+//     handles but stock tsc rejects.
+//
+// The "include": ["src"] tells TypeScript to only type-check files
+// under the src/ folder. The root-level index.html is not TypeScript
+// and is handled by Vite separately.
 {
   "compilerOptions": {
     "target": "es2023",

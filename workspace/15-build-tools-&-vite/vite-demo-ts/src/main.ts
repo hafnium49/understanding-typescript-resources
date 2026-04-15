@@ -1,3 +1,10 @@
+// LESSON 198 — Vite's entry module. Plain tsc would reject most of
+// these imports because they reference non-TypeScript files (CSS,
+// SVG, PNG). Vite understands them: it bundles the CSS, inlines or
+// copies images into dist/assets/ with hashed filenames, and gives
+// each import a URL string the bundled code can use at runtime.
+// This file-type flexibility is exactly what tsc lacked in the
+// starting-project folder.
 import './style.css'
 import typescriptLogo from './assets/typescript.svg'
 import viteLogo from './assets/vite.svg'

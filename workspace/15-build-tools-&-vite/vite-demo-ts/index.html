@@ -1,3 +1,20 @@
+<!--
+  LESSON 198 — index.html lives at the PROJECT ROOT, not inside src/.
+  This is a Vite convention: index.html is the entry point of the
+  application and is treated as source code (not just a static asset).
+  Vite scans it to discover JavaScript/TypeScript and CSS imports,
+  rewrites asset paths during the build, and copies it into dist/
+  with hashed references to the bundled JS/CSS.
+
+  The script tag below references "/src/main.ts" directly — Vite
+  resolves this path and transforms TypeScript on the fly during
+  development. In production (after "npm run build"), this tag is
+  rewritten to point at the bundled /assets/index-<hash>.js file.
+
+  The "/favicon.svg" reference (not "./favicon.svg") works because
+  Vite serves anything in the public/ folder at the site root during
+  dev and copies it to dist/ at build time.
+-->
 <!doctype html>
 <html lang="en">
   <head>
