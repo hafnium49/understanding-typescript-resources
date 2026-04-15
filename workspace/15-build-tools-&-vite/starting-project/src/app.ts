@@ -56,6 +56,31 @@
 // Instead, you use project scaffolds that set them up for you. The
 // next lesson introduces Vite — a widely used, pre-configured build
 // tool that takes care of this entire pipeline in one package.
+//
+// LESSON 197 — INTRODUCING VITE.
+//
+// Vite (https://vite.dev/) is a build tool and dev server designed for
+// modern frontend projects. Rather than replacing Webpack or esbuild,
+// Vite WRAPS one of them (typically esbuild under the hood for dev,
+// and Rollup-based tooling for production builds) and exposes a
+// cohesive, pre-configured experience on top.
+//
+// What Vite gives you out of the box:
+//   - TypeScript support — no manual tsc invocation needed
+//   - HTML, CSS, images, fonts, and other assets handled automatically
+//   - Instant dev server with hot module replacement (changes appear
+//     in the browser immediately on save, no full page reload)
+//   - Optimized production builds with tree-shaking and minification
+//   - Templates (presets) for common frameworks: React, Vue, Svelte,
+//     Solid, Preact, Lit, and plain vanilla-TS projects
+//
+// The intent: you should not have to configure esbuild, Webpack, or
+// Rollup directly as a TypeScript developer. Vite does that work for
+// you. It is completely free and open-source.
+//
+// The NEXT lesson will walk through creating an actual Vite project
+// (using the vanilla-ts preset) and see how it handles the HTML, CSS,
+// and TypeScript files that tsc alone could not fully package.
 
 const btn = document.querySelector('button')!;
 
