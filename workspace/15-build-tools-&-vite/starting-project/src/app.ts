@@ -81,6 +81,55 @@
 // The NEXT lesson will walk through creating an actual Vite project
 // (using the vanilla-ts preset) and see how it handles the HTML, CSS,
 // and TypeScript files that tsc alone could not fully package.
+//
+// LESSON 198 — SCAFFOLDING A VITE VANILLA-TS PROJECT.
+//
+// The companion folder "../vite-demo-ts" was created by running:
+//
+//   npm create vite@latest vite-demo-ts -- --template vanilla-ts
+//   cd vite-demo-ts
+//   npm install
+//   npm run build
+//
+// The "npm create vite@latest" command downloads and runs the Vite
+// project scaffolder. With the --template vanilla-ts flag, it produces
+// a plain TypeScript frontend project (no React/Vue/Svelte). Omitting
+// the flag makes the command interactive: it prompts for a project
+// name and template choice.
+//
+// DIFFERENCES FROM THIS starting-project FOLDER:
+//
+//   - index.html lives at the PROJECT ROOT (not inside src/). Vite
+//     treats index.html as the entry point, not a static asset to copy.
+//   - src/ contains main.ts (entry), counter.ts, style.css, and an
+//     assets/ subfolder with SVG logos. A public/ folder at the root
+//     holds static assets served as-is (favicon, icons).
+//   - package.json lists "typescript" and "vite" as devDependencies,
+//     and defines three scripts: "dev" (start dev server), "build"
+//     (produce production bundle in dist/), "preview" (serve the
+//     built output locally to verify).
+//   - Running "npm run build" now produces a dist/ folder with
+//     HTML, CSS, and JS — ALL assets copied and bundled, unlike
+//     tsc which only produced app.js.
+//
+// OUTPUT STRUCTURE OF dist/ AFTER BUILD:
+//   dist/index.html                    (copied & rewritten to point to hashed assets)
+//   dist/assets/index-<hash>.js        (bundled + minified TypeScript output)
+//   dist/assets/index-<hash>.css       (bundled + minified CSS)
+//   dist/assets/<name>-<hash>.svg/png  (processed static images)
+//
+// The hashed filenames (e.g., "index-BZHxPfsZ.js") are Vite's cache-
+// busting strategy: when you rebuild, changed files get new hashes,
+// so browsers and CDNs automatically fetch the new version instead
+// of serving a stale cached copy.
+//
+// WHY TYPESCRIPT IS STILL IN devDependencies:
+//
+// Vite uses esbuild (or similar) to compile TypeScript for speed,
+// but the "build" script also invokes "tsc" (as `tsc && vite build`)
+// to perform full TYPE CHECKING — esbuild only strips types, it does
+// not check them. So TypeScript is still needed as a dev dependency
+// to catch type errors before production builds ship.
 
 const btn = document.querySelector('button')!;
 
