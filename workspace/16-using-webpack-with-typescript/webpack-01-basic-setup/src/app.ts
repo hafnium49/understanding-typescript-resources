@@ -115,6 +115,51 @@
 // apply just the subset of Webpack features needed to ship a
 // TypeScript project through a bundled development and production
 // workflow.
+//
+// LESSON 206 — INSTALLING WEBPACK AND ITS COMPANIONS.
+//
+// Before Webpack can do anything, the required packages have to be
+// added as development dependencies:
+//
+//   npm install --save-dev webpack webpack-cli webpack-dev-server \
+//                          typescript ts-loader
+//
+// The --save-dev flag marks them as development-only — the bundled
+// output served to users does not need any of them at runtime; they
+// only participate in building it.
+//
+// Package-by-package breakdown:
+//
+//   webpack             Core bundler. Reads source files, walks the
+//                       import graph, applies loaders/plugins, and
+//                       emits bundled output.
+//
+//   webpack-cli         Command-line wrapper around webpack. Without
+//                       this, running "webpack" or "webpack serve"
+//                       from an npm script would fail.
+//
+//   webpack-dev-server  Development server backed by Webpack. It
+//                       watches source files, recompiles on every
+//                       save, and refreshes the browser. Removes
+//                       the need for a separate lite-server process.
+//
+//   typescript          Installed LOCALLY (not only globally) so
+//                       this project pins to a specific TypeScript
+//                       version. Protects the project from upgrades
+//                       to the global compiler that might introduce
+//                       breaking changes.
+//
+//   ts-loader           The bridge between Webpack and TypeScript.
+//                       It teaches Webpack how to read .ts files by
+//                       invoking the TypeScript compiler internally,
+//                       so Webpack can both COMPILE TS → JS AND
+//                       BUNDLE the result in a single pass. Without
+//                       ts-loader, Webpack would only understand
+//                       plain JavaScript.
+//
+// See this project's package.json for the installed versions and a
+// condensed summary. The next lesson creates webpack.config.js to
+// actually tell Webpack what to do with these pieces.
 import { ProjectInput } from './components/project-input';
 import { ProjectList } from './components/project-list';
 

@@ -1,4 +1,5 @@
 {
+  "//lesson-206": "Webpack dependencies installed with: npm install --save-dev webpack webpack-cli webpack-dev-server typescript ts-loader. These are DEVELOPMENT-ONLY dependencies — the compiled/bundled output runs in the browser without any of them. Package roles: webpack = the core bundler engine; webpack-cli = command-line interface so 'webpack' and 'webpack serve' work in npm scripts; webpack-dev-server = local development server with live reload and automatic rebuilds on file change (replaces lite-server once wired up); typescript = project-local compiler (pins version per-project so a global tsc upgrade does not break this setup); ts-loader = the BRIDGE between Webpack and TypeScript, so Webpack can consume .ts files directly and emit bundled .js output in a single pass. lite-server is kept for now but will be replaced by webpack-dev-server in a later lesson.",
   "name": "understanding-typescript",
   "version": "1.0.0",
   "description": "Understanding TypeScript Course Setup",
