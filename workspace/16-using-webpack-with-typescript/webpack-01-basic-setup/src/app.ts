@@ -70,6 +70,51 @@
 // The rest of this section configures Webpack step by step to
 // achieve this: keep the multi-file source layout shown above,
 // but ship a single bundled file to the browser.
+//
+// LESSON 205 — OBSERVING THE PROBLEM IN THE BROWSER.
+//
+// To see the multi-file cost concretely, the current project can be
+// started with:
+//
+//   npm start       (spins up lite-server for live reload)
+//   tsc -w          (runs the TypeScript compiler in watch mode)
+//
+// Opening DevTools → Network tab and reloading reveals one HTTP
+// request per compiled file: app.js, project-input.js,
+// project-list.js, base-component.js, and so on. Each file is
+// small, but every request carries a fixed OVERHEAD independent
+// of file size: DNS lookup, TCP/TLS handshake, server processing,
+// round-trip latency. On a local dev server this overhead is
+// negligible, but over the public internet it adds up quickly —
+// dozens of requests can dominate total load time even when each
+// file is tiny.
+//
+// Two further shortcomings of the "plain tsc + lite-server" setup:
+//
+//   1. UNOPTIMIZED OUTPUT — the emitted .js files preserve original
+//      variable/function names, whitespace, and comments. They are
+//      larger than they need to be for production.
+//   2. TWO COMMANDS TO RUN — you must run tsc in one terminal and
+//      the dev server in another, instead of a single command that
+//      compiles, bundles, serves, and reloads on change.
+//
+// WHAT WEBPACK SOLVES:
+//
+//   - BUNDLING: traces every import starting from an entry file
+//     and emits ONE (or a few) output files, collapsing dozens of
+//     HTTP requests into one.
+//   - MINIFICATION: strips whitespace/comments and shortens
+//     identifiers so users download less code.
+//   - UNIFIED DEV WORKFLOW: webpack-dev-server (added in a later
+//     lesson) serves the project and reloads the browser on every
+//     change, without a separate lite-server process.
+//   - EXTENSIBILITY: loaders/plugins let you add CSS, image, and
+//     other asset handling — outside the scope of this section.
+//
+// Full details live at https://webpack.js.org/. The lessons below
+// apply just the subset of Webpack features needed to ship a
+// TypeScript project through a bundled development and production
+// workflow.
 import { ProjectInput } from './components/project-input';
 import { ProjectList } from './components/project-list';
 
