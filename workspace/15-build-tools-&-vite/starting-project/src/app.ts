@@ -152,6 +152,31 @@
 // any project. Inside a project, the local devDependency wins.
 // (See vite-demo-ts/package.json for the per-project devDependency
 // entries and their version specifiers.)
+//
+// LESSON 200 — TYPESCRIPT DECLARATION FILES (.d.ts).
+//
+// A ".d.ts" file (DECLARATION file) contains TYPE INFORMATION ONLY —
+// no executable code. It compiles to nothing. Its job is to describe
+// the shape of types that live elsewhere (often in third-party
+// JavaScript libraries) so TypeScript and the IDE can provide type
+// checking and autocompletion.
+//
+// Two common forms:
+//
+//   1. A triple-slash reference directive at the top of a .d.ts file:
+//        /// <reference types="some-package" />
+//      Pulls in the type declarations from that package globally.
+//
+//   2. A "declare module" block that describes the types a library
+//      exports, used when a package ships without its own .d.ts.
+//
+// You rarely write .d.ts files yourself in application code. They
+// matter most when BUILDING A LIBRARY and wanting to ship types
+// alongside the compiled JavaScript output.
+//
+// See vite-demo-ts/src/vite-env.d.ts for a live example that
+// references Vite's own type declarations — enabling main.ts to
+// import CSS/SVG/PNG files as modules with full type safety.
 
 const btn = document.querySelector('button')!;
 
