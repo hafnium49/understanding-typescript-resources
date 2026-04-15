@@ -34,6 +34,42 @@
 // ProjectInput and ProjectList components and instantiating them.
 // Subsequent lessons in this section wire Webpack up to bundle
 // these imports into a single deployable JavaScript file.
+//
+// LESSON 204 — WHY WEBPACK? THE MULTI-FILE PROBLEM.
+//
+// In earlier course sections, the same project (a drag-and-drop
+// task board) was built in two different ways:
+//
+//   - ONE GIANT FILE: all classes, state, utilities, and bootstrap
+//     code lived in a single app.ts. The browser loaded one script;
+//     no extra tooling was needed, but the file became unreadable
+//     and unmaintainable as it grew.
+//
+//   - MULTIPLE FILES via NAMESPACES / ES MODULES: code was split
+//     by responsibility (components/, state/, models/, util/,
+//     decorators/) to stay manageable. Readability improved, but
+//     this introduced a NEW problem specific to browsers: each
+//     imported module becomes a SEPARATE NETWORK REQUEST when the
+//     page loads. A large module graph can mean dozens of HTTP
+//     requests, slowing down first-load performance noticeably.
+//
+// WEBPACK'S ROLE:
+//
+// Webpack is a BUNDLER. At build time it walks the import graph
+// starting from an entry file (this app.ts), follows every import,
+// and concatenates the whole module tree into a small number of
+// output files (often just one). The browser then fetches that
+// single bundle in one request instead of many.
+//
+// In addition, Webpack can:
+//   - Run TypeScript through a loader (ts-loader) so the browser
+//     receives plain JavaScript without a separate tsc step.
+//   - Minify, tree-shake, and fingerprint the output for production.
+//   - Serve a local dev server with live reload during development.
+//
+// The rest of this section configures Webpack step by step to
+// achieve this: keep the multi-file source layout shown above,
+// but ship a single bundled file to the browser.
 import { ProjectInput } from './components/project-input';
 import { ProjectList } from './components/project-list';
 
