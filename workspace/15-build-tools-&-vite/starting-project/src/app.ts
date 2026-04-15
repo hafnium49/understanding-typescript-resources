@@ -177,6 +177,38 @@
 // See vite-demo-ts/src/vite-env.d.ts for a live example that
 // references Vite's own type declarations — enabling main.ts to
 // import CSS/SVG/PNG files as modules with full type safety.
+//
+// LESSON 201 — NON-CODE IMPORTS ARE A VITE FEATURE, NOT TYPESCRIPT.
+//
+// Inside vite-demo-ts/src/main.ts you will see statements like:
+//
+//   import './style.css'
+//   import heroImg from './assets/hero.png'
+//   import { setupCounter } from './counter.ts'
+//
+// None of these would be legal in plain TypeScript or Node.js:
+//
+//   - Importing a .css file for side effects is a BUNDLER CONVENTION.
+//     Vite scans the import, bundles the stylesheet, and injects a
+//     <link> tag into the built HTML. The CSS never ends up in the
+//     compiled JavaScript.
+//   - Importing an image (.png, .svg, etc.) evaluates to a URL
+//     STRING. Vite processes the asset, copies it to dist/assets/
+//     with a hashed name, and gives your code the final URL to use.
+//   - Including the ".ts" extension in the import path is permitted
+//     because Vite (and the "allowImportingTsExtensions" compiler
+//     flag) allow it; classic tsc/Node setups use ".js" instead.
+//
+// KEY POINT: these capabilities come from VITE, not from TypeScript.
+// TypeScript's role is just to know the shape of what these imports
+// evaluate to (via the vite/client type declarations). The actual
+// resolution, transformation, and bundling is done by the build
+// tool at compile and dev-server time.
+//
+// You can confirm this by inspecting the built output: searching
+// "index-<hash>.js" in dist/ for ".css" finds nothing — Vite
+// rewrote every non-JS import into a reference to the bundled
+// asset file before writing the final JavaScript.
 
 const btn = document.querySelector('button')!;
 

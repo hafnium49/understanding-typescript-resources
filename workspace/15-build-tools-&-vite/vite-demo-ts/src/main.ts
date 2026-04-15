@@ -5,6 +5,36 @@
 // each import a URL string the bundled code can use at runtime.
 // This file-type flexibility is exactly what tsc lacked in the
 // starting-project folder.
+//
+// LESSON 201 — A CLOSER LOOK AT THE VITE IMPORT SYNTAX.
+//
+// Four things worth noticing in the import block below:
+//
+//   1. SIDE-EFFECT CSS IMPORT — "import './style.css'" has no names
+//      after "import" and no "from" clause with bindings. It runs
+//      the file purely for its side effects. At build time, Vite
+//      scans this, bundles the CSS, and links the bundled output
+//      from the generated index.html. The CSS itself never appears
+//      in the compiled JavaScript.
+//
+//   2. ASSET IMPORTS (SVG/PNG) — "import heroImg from './...png'"
+//      looks like importing a module but is actually how Vite
+//      exposes static assets. At build time the file is processed
+//      (possibly resized, optimized, or inlined for small files)
+//      and the import evaluates to a URL STRING pointing at the
+//      final hashed asset under dist/assets/. You use heroImg
+//      anywhere a URL is expected (img src, CSS background, etc.).
+//
+//   3. ".ts" EXTENSION IN THE IMPORT PATH — "./counter.ts" works
+//      because Vite (and tsconfig's allowImportingTsExtensions)
+//      accept the TypeScript extension. In a plain Node/tsc setup
+//      you would typically write "./counter.js" (the compiled
+//      output name) instead.
+//
+//   4. INSPECTABILITY — none of these import paths survive into
+//      the compiled dist/assets/index-<hash>.js. Vite rewrites them
+//      into direct references to the bundled/hashed files. This is
+//      pure build-tool magic, not a TypeScript language feature.
 import './style.css'
 import typescriptLogo from './assets/typescript.svg'
 import viteLogo from './assets/vite.svg'
