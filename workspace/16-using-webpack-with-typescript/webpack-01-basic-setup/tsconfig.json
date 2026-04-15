@@ -1,3 +1,24 @@
+// LESSON 207 — TSCONFIG SETTINGS THAT MATTER FOR WEBPACK + ts-loader.
+//
+// Webpack itself does not care about most tsconfig options, but it
+// DOES delegate actual TypeScript compilation to ts-loader, which
+// does read this file. A few settings are worth verifying:
+//
+//   target    Sets the JavaScript version for emitted code. Use "es5"
+//             if you need to support very old browsers, "es6" or
+//             higher for modern ones. ts-loader honors this.
+//   module    Must be "es2015" / "es6" (or a newer "esnext") so that
+//             import/export statements reach ts-loader in a form it
+//             hands off to Webpack. Setting "commonjs" here would
+//             interfere because Webpack does its own module work.
+//   outDir    Kept at "./dist" to match Webpack's output.path.
+//   rootDir   Commented out — Webpack, not TypeScript, now decides
+//             which files are the project root; it discovers source
+//             files by walking the import graph from the "entry".
+//
+// The other compiler settings below are general TypeScript hygiene
+// (strict mode, source maps, unused locals, etc.) and are unrelated
+// to Webpack specifically.
 {
   "compilerOptions": {
     /* Basic Options */

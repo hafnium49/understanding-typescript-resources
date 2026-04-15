@@ -160,6 +160,28 @@
 // See this project's package.json for the installed versions and a
 // condensed summary. The next lesson creates webpack.config.js to
 // actually tell Webpack what to do with these pieces.
+//
+// LESSON 207 — PROJECT SETUP FOR WEBPACK.
+//
+// Three concrete changes belong to this lesson:
+//
+//   1. tsconfig.json — verified "target"/"module", kept "outDir",
+//      and COMMENTED OUT "rootDir" (Webpack now decides the roots
+//      via the "entry" in webpack.config.js). See tsconfig.json for
+//      inline notes.
+//
+//   2. webpack.config.js — NEW file at the project root. Exports a
+//      configuration object telling Webpack WHERE TO START (entry)
+//      and WHERE TO OUTPUT the bundle. See that file for details.
+//
+//   3. IMPORT PATHS LOSE THE ".js" EXTENSION — under plain ES
+//      modules, browsers required ".js" extensions (e.g.,
+//      "./components/project-input.js") because the browser
+//      loaded the files directly. Webpack resolves extensions
+//      automatically — adding ".js" now would make Webpack look
+//      for "project-input.js.ts" (doubled extension) and fail.
+//      Every import in this project therefore uses the bare name
+//      only, as shown in the imports right below.
 import { ProjectInput } from './components/project-input';
 import { ProjectList } from './components/project-list';
 
