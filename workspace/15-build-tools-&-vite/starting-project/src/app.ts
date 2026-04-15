@@ -209,6 +209,36 @@
 // "index-<hash>.js" in dist/ for ".css" finds nothing — Vite
 // rewrote every non-JS import into a reference to the bundled
 // asset file before writing the final JavaScript.
+//
+// LESSON 202 — SECTION WRAP-UP.
+//
+// Section 15 recap in a single paragraph:
+//
+// Plain tsc is sufficient only for compiling TypeScript to JavaScript.
+// Real frontend projects also contain HTML, CSS, images, and other
+// assets that need to be copied, transformed, or bundled — work that
+// belongs to a DEDICATED BUILD TOOL. You could wire up Webpack or
+// esbuild yourself, but most teams use pre-configured scaffolders
+// instead. VITE is the current go-to: one command scaffolds a
+// project, "npm install" pulls in dependencies, "npm run dev" gives
+// you a hot-reloading dev server, and "npm run build" produces a
+// hashed, minified dist/ folder ready to deploy. Vite handles
+// TypeScript compilation (via esbuild), bundles CSS, processes
+// image assets, and rewrites your source imports into references
+// to the final built artifacts.
+//
+// Key takeaways to carry forward:
+//   - You rarely need to configure build tools directly as a
+//     TypeScript developer — pick a scaffolder, use its defaults.
+//   - TypeScript stays as a devDependency even when globally
+//     installed (portability + per-project version pinning).
+//   - .d.ts files hold type-only declarations (no runtime output).
+//   - Non-TypeScript imports (CSS, images, etc.) are a BUILD-TOOL
+//     feature, not a language feature.
+//
+// The rest of the course will use Vite (or similar tools) where
+// appropriate rather than compiling with plain tsc, matching
+// real-world project setups.
 
 const btn = document.querySelector('button')!;
 
