@@ -130,6 +130,28 @@
 // to perform full TYPE CHECKING — esbuild only strips types, it does
 // not check them. So TypeScript is still needed as a dev dependency
 // to catch type errors before production builds ship.
+//
+// LESSON 199 — DEV DEPENDENCIES VS. GLOBAL INSTALLATION.
+//
+// A frequent question: if TypeScript is already installed globally
+// (via "npm install -g typescript"), why list it as a devDependency
+// in each project? Two concrete reasons:
+//
+//   1. PORTABILITY: The build script works on any machine without
+//      a global tsc install. A CI pipeline, a new teammate's laptop,
+//      or a Docker image just runs "npm install" and gets the exact
+//      compiler the project expects.
+//
+//   2. PER-PROJECT VERSION PINNING: Different projects can pin to
+//      different TypeScript versions. If one legacy project is stuck
+//      on TS 4.x (upgrading would break it) while a new project
+//      needs the latest, both can coexist because each reads its
+//      own package.json devDependencies — not a shared global install.
+//
+// The global tsc is mainly useful for ad-hoc experimentation outside
+// any project. Inside a project, the local devDependency wins.
+// (See vite-demo-ts/package.json for the per-project devDependency
+// entries and their version specifiers.)
 
 const btn = document.querySelector('button')!;
 
