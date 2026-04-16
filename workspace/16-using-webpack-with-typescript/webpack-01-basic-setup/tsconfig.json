@@ -12,9 +12,10 @@
 //             hands off to Webpack. Setting "commonjs" here would
 //             interfere because Webpack does its own module work.
 //   outDir    Kept at "./dist" to match Webpack's output.path.
-//   rootDir   Commented out — Webpack, not TypeScript, now decides
-//             which files are the project root; it discovers source
-//             files by walking the import graph from the "entry".
+//   rootDir   Set to "./src". When outDir is configured and your sources
+//             share a common parent, recent TypeScript versions REQUIRE
+//             rootDir to be explicit (otherwise: error TS5011). Setting
+//             it also keeps the dist folder layout predictable.
 //
 // The other compiler settings below are general TypeScript hygiene
 // (strict mode, source maps, unused locals, etc.) and are unrelated
@@ -38,7 +39,7 @@
     "sourceMap": true /* Generates corresponding '.map' file. */,
     // "outFile": "./dist/bundle.js",                       /* Concatenate and emit output to single file. */
     "outDir": "./dist" /* Redirect output structure to the directory. */,
-    // "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
     // "composite": true,                     /* Enable project compilation */
     "removeComments": true /* Do not emit comments to output. */,
     // "noEmit": true,                        /* Do not emit outputs. */
