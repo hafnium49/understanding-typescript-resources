@@ -1,4 +1,18 @@
 {
+  "_lesson": "Lesson 211: Production workflow added.",
+  "_notes": [
+    "The 'build' script now passes '--config webpack.config.prod.js' to",
+    "the webpack CLI. By default webpack looks for webpack.config.js, so",
+    "the explicit --config flag is required to use the production-tuned",
+    "configuration file.",
+    "",
+    "Two parallel workflows are now in place:",
+    "  - 'npm start'  → webpack-dev-server, in-memory bundle, fast rebuilds.",
+    "  - 'npm run build' → optimized bundle written to ./dist for deployment.",
+    "",
+    "A new dev dependency was added: clean-webpack-plugin. It clears the",
+    "dist folder before each production build so stale files do not linger."
+  ],
   "name": "understanding-typescript",
   "version": "1.0.0",
   "description": "Understanding TypeScript Course Setup",
