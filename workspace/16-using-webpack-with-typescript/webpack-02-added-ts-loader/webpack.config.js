@@ -33,6 +33,19 @@
 const path = require('path');
 
 module.exports = {
+  // MODE — required to silence the "fallback to production" warning
+  // and to make source maps actually work in this snapshot.
+  //
+  // Without this, Webpack defaults to "production" mode, which
+  // minifies the bundle AND overrides "devtool" so no usable source
+  // maps reach the browser. Result: DevTools shows minified code and
+  // no "webpack://" folder with the original .ts files.
+  //
+  // Setting "development" disables minification, keeps source maps
+  // intact, and produces faster, debuggable builds. The course adds
+  // this in the next snapshot (webpack-03), but it is needed here
+  // too if you want to inspect TypeScript sources during this lesson.
+  mode: 'development',
   entry: './src/app.ts',
   output: {
     filename: 'bundle.js',
