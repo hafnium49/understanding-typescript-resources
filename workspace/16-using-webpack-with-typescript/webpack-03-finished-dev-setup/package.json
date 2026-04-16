@@ -1,4 +1,20 @@
 {
+  "_lesson": "Lesson 210: Finished Development Setup with webpack-dev-server.",
+  "_notes": [
+    "The 'start' script was switched from 'lite-server' to 'webpack-dev-server'.",
+    "webpack-dev-server spins up a local server on port 8080 AND runs the",
+    "webpack build pipeline in watch mode. When source files change, the",
+    "bundle is automatically rebuilt and the browser refreshes.",
+    "",
+    "IMPORTANT: webpack-dev-server keeps the bundle IN MEMORY — no file",
+    "is actually written to the dist folder while the dev server is running.",
+    "This is faster than disk writes but means the dist folder appears empty",
+    "during development. The webpack.config.js 'publicPath' setting tells",
+    "the dev server where to serve this in-memory bundle from.",
+    "",
+    "The 'build' script (plain 'webpack') is unchanged — it still produces",
+    "real files in the dist folder for production deployment."
+  ],
   "name": "understanding-typescript",
   "version": "1.0.0",
   "description": "Understanding TypeScript Course Setup",

@@ -6,6 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>ProjectManager</title>
     <link rel="stylesheet" href="app.css" />
+    <!--
+      The bundle is loaded from "dist/bundle.js". This path is what
+      webpack.config.js's "output.publicPath" must align with so that
+      webpack-dev-server can serve the in-memory bundle at the URL
+      the browser requests. Without the matching publicPath setting,
+      the dev server would respond with 404 and the page would crash.
+    -->
     <script type="module" src="dist/bundle.js"></script>
   </head>
   <body>
