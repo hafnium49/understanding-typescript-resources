@@ -7,6 +7,29 @@
 //   1. module.rules   — per-file-type processing instructions
 //   2. resolve.extensions — which file extensions Webpack auto-adds
 //   3. devtool        — how to hook up source maps for debugging
+//
+// LESSON 209 — HEADS-UP FOR THE NEXT LESSON (webpack-dev-server).
+//
+// The course was recorded against an older Webpack version. With the
+// current Webpack (5.x) plus webpack-dev-server (4.x+), two extra
+// settings are required for the dev-server to serve the root HTML
+// and bundle correctly:
+//
+//   devServer: {
+//     static: [ { directory: path.join(__dirname) } ]
+//   }
+//   // …and in the output block:
+//   publicPath: '/dist/'
+//
+// Both adjustments are ACTUALLY APPLIED in the next snapshot
+// (webpack-03-finished-dev-setup). They are mentioned here so you
+// know to expect them — this current file (snapshot 02) does not
+// yet need them because webpack-dev-server has not been introduced.
+//
+// COMMON MISTAKE: publicPath must be the STRING "/dist/" with a
+// leading slash, not "dist" or "./dist". The leading slash makes
+// the dev-server resolve it from the site root; a relative form
+// breaks asset paths in the served HTML.
 const path = require('path');
 
 module.exports = {
