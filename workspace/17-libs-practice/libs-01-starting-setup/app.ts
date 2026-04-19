@@ -362,44 +362,63 @@ console.log(chunkedArray);
 import { z } from 'zod';
 import { readFileSync } from 'node:fs';
 
-// DEFINING A SCHEMA:
+// =====================================================================
+// LESSON 222 — COMPOSING OBJECT SCHEMAS & GETTING FREE TYPE INFERENCE.
+// =====================================================================
 //
-// The default import is an object "z" that exposes builder methods for
-// every type Zod knows about: z.string(), z.number(), z.boolean(),
-// z.object({...}), z.array(...), z.union([...]), and many others.
+// The value in data.json is not a plain string — it is an object with
+// three properties (title, id, values). The schema must match that
+// shape exactly, so we move from z.string() to a composed object schema.
 //
-// Here we declare the simplest possible schema: the value must be a
-// string. Zod schemas are composable — larger object / array shapes
-// are built by nesting these primitives.
-const dataSchema = z.string();
+// Zod's schema-building methods (z.string(), z.number(), z.array(),
+// z.object(), z.union(), z.boolean(), ...) are all plain JavaScript
+// function calls. They compose: each returns a schema that can be
+// embedded inside another (an object schema containing a string, an
+// array schema containing a union, etc.). That's what makes Zod feel
+// like TypeScript at runtime.
+//
+// THE KEY BENEFIT — TYPE INFERENCE FOR FREE:
+//
+// Nowhere below do we write a TypeScript type for the shape of the
+// parsed data. Zod's method signatures are generic and carry the
+// type through from the schema definition to the parse() return
+// value. When parse() succeeds, parsedData is automatically typed as:
+//     { title: string; id: number; values: (string | number)[] }
+//
+// That is the "TypeScript-first" superpower at work: we define the
+// shape ONCE as a runtime schema, and TypeScript infers the static
+// type from that same definition. No duplicate type declaration, no
+// drift between runtime validation and compile-time typing.
+const dataSchema = z.object({
+  title: z.string(),
+  id: z.number(),
+  // z.array(z.union([...])) expresses "an array whose elements are
+  // either strings or numbers". The union's alternatives are passed
+  // as an ARRAY of schemas to z.union([...]). The data file happens
+  // to contain only string elements, but allowing numbers too makes
+  // the schema more tolerant of mixed input.
+  values: z.array(z.union([z.string(), z.number()])),
+});
 
-// PARSING DATA AGAINST THE SCHEMA:
+// READING AND PREPARING THE FILE CONTENT:
 //
-// readFileSync returns a Buffer (or a string, if an encoding is
-// specified). Calling schema.parse(value) validates "value" at
-// runtime. If it matches the schema, parse() returns the value with
-// its TypeScript type narrowed accordingly (here: string). If it does
-// NOT match, Zod throws a ZodError describing what went wrong.
+// readFileSync returns a Buffer by default. To turn the JSON text into
+// an actual JavaScript object we chain:
+//   .toString()   — Buffer → string representation of the file
+//   JSON.parse()  — string → native JavaScript object
 //
-// Compare to a TypeScript-only annotation like:
-//     const parsedData: string = content;
-// That check only exists during compilation and is completely absent
-// from the compiled .js output — it provides NO runtime safety. Zod's
-// .parse() survives compilation because it's a real function call,
-// not a type annotation.
-const content = readFileSync('data.json');
+// Note the inferred type of the JSON.parse result is "any" because
+// TypeScript cannot statically know what a runtime-parsed file
+// contains. That is precisely the blind spot Zod fills in next.
+const content = JSON.parse(readFileSync('data.json').toString());
+
+// PARSING AGAINST THE SCHEMA:
+//
+// schema.parse(value) validates at runtime and returns the value
+// narrowed to the schema's type (or throws a ZodError on failure).
+// parsedData is therefore typed as the object shape defined above —
+// with no manual annotation required. Property access like
+// parsedData.title or parsedData.values[0] is fully type-checked.
 const parsedData = dataSchema.parse(content);
 console.log(parsedData);
-
-// DEMONSTRATION OF A RUNTIME VALIDATION FAILURE:
-//
-// If we switched the schema to z.number() (uncomment below), the
-// content would no longer satisfy it. Compiling and running the
-// output would produce a ZodError at runtime explaining that a number
-// was expected but an object (the raw Buffer) was received. Unlike a
-// TypeScript annotation, this check actually runs and can catch
-// real-world data-shape bugs.
-
-// const numberSchema = z.number();
-// numberSchema.parse(content); // throws ZodError at runtime
 
