@@ -190,3 +190,81 @@ console.log(chunkedArray);
 //
 // For typical application developers (this course's focus), this is
 // background knowledge — you rarely need to author these files yourself.
+
+// =====================================================================
+// LESSON 219 — USING "declare" MANUALLY (lightweight alternative to .d.ts).
+// =====================================================================
+//
+// Sometimes you need TypeScript to recognize just one or two symbols
+// that come from outside your TypeScript code — not an entire library.
+// Installing or authoring a full .d.ts file would be overkill in that
+// case.
+//
+// SCENARIO — a global variable from an inline HTML <script>:
+//
+// See index.html in this folder. The inline <script> declares:
+//     var MODE = 'DEFAULT';
+// This creates a GLOBAL "MODE" variable on the page. Any .ts code
+// loaded later could reference it at runtime — but TypeScript does
+// not know it exists, because TypeScript never sees the HTML file.
+//
+// Referencing MODE from a .ts file would produce:
+//     error TS2304: Cannot find name 'MODE'.
+//
+// THE "declare" KEYWORD — telling TypeScript a symbol exists.
+//
+// "declare" is the same keyword found inside .d.ts files, but you can
+// use it directly in your own .ts source too. It DECLARES the existence
+// and type of something WITHOUT producing any runtime code — the line
+// vanishes during compilation.
+//
+// Syntax for a single global:
+//     declare var MODE: string;
+//
+// After this declaration, TypeScript accepts references to MODE as if
+// it were a string, and the compiled .js output contains nothing for
+// the declare line — the variable is assumed to exist at runtime
+// (from the HTML script block, from another library, etc.).
+//
+// Uncomment both lines below to see this in action — the compiler will
+// accept both. (They are commented out so this demo file can compile
+// cleanly without requiring MODE to actually exist in a browser.)
+
+// declare var MODE: string;
+// const selectedMode = MODE;
+
+// DECLARING LARGER SHAPES — namespaces, modules, interfaces.
+//
+// "declare" is not limited to single variables. You can describe an
+// entire external API's shape:
+//
+//     declare namespace D3 {
+//       export interface Selectors {
+//         select: {
+//           (selector: string): Selection;
+//           (element: EventTarget): Selection;
+//         };
+//       }
+//       export interface Event {
+//         x: number;
+//         y: number;
+//       }
+//       export interface Base extends Selectors {
+//         event: Event;
+//       }
+//     }
+//
+// This pattern — declare namespace + nested interfaces — is exactly
+// what you find inside real .d.ts files for popular libraries like
+// Lodash (see node_modules/@types/lodash for many examples).
+//
+// WHEN TO PREFER "declare" IN YOUR OWN .ts FILES:
+//   - You only need one or two extra type declarations
+//   - No suitable @types package exists, and writing a full .d.ts file
+//     is not worth the effort
+//   - You want the declaration to live alongside the code that uses it
+//
+// WHEN TO PREFER .d.ts FILES INSTEAD:
+//   - You are typing an entire library
+//   - You want declarations separated from runtime code
+//   - You are publishing a library for other TypeScript users

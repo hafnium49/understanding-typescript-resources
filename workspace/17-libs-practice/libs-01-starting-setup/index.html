@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>declare keyword demo</title>
+</head>
+<body>
+  <!--
+    This inline script defines a GLOBAL variable named MODE before any
+    other scripts run. Because "var" at script-tag top level creates a
+    global binding on the window object, any later script can reference
+    "MODE" directly. See app.ts (lesson 219) for how TypeScript code
+    can be taught to recognize this external global via the "declare"
+    keyword.
+  -->
+  <script>
+    var MODE = 'DEFAULT';
+  </script>
+
+  <!-- Compiled output from app.ts would be loaded here. -->
+  <!-- <script src="dist/app.js" defer></script> -->
+</body>
+</html>
