@@ -5,11 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Understanding TypeScript</title>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIaAc2c5M3VpbCH6PPq_guwy9lHuowXOs"
-      async
-      defer
-    ></script>
+    <!--
+      LESSON 229 — GOOGLE MAPS SDK LOADING.
+
+      The transcript adds the Google Maps SDK script tag here in index.html,
+      with the API key hardcoded directly in its URL. This project instead
+      INJECTS that script dynamically from app.ts so the key can live
+      exclusively in the workspace-root .env file.
+
+      Why: dotenv-webpack substitutes process.env.* references only inside
+      the JS bundle — it does not touch static HTML. Hardcoding the key
+      in this file would duplicate it outside of .env (and commit it to
+      source). Dynamic injection keeps .env as the single source of truth.
+
+      See src/app.ts for the loader that appends the SDK <script> tag
+      with the key from process.env.GOOGLE_API_KEY.
+    -->
     <script src="dist/bundle.js" defer></script>
     <link rel="stylesheet" href="app.css" />
   </head>
