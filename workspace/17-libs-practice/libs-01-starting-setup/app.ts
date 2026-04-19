@@ -6,28 +6,54 @@
 // typically rely on third-party npm packages — for HTTP requests, date
 // formatting, UI rendering, utilities, and countless other needs.
 //
-// This section explores how TypeScript interacts with external libraries
-// and the common challenges that arise:
+// This section explores three scenarios:
+//   1. JavaScript-only libraries (need .d.ts declarations, often via @types/*)
+//   2. .d.ts files themselves (type-only, no runtime logic)
+//   3. TypeScript-first libraries (seamless, no extra types needed)
+
+// =====================================================================
+// LESSON 215 — TRYING TO USE LODASH (a JavaScript-only library).
+// =====================================================================
 //
-//   1. JAVASCRIPT-ONLY LIBRARIES
-//      Libraries originally written in plain JavaScript (no TypeScript
-//      types built in). TypeScript does not know what functions these
-//      libraries expose or what types they return — so you need TYPE
-//      DECLARATION FILES (.d.ts) to bridge the gap. Often these are
-//      provided by the community via the @types/* scope on npm.
+// Lodash is one of the most popular JavaScript utility libraries on npm.
+// It offers a vast set of helpers for working with arrays, objects,
+// strings, and more. However, Lodash is written in plain JavaScript —
+// its source repository contains no TypeScript code and no type
+// declarations. This is the exact scenario where TypeScript needs extra
+// help to understand a library.
 //
-//   2. .d.ts FILES
-//      Declaration files contain ONLY type information — no runtime
-//      logic. They describe the shape of existing JavaScript code so
-//      TypeScript can type-check your usage of it. Understanding what
-//      these files look like and how they work is important even if
-//      you never write one yourself.
+// INSTALLATION:
+//   npm install --save lodash
 //
-//   3. TYPESCRIPT-FIRST LIBRARIES
-//      Libraries written in TypeScript (or shipped with built-in .d.ts
-//      files). These integrate seamlessly — no extra @types package
-//      needed. Some are so TypeScript-oriented that they exploit
-//      advanced type features and are mostly useful within TS projects.
+// This adds Lodash as a runtime dependency so the JavaScript code can
+// be imported at runtime. Installing the library is NOT enough for
+// TypeScript, though — as the error below demonstrates.
 //
-// No code is written in this introductory lesson. Subsequent lessons
-// will install actual packages and demonstrate each scenario.
+// IMPORT CONVENTION:
+// Lodash is traditionally imported under the name "_" (underscore).
+// That single-character alias is a community convention going back to
+// Underscore.js (Lodash's predecessor) and matches how the library is
+// commonly referenced in documentation.
+import _ from 'lodash';
+
+// A simple array to demonstrate chunking.
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
+
+// _.chunk splits an array into sub-arrays of a given size. Here, size 2
+// would produce [[1,2], [3,4], [5,6], [7,8]]. With numbers not evenly
+// divisible by the chunk size, the final group contains the remainder.
+console.log(_.chunk(numbers, 2));
+
+// EXPECTED ERROR:
+//
+// Both the IDE and the TypeScript compiler (tsc) flag this with:
+//   "Could not find a declaration file for module 'lodash'."
+//
+// The JavaScript runtime would be perfectly happy with this code —
+// Lodash is installed and the import path resolves. The problem is
+// purely at the TYPE-CHECKING stage: TypeScript cannot see what
+// functions Lodash exports or what types they accept and return,
+// because the package ships no .d.ts files.
+//
+// The next lesson will show how to fix this by installing type
+// declarations from the @types/* scope on npm.
