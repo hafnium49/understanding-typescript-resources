@@ -311,3 +311,95 @@ console.log(chunkedArray);
 //      TypeScript-first (category B).
 //
 // The next lesson will install and use Zod to see category B in action.
+
+// =====================================================================
+// LESSON 221 — WHAT IS ZOD? (runtime validation driven by TypeScript).
+// =====================================================================
+//
+// ZOD AS AN EXAMPLE OF A TYPESCRIPT-FIRST LIBRARY:
+//
+// Zod is one prominent example of the "TypeScript-first" category.
+// Another library in the same spirit is class-validator, which uses
+// decorators on class properties (e.g., @Length(10, 20) on a title
+// field) to attach validation rules that operate alongside the type
+// system. Zod takes a different but related approach: instead of
+// decorating existing classes, you BUILD UP a schema object and then
+// use it to parse and validate arbitrary data.
+//
+// THE PROBLEM ZOD SOLVES:
+//
+// TypeScript's type checks happen at COMPILATION time. When code runs
+// in the browser or in Node.js, the types are gone — the output is
+// plain JavaScript. If data arrives at runtime from an untrusted
+// source (an HTTP request body, a JSON file on disk, form input,
+// LocalStorage, a third-party API), TypeScript cannot guarantee that
+// its actual shape matches what your types claim. Runtime validation
+// is required to bridge that gap.
+//
+// Zod extends TypeScript's "certain types in certain places" guarantee
+// into runtime by letting you DEFINE a schema once and then PARSE data
+// against it. Valid data passes through (typed correctly); invalid
+// data raises a ZodError with details.
+//
+// PREREQUISITES (per Zod's docs):
+//   - TypeScript must be installed
+//   - "strict": true should be set in tsconfig.json
+//
+// INSTALLATION:
+//   npm install zod
+//
+// Note: No @types/zod is needed — Zod ships its own type declarations,
+// as expected for a TypeScript-first library.
+//
+// WHY ALSO @types/node?
+//
+// To read a file from disk we use Node's built-in "fs" module via
+// "import { readFileSync } from 'node:fs'". Node.js APIs are not built
+// into TypeScript, so without their type declarations the import
+// triggers the same "Cannot find a declaration file" error we saw
+// with Lodash. Install them as a dev dependency:
+//   npm install --save-dev @types/node
+import { z } from 'zod';
+import { readFileSync } from 'node:fs';
+
+// DEFINING A SCHEMA:
+//
+// The default import is an object "z" that exposes builder methods for
+// every type Zod knows about: z.string(), z.number(), z.boolean(),
+// z.object({...}), z.array(...), z.union([...]), and many others.
+//
+// Here we declare the simplest possible schema: the value must be a
+// string. Zod schemas are composable — larger object / array shapes
+// are built by nesting these primitives.
+const dataSchema = z.string();
+
+// PARSING DATA AGAINST THE SCHEMA:
+//
+// readFileSync returns a Buffer (or a string, if an encoding is
+// specified). Calling schema.parse(value) validates "value" at
+// runtime. If it matches the schema, parse() returns the value with
+// its TypeScript type narrowed accordingly (here: string). If it does
+// NOT match, Zod throws a ZodError describing what went wrong.
+//
+// Compare to a TypeScript-only annotation like:
+//     const parsedData: string = content;
+// That check only exists during compilation and is completely absent
+// from the compiled .js output — it provides NO runtime safety. Zod's
+// .parse() survives compilation because it's a real function call,
+// not a type annotation.
+const content = readFileSync('data.json');
+const parsedData = dataSchema.parse(content);
+console.log(parsedData);
+
+// DEMONSTRATION OF A RUNTIME VALIDATION FAILURE:
+//
+// If we switched the schema to z.number() (uncomment below), the
+// content would no longer satisfy it. Compiling and running the
+// output would produce a ZodError at runtime explaining that a number
+// was expected but an object (the raw Buffer) was received. Unlike a
+// TypeScript annotation, this check actually runs and can catch
+// real-world data-shape bugs.
+
+// const numberSchema = z.number();
+// numberSchema.parse(content); // throws ZodError at runtime
+
