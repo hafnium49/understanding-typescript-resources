@@ -139,3 +139,54 @@ console.log(chunkedArray);
 // automatically. The library itself (lodash) is still plain JavaScript
 // at runtime; the .d.ts files just teach the compiler what types that
 // JavaScript code operates on.
+
+// =====================================================================
+// LESSON 218 — DIVING DEEPER INTO .d.ts FILES (reference resource).
+// =====================================================================
+//
+// So far this course has focused on USING TypeScript in applications.
+// Another area where TypeScript is widely used is in AUTHORING LIBRARIES
+// that other developers will consume. That is where writing .d.ts files
+// (rather than just installing them) becomes relevant.
+//
+// THE TERM ".d.ts":
+// "d" stands for "declaration". A .d.ts file is a TYPE DECLARATION FILE
+// that carries only type information — the bridge between JavaScript
+// code a library may ship and the TypeScript code that will consume it.
+//
+// THREE OPTIONS WHEN PUBLISHING A LIBRARY:
+//
+//   1) Ship the source as .ts files (no compilation step).
+//      Consumers compile it themselves as part of their build.
+//
+//   2) Ship compiled .js files AND accompanying .d.ts files in the same
+//      package. TypeScript consumers get types out of the box with no
+//      extra @types install needed. This is the most common modern
+//      approach for TypeScript-aware libraries.
+//
+//   3) Ship only compiled .js files and rely on the community (or your
+//      own separate publication) to provide .d.ts files through the
+//      @types/* scope on npm. This is the Lodash situation we saw.
+//
+// Options 2 and 3 both require writing .d.ts files — either bundled
+// with the library or maintained separately.
+//
+// LEARN MORE:
+//   https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html
+//
+// The official TypeScript Handbook section covers:
+//   - Declaration Reference:   common API patterns and how to type them
+//   - Library Structures:      global vs module libraries and their
+//                              impact on declaration-file design
+//   - Do's and Don'ts:         frequent mistakes and how to avoid them
+//   - Deep Dive:               advanced mechanics for complex typings
+//   - Publish to npm:          how to ship .d.ts files as part of a
+//                              package, and how to manage peer types
+//   - Find and Install:        how consumers locate existing types
+//
+// If the immediate goal is to add types to an EXISTING npm package, the
+// handbook recommends starting with the "Modules .d.ts" section rather
+// than reading the handbook sequentially.
+//
+// For typical application developers (this course's focus), this is
+// background knowledge — you rarely need to author these files yourself.
