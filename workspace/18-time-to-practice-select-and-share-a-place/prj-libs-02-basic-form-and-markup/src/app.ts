@@ -3,7 +3,38 @@
 // This lesson wires up the HTML form (added in lesson 225) to a
 // TypeScript handler. By the end of this lesson, submitting the form
 // captures the entered address but does NOT yet call any external API —
-// that arrives in the next lesson with axios + the Google Geocoding API.
+// that arrives in a later lesson with axios + the Google Geocoding API.
+
+// =====================================================================
+// LESSON 227 — GOOGLE GEOCODING API KEY.
+// =====================================================================
+//
+// The Google Geocoding API converts an address string into a pair of
+// latitude/longitude coordinates (or vice versa). We will use the
+// "forward geocoding" direction: address → coordinates. Later lessons
+// feed those coordinates into Google Maps to render the location.
+//
+// REQUEST URL (for reference, used in the next lesson):
+//   https://maps.googleapis.com/maps/api/geocode/json?address=...&key=...
+//
+// MANUAL SETUP (must be done BEFORE the next lesson's code can succeed):
+//
+//   1. Sign in to a Google account.
+//   2. Visit the Google Maps Platform "Get Started" page:
+//      https://developers.google.com/maps/documentation/javascript/get-api-key
+//   3. Enable the "Places" product (for the Geocoding API) and the
+//      "Maps" product (for the Maps JavaScript SDK — needed later).
+//   4. Select or create a Google Cloud project.
+//   5. Set up a billing account (a credit card is required, but the free
+//      tier is generous — this demo will not exceed it).
+//   6. Copy the generated API key.
+//   7. OPTIONAL: restrict the key to a specific app/domain in the
+//      developer console for safety.
+//   8. Replace the placeholder below with the copied key.
+//
+// The API key is a SECRET. Do NOT commit a real key to a public
+// repository. For learning purposes we embed it here; production apps
+// should load it from environment variables or a backend proxy.
 
 // FORM REFERENCE.
 //
@@ -28,6 +59,13 @@ const form = document.querySelector('form')!;
 // element with id="address" exists in index.html.
 const addressInput = document.getElementById('address')! as HTMLInputElement;
 
+// GOOGLE API KEY (lesson 227).
+//
+// Stored as a module-level constant so the next lesson can reference
+// it when building the request URL. Keep this placeholder until you
+// complete the manual setup above.
+const GOOGLE_API_KEY = 'YOUR_API_KEY_HERE';
+
 // SUBMIT HANDLER.
 //
 // The explicit "event: Event" annotation lets TypeScript surface the
@@ -47,10 +85,10 @@ function searchAddressHandler(event: Event) {
   // TypeScript allows this access without complaint.
   const enteredAddress = addressInput.value;
 
-  // Placeholder output — confirms the capture works end-to-end.
-  // The next lesson replaces this with an axios request to Google's
-  // Geocoding API to convert the address into coordinates.
-  console.log(enteredAddress);
+  // Placeholder output — confirms both the captured address and that
+  // the API key constant is wired up. The next lesson replaces this
+  // with a real request to the Geocoding API that uses both values.
+  console.log(enteredAddress, GOOGLE_API_KEY);
 }
 
 // WIRING UP THE HANDLER.

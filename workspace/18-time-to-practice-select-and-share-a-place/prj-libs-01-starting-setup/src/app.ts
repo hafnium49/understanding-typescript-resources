@@ -8,7 +8,11 @@
 //                 → see prj-libs-02-basic-form-and-markup/
 //   - Lesson 226: adds the form submission handler in app.ts
 //                 → see prj-libs-02-basic-form-and-markup/src/app.ts
-//   - Lesson 227+: integrates axios and the Google Maps SDK
+//   - Lesson 227: adds the Google Geocoding API key as a constant
+//                 (requires manual Google Cloud Console setup — see
+//                 the header comment in prj-libs-02 app.ts for steps)
+//                 → see prj-libs-02-basic-form-and-markup/src/app.ts
+//   - Lesson 228+: integrates axios and sends requests to the API
 //                 → see prj-libs-03-fetching-coordinates+2/
 //
 // This file stays empty so students can compare "before" (this dir) vs.
