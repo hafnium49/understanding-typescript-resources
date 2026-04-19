@@ -44,16 +44,49 @@ const numbers = [1, 2, 3, 4, 5, 6, 7, 8];
 // divisible by the chunk size, the final group contains the remainder.
 console.log(_.chunk(numbers, 2));
 
-// EXPECTED ERROR:
+// =====================================================================
+// LESSON 216 — FIXING THE ERROR WITH @types/lodash.
+// =====================================================================
 //
-// Both the IDE and the TypeScript compiler (tsc) flag this with:
-//   "Could not find a declaration file for module 'lodash'."
+// The error from the previous lesson said:
+//   "Could not find a declaration file for module 'lodash'.
+//    Try `npm i --save-dev @types/lodash` ..."
 //
-// The JavaScript runtime would be perfectly happy with this code —
-// Lodash is installed and the import path resolves. The problem is
-// purely at the TYPE-CHECKING stage: TypeScript cannot see what
-// functions Lodash exports or what types they accept and return,
-// because the package ships no .d.ts files.
+// That hint points to the solution: the @types/* scope on npm contains
+// community-maintained TYPE DECLARATION PACKAGES for thousands of
+// JavaScript libraries that don't ship their own types.
 //
-// The next lesson will show how to fix this by installing type
-// declarations from the @types/* scope on npm.
+// INSTALLATION (as a development-only dependency):
+//   npm install --save-dev @types/lodash
+//
+// The --save-dev flag places the package under "devDependencies" in
+// package.json. Type declarations are only needed during development
+// and compilation — the production JavaScript output does not use them.
+//
+// THE DEFINITELYTYPED PROJECT:
+//
+// All @types/* packages come from a single GitHub monorepo called
+// DefinitelyTyped (github.com/DefinitelyTyped/DefinitelyTyped). It
+// houses .d.ts files for essentially every popular JavaScript library.
+// When you run "npm install @types/<pkg>", npm downloads the relevant
+// folder from that repository, published under the @types scope.
+//
+// Common examples follow the same pattern:
+//   - jQuery         → npm install --save-dev @types/jquery
+//   - React          → npm install --save-dev @types/react
+//   - Express        → npm install --save-dev @types/express
+//   - Node.js APIs   → npm install --save-dev @types/node
+//
+// With @types/lodash installed, the previous error disappears. The IDE
+// now provides autocomplete for all Lodash methods, shows parameter
+// types (e.g., chunk expects an array and a number), and infers the
+// return type of _.chunk(numbers, 2) as number[][].
+//
+// This is the canonical workflow for using any JavaScript-only library
+// in a TypeScript project: install the package itself, then install
+// its type declarations from @types/*.
+
+// Assigning the result to a variable makes the inferred return type
+// visible in the IDE tooltip — number[][] (an array of number arrays).
+const chunkedArray = _.chunk(numbers, 2);
+console.log(chunkedArray);
