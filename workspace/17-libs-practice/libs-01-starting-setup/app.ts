@@ -268,3 +268,46 @@ console.log(chunkedArray);
 //   - You are typing an entire library
 //   - You want declarations separated from runtime code
 //   - You are publishing a library for other TypeScript users
+
+// =====================================================================
+// LESSON 220 — TYPESCRIPT-AWARE vs. TYPESCRIPT-FIRST LIBRARIES (overview).
+// =====================================================================
+//
+// The Lodash scenario illustrated the most difficult case: a library
+// written in plain JavaScript that requires a separate @types package.
+// Many modern libraries are built differently and are far easier to
+// integrate into TypeScript projects. There are two important categories
+// beyond pure-JS libraries:
+//
+// CATEGORY A — LIBRARIES WRITTEN IN TYPESCRIPT.
+//
+// These are authored in TypeScript and ship pre-built type declarations
+// inside the same npm package. No @types/* install is needed — running
+// "npm install <library>" is enough for full type support out of the
+// box. Prisma is a typical example: its source is TypeScript, but it
+// can also be consumed from plain JavaScript projects.
+//
+// CATEGORY B — TYPESCRIPT-FIRST LIBRARIES.
+//
+// These go further: they are DESIGNED around TypeScript's type system
+// and expect to be used in TypeScript projects. The API exploits
+// advanced type features such that the library's true value only
+// becomes apparent when you have static types. Using them in plain
+// JavaScript usually works but loses most of the point of the library.
+//
+// Zod is a leading example. It defines runtime validators whose schemas
+// double as TypeScript types, so a single declaration gives you both
+// runtime validation AND compile-time type safety. That duality is the
+// whole selling point and is meaningless without TypeScript.
+//
+// QUICK DECISION GUIDE when adopting a library in a TypeScript project:
+//
+//   1. Install the package and import it.
+//   2. If TypeScript reports "Cannot find a declaration file", the
+//      library is plain JavaScript (category: Lodash). Look for an
+//      @types/<name> package.
+//   3. If imports work immediately without an @types install, the
+//      library either ships its own types (category A) or is
+//      TypeScript-first (category B).
+//
+// The next lesson will install and use Zod to see category B in action.
