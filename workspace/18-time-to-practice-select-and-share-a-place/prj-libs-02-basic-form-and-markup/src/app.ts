@@ -17,7 +17,7 @@
 // REQUEST URL (for reference, used in the next lesson):
 //   https://maps.googleapis.com/maps/api/geocode/json?address=...&key=...
 //
-// MANUAL SETUP (must be done BEFORE the next lesson's code can succeed):
+// ONE-TIME MANUAL SETUP (required to obtain a working key):
 //
 //   1. Sign in to a Google account.
 //   2. Visit the Google Maps Platform "Get Started" page:
@@ -30,11 +30,26 @@
 //   6. Copy the generated API key.
 //   7. OPTIONAL: restrict the key to a specific app/domain in the
 //      developer console for safety.
-//   8. Replace the placeholder below with the copied key.
+//   8. Place the key in a .env file at the repository root (see below).
 //
-// The API key is a SECRET. Do NOT commit a real key to a public
-// repository. For learning purposes we embed it here; production apps
-// should load it from environment variables or a backend proxy.
+// CREDENTIAL LOADING VIA dotenv-webpack:
+//
+// The API key lives in a .env file at the workspace root, NOT in this
+// source file. At build time the dotenv-webpack plugin (configured in
+// webpack.config.js) reads that .env file and statically substitutes
+// every `process.env.GOOGLE_API_KEY` reference in the compiled bundle
+// with the literal string from .env.
+//
+// Benefits:
+//   - One source of truth (the .env file) across all projects.
+//   - The real key never has to be hardcoded into committed source.
+//   - The browser bundle contains the value as a plain string at run
+//     time, so no `process` object exists in the browser — the
+//     substitution is complete before the bundle is shipped.
+//
+// For production apps, a .env file is still not truly secret because
+// it ends up baked into the client bundle. A backend proxy is the
+// proper defense — see the project README for that pattern.
 
 // FORM REFERENCE.
 //
@@ -61,10 +76,11 @@ const addressInput = document.getElementById('address')! as HTMLInputElement;
 
 // GOOGLE API KEY (lesson 227).
 //
-// Stored as a module-level constant so the next lesson can reference
-// it when building the request URL. Keep this placeholder until you
-// complete the manual setup above.
-const GOOGLE_API_KEY = 'YOUR_API_KEY_HERE';
+// Read from process.env.GOOGLE_API_KEY, which dotenv-webpack replaces
+// at build time with the value defined in the workspace-root .env file.
+// The ambient augmentation in env.d.ts narrows this specific variable
+// to a plain string, so no non-null assertion is needed here.
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 // SUBMIT HANDLER.
 //

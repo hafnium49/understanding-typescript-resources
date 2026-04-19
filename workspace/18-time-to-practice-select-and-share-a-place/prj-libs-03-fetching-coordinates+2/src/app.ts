@@ -39,10 +39,12 @@ import axios from "axios";
 const form = document.querySelector("form")!;
 const addressInput = document.getElementById("address")! as HTMLInputElement;
 
-// GOOGLE API KEY — replace with your own key from Google Cloud Console.
-// The value shown here is the course instructor's key (subject to
-// change or revocation). See lesson 227 for manual setup instructions.
-const GOOGLE_API_KEY = "AIzaSyCIaAc2c5M3VpbCH6PPq_guwy9lHuowXOs";
+// GOOGLE API KEY — loaded from the workspace-root .env file at build
+// time by the dotenv-webpack plugin (see webpack.config.js). The plugin
+// replaces this expression with a literal string during bundling, so
+// no `process` object exists at runtime in the browser.
+// The ambient augmentation in env.d.ts types this as a plain string.
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 // RESPONSE SHAPE — described as a named type alias for readability.
 //
