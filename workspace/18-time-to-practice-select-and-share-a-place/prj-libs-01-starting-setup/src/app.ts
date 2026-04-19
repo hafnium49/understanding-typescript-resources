@@ -1,14 +1,17 @@
-// LESSON 224: SECTION INTRODUCTION — "Select & Share a Place" demo project.
+// LESSON 224 — SECTION INTRODUCTION.
 //
-// This section applies what was covered in the previous section
-// (integrating third-party JavaScript libraries with TypeScript) to a
-// small real-world project. The goal is to build a "Select & Share a
-// Place" app that uses the Google Maps API and supporting libraries.
+// This directory captures the STARTING STATE of the "Select & Share a
+// Place" demo project — before any code has been written.
 //
-// This file is the empty starting point. The next lecture walks through
-// the overall project setup — the configuration (package.json,
-// tsconfig.json, webpack.config.js, index.html) is already in place, so
-// you can start writing feature code in src/app.ts once the walkthrough
-// is complete.
+// Later lessons progressively build up the project:
+//   - Lesson 225: adds HTML markup (form + map container) and app.css
+//                 → see prj-libs-02-basic-form-and-markup/
+//   - Lesson 226: adds the form submission handler in app.ts
+//                 → see prj-libs-02-basic-form-and-markup/src/app.ts
+//   - Lesson 227+: integrates axios and the Google Maps SDK
+//                 → see prj-libs-03-fetching-coordinates+2/
+//
+// This file stays empty so students can compare "before" (this dir) vs.
+// "after" (the later dirs) as the project evolves.
 
 // Code goes here!
