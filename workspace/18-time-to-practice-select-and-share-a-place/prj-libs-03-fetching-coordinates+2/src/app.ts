@@ -97,6 +97,8 @@ function searchAddressHandler(event: Event) {
       // failure in its body (e.g., an invalid address). Checking the
       // logical "status" field ensures we only proceed on real success.
       // Throwing inside .then() routes execution to the .catch() below.
+      console.log(response);
+      
       if (response.data.status !== "OK") {
         throw new Error("Could not fetch location!");
       }
