@@ -420,5 +420,50 @@ const content = JSON.parse(readFileSync('data.json').toString());
 // with no manual annotation required. Property access like
 // parsedData.title or parsedData.values[0] is fully type-checked.
 const parsedData = dataSchema.parse(content);
-console.log(parsedData);
+
+// =====================================================================
+// LESSON 223 — EXTRACTING A TYPE FROM A ZOD SCHEMA WITH z.infer.
+// =====================================================================
+//
+// What happens when you need to pass parsed data into a function that
+// expects a typed parameter? The function's parameter declaration is
+// TypeScript code, so it needs a named type for the shape that Zod
+// produces internally.
+//
+// THE NAIVE APPROACH — re-declaring the type by hand:
+//
+//   type Data = {
+//     title: string;
+//     id: number;
+//     values: (string | number)[];
+//   };
+//   function output(data: Data) { ... }
+//
+// This works but has a major problem: the schema and the type are
+// maintained in two places. If the schema gains or loses a field, the
+// type alias must be updated by hand, and any drift silently produces
+// incorrect runtime/compile-time expectations.
+//
+// THE ZOD APPROACH — z.infer<typeof schema>:
+//
+// Zod exposes a generic utility type called "infer" on the same z
+// object used to build schemas. You pass it "typeof schema" (note: a
+// TYPE, not a value — no parentheses, and z.infer is used with angle
+// brackets like other generic types) and it yields the exact shape
+// the schema represents. The type stays in lockstep with the schema
+// automatically: update the schema and the alias updates too.
+type Data = z.infer<typeof dataSchema>;
+
+// The function parameter is now typed as Data, which resolves to the
+// same shape that dataSchema.parse() returns. No manual type work.
+function output(data: Data) {
+  console.log(data);
+}
+
+output(parsedData);
+
+// BEST OF BOTH WORLDS:
+// - Runtime validation guarantees the data genuinely matches the shape.
+// - Static type inference (via z.infer) gives us compile-time safety
+//   throughout the rest of the TypeScript code, all from one schema.
 
