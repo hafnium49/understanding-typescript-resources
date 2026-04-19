@@ -1,3 +1,16 @@
+<!--
+  LESSON 225 — BASIC FORM & MARKUP.
+
+  Builds the minimal UI for the "Select & Share a Place" demo:
+    1. A container where Google Maps will eventually render.
+    2. A placeholder paragraph shown before a place is selected.
+    3. A form for entering an address.
+
+  The TypeScript code (app.ts) will:
+    - Reach into this DOM to read the entered address.
+    - Send it to the Google Geocoding API to get coordinates.
+    - Render those coordinates as a map inside #map.
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,14 +19,29 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Understanding TypeScript</title>
     <script src="dist/bundle.js" defer></script>
+    <!-- External stylesheet added in this lesson (see app.css). -->
     <link rel="stylesheet" href="app.css">
   </head>
   <body>
+    <!--
+      Map container. The id "map" is how app.ts and app.css will target
+      this element. It starts holding a placeholder paragraph so the user
+      sees something before selecting a place; once a place is chosen,
+      the Google Maps SDK will replace its content with a rendered map.
+    -->
     <div id="map">
       <p>Please enter an address!</p>
     </div>
+    <!--
+      Form intentionally has no "action" or "method" attribute — the
+      submit event will be handled in TypeScript, not via a browser form
+      submission. This lets us call preventDefault() on the event and
+      route the entered value through the Google API asynchronously.
+    -->
     <form>
+      <!-- id="address" lets app.ts grab this input via getElementById. -->
       <input type="text" id="address">
+      <!-- type="submit" triggers the form's submit event on click. -->
       <button type="submit">SEARCH ADDRESS</button>
     </form>
   </body>

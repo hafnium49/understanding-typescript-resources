@@ -1,7 +1,31 @@
+/*
+  LESSON 225 — BASIC STYLING.
+
+  Minimal styles to make the page legible. This is not a CSS course, so
+  only the essentials are covered: a visible map container, centered
+  placeholder text, and a centered form. Feel free to extend this with
+  richer styling for the input and button on your own.
+*/
+
+/*
+  Default sans-serif for the whole document. Applying this at the html
+  element level is a common baseline so child elements inherit it
+  without needing individual rules.
+*/
 html {
   font-family: sans-serif;
 }
 
+/*
+  Map container styling.
+  - 90% width + "margin: 2rem auto" → centers the box horizontally.
+  - Fixed 20rem height → gives the map a visible area before Google Maps
+    injects its own content.
+  - Border makes the placeholder box visible against the page background.
+  - display:flex with justify-content/align-items center → vertically and
+    horizontally centers the placeholder paragraph inside the box.
+  - text-align:center → handles multi-line text if the placeholder wraps.
+*/
 #map {
   width: 90%;
   height: 20rem;
@@ -13,6 +37,13 @@ html {
   text-align: center;
 }
 
+/*
+  Form styling — simply centers the input + button as a block.
+  margin: 2rem auto adds breathing room above/below, and auto on the
+  horizontal axis centers the form relative to the body's block flow
+  (though text-align:center on inline-block children does most of the
+  visual centering work here).
+*/
 form {
   text-align: center;
   margin: 2rem auto;
