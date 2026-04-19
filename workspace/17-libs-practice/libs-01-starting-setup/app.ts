@@ -90,3 +90,52 @@ console.log(_.chunk(numbers, 2));
 // visible in the IDE tooltip — number[][] (an array of number arrays).
 const chunkedArray = _.chunk(numbers, 2);
 console.log(chunkedArray);
+
+// =====================================================================
+// LESSON 217 — WHAT DID WE JUST INSTALL? (peeking inside @types/lodash).
+// =====================================================================
+//
+// The @types/lodash package lives at node_modules/@types/lodash/. Opening
+// that folder reveals dozens of .d.ts files — one (or more) for each
+// Lodash utility method (chunk.d.ts, map.d.ts, pick.d.ts, etc.).
+//
+// WHAT .d.ts FILES CONTAIN:
+// Declaration files carry ONLY type information: interfaces, type
+// aliases, and function signatures. No runtime logic, no actual
+// implementation — that lives in the JavaScript source. The .d.ts
+// files purely tell TypeScript "here's what this library looks like".
+//
+// STRUCTURE OF @types/lodash:
+//   - index.d.ts         — the entry point, references many sub-files
+//   - chunk.d.ts         — imports chunk from index and re-exports
+//   - common/array.d.ts  — detailed interfaces for array utilities
+//   - common/*.d.ts      — further groupings (collection, object, etc.)
+//
+// TWO UNFAMILIAR SYNTAX PIECES APPEAR IN THESE FILES:
+//
+//   /// <reference path="..." />
+//     A triple-slash directive. It LOOKS like a comment but is actually
+//     a TypeScript feature for pulling other declaration files into
+//     the current scope. Used to split a large set of types across
+//     many files while still making them all visible together.
+//     (Covered in depth in the namespaces & modules section.)
+//
+//   declare module 'lodash' { ... }
+//     The "declare" keyword tells TypeScript about the existence of
+//     something without providing runtime code. "declare module" groups
+//     type definitions under a module name so that even when they live
+//     in different files, TypeScript treats them as one logical unit.
+//
+// WHEN WOULD YOU WRITE THESE YOURSELF?
+// Essentially only if you maintain a JavaScript library and want to
+// ship type support to TypeScript users. As an APPLICATION developer
+// (the typical case in this course), you will never need to author
+// .d.ts files — you just install the appropriate @types/* package and
+// let the community-maintained declarations do the work.
+//
+// KEY TAKEAWAY:
+// The @types/* install is not magic. It downloads a folder of plain
+// .d.ts files into node_modules and TypeScript picks them up
+// automatically. The library itself (lodash) is still plain JavaScript
+// at runtime; the .d.ts files just teach the compiler what types that
+// JavaScript code operates on.
