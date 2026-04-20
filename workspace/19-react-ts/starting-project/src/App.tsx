@@ -142,6 +142,37 @@ import Header from './components/Header.tsx';
 import CourseGoals from './components/CourseGoals.tsx';
 import goalsImg from './assets/goals.jpg';
 
+// =====================================================================
+// LESSON 240 — DELETE HANDLER WITH FUNCTIONAL STATE UPDATE.
+// =====================================================================
+//
+// The handleDeleteGoal function signature must match the onDelete
+// prop's function type declared in CourseGoalsProps: it takes an id
+// (number) and returns nothing. TypeScript checks this match at the
+// call site — passing a mismatched function would be a compile error.
+//
+// FUNCTIONAL STATE UPDATE:
+// Whenever new state depends on the PREVIOUS state, React recommends
+// passing a FUNCTION (not a plain value) to the state setter:
+//
+//   setGoals((prevGoals) => ...)
+//
+// React invokes this updater with the latest state snapshot, avoiding
+// stale-closure bugs when multiple updates are queued. TypeScript
+// automatically infers "prevGoals" as the same type as the state.
+//
+// IMMUTABLE UPDATE WITH filter():
+// The updater returns a NEW array produced by Array.prototype.filter,
+// keeping only goals whose id does not match the deleted id. Returning
+// true from the predicate keeps an element; returning false drops it.
+// Using filter (instead of splice) keeps the original array untouched —
+// React requires a new reference to detect the state change.
+//
+// PASSING THE FUNCTION (NOT CALLING IT):
+// onDelete={handleDeleteGoal}   ← correct: passes the function reference
+// onDelete={handleDeleteGoal(1)} ← wrong: calls it immediately and
+//                                  passes the return value (undefined)
+
 function App() {
   const [goals, setGoals] = useState([
     {
@@ -156,12 +187,16 @@ function App() {
     },
   ]);
 
+  function handleDeleteGoal(id: number) {
+    setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== id));
+  }
+
   return (
     <main>
       <Header image={{ src: goalsImg, alt: 'A list of goals.' }}>
         <h1>Your Course Goals</h1>
       </Header>
-      <CourseGoals goals={goals} />
+      <CourseGoals goals={goals} onDelete={handleDeleteGoal} />
     </main>
   );
 }

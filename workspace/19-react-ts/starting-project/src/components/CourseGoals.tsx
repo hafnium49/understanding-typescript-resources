@@ -61,11 +61,35 @@ type Goal = {
   description: string;
 };
 
+// =====================================================================
+// LESSON 240 — FUNCTION PROPS FOR PARENT-CHILD COMMUNICATION.
+// =====================================================================
+//
+// The delete button lives inside CourseGoals, but the goals state lives
+// in App (the parent). To delete a goal, the child must notify the
+// parent. In React, this is done by passing a FUNCTION DOWN as a prop.
+// The child invokes that function, and the parent's handler runs —
+// updating state at the correct level.
+//
+// TYPING A FUNCTION PROP:
+// The "onDelete" prop is typed as a FUNCTION TYPE using arrow-style
+// syntax in a type position:
+//
+//   onDelete: (id: number) => void;
+//
+// Left of the arrow: the parameters the function must accept.
+// Right of the arrow: the return type. Here the handler is called for
+// its side effect (updating state), so the return is "void".
+//
+// You could also make the prop optional (onDelete?: (...) => void)
+// if a component can function without the callback — we do not here.
+
 interface CourseGoalsProps {
   goals: Goal[];
+  onDelete: (id: number) => void;
 }
 
-export default function CourseGoals({ goals }: CourseGoalsProps) {
+export default function CourseGoals({ goals, onDelete }: CourseGoalsProps) {
   return (
     <ul>
       {goals.map((goal) => (
@@ -76,11 +100,14 @@ export default function CourseGoals({ goals }: CourseGoalsProps) {
               <p>{goal.description}</p>
             </div>
             {/*
-              The delete button has no handler yet — it will be wired up
-              in a later lesson, once we introduce state management for
-              the goals list.
+              The onClick handler uses an inline arrow function to
+              forward goal.id to the parent's onDelete callback. We
+              cannot write onClick={onDelete} directly because the
+              button's click handler would pass a MouseEvent, not the
+              goal id. Wrapping in an arrow function lets us control
+              which argument is actually forwarded.
             */}
-            <button>Delete</button>
+            <button onClick={() => onDelete(goal.id)}>Delete</button>
           </article>
         </li>
       ))}
