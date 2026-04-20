@@ -140,6 +140,7 @@
 import { useState } from 'react';
 import Header from './components/Header.tsx';
 import CourseGoals from './components/CourseGoals.tsx';
+import NewGoal from './components/NewGoal.tsx';
 import goalsImg from './assets/goals.jpg';
 
 // =====================================================================
@@ -191,11 +192,45 @@ function App() {
     setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== id));
   }
 
+  // =====================================================================
+  // LESSON 243 — ADDING A NEW GOAL.
+  // =====================================================================
+  //
+  // The parameters (text, summary) match the signature declared in
+  // NewGoalProps.onAdd — TypeScript enforces that match at the point
+  // where we pass handleAddGoal to the NewGoal component.
+  //
+  // IMMUTABLE UPDATE WITH concat():
+  // Array.concat returns a NEW array that includes all existing items
+  // plus the new one. Returning a new array (instead of .push()-ing
+  // into the old one) is important — React compares references to
+  // detect changes, so mutating in place would fail to trigger re-render.
+  //
+  // TYPESCRIPT CATCHES STRUCTURAL MISMATCHES:
+  // The new goal object's keys must exactly match the state's inferred
+  // shape (id/title/description). Using a wrong name (e.g., "summary"
+  // instead of "description") surfaces as an "Object literal may only
+  // specify known properties" error — TypeScript preventing a subtle
+  // bug before it reaches runtime.
+  //
+  // Math.random() is used for a quick id. In real apps prefer a proper
+  // unique id (e.g., crypto.randomUUID()) to avoid collisions.
+  function handleAddGoal(text: string, summary: string) {
+    setGoals((prevGoals) =>
+      prevGoals.concat({
+        id: Math.random(),
+        title: text,
+        description: summary,
+      })
+    );
+  }
+
   return (
     <main>
       <Header image={{ src: goalsImg, alt: 'A list of goals.' }}>
         <h1>Your Course Goals</h1>
       </Header>
+      <NewGoal onAdd={handleAddGoal} />
       <CourseGoals goals={goals} onDelete={handleDeleteGoal} />
     </main>
   );

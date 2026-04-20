@@ -70,10 +70,28 @@
 // The "!" tells TypeScript "trust me, this is not null". If the
 // assumption is wrong at runtime, a TypeError is thrown.
 
+// =====================================================================
+// LESSON 243 — FORWARDING FORM DATA TO THE PARENT VIA A CALLBACK PROP.
+// =====================================================================
+//
+// NewGoal extracts the two input values locally, then hands them to
+// the parent (App) through a function prop called "onAdd". The parent
+// owns the goals state and is responsible for turning the raw text
+// into a new Goal object and pushing it into the list.
+//
+// This mirrors the same "lift state up + pass callback down" pattern
+// used for deletion (see CourseGoals' onDelete prop). The difference
+// here is that onAdd carries TWO string parameters — the goal's title
+// and its summary text — instead of a single id.
+
 import { useRef } from 'react';
 import type { FormEvent } from 'react';
 
-export default function NewGoal() {
+interface NewGoalProps {
+  onAdd: (text: string, summary: string) => void;
+}
+
+export default function NewGoal({ onAdd }: NewGoalProps) {
   // Refs start as null and are populated by React when the DOM element
   // mounts (see the "ref" prop on the inputs below).
   const goalRef = useRef<HTMLInputElement>(null);
@@ -87,9 +105,9 @@ export default function NewGoal() {
     const enteredGoal = goalRef.current!.value;
     const enteredSummary = summaryRef.current!.value;
 
-    // For now, we just log the values — forwarding them up to the
-    // parent component is covered in the next lesson.
-    console.log(enteredGoal, enteredSummary);
+    // Hand the raw text values to the parent. Any validation (e.g.,
+    // rejecting empty strings) could happen here before calling onAdd.
+    onAdd(enteredGoal, enteredSummary);
   }
 
   return (
