@@ -53,12 +53,40 @@
 // signals JSX support. This is analogous to how plain React files use
 // ".jsx" instead of ".js".
 //
-// The simplified App.tsx below returns a plain string — a minimal
-// starting point before we begin assembling real components. See
-// components/Header.tsx for the first typed component.
+// =====================================================================
+// LESSON 235 — USING THE TYPED COMPONENT & VITE IMAGE IMPORTS.
+// =====================================================================
+//
+// IMPORTING LOCAL IMAGES IN VITE:
+// In plain JavaScript, you cannot "import" an image file — imports only
+// work for JavaScript modules. Vite extends this by rewriting image
+// imports at build time: the import expression yields the PUBLIC URL
+// of the asset after bundling (e.g., "/assets/goals-ab12cd.jpg"),
+// suitable for use in <img src>.
+//
+// This is a Vite convenience, not a TypeScript or vanilla JS feature.
+//
+// FILE EXTENSIONS IN IMPORT PATHS:
+// You can write the import as './components/Header' or
+// './components/Header.tsx' — both work. Include the extension if your
+// team prefers explicit paths; omit it to rely on resolution. The only
+// rule: do NOT use ".jsx" or ".js" — stick with ".tsx" or no extension.
+//
+// TYPE CHECKING AT THE CALL SITE:
+// Because Header's props parameter is typed as HeaderProps, TypeScript
+// verifies that we pass a matching object. Omitting the "image" prop,
+// misspelling "src", or passing a non-string would all be compile errors
+// — the same type safety you get for function calls.
+
+import Header from './components/Header.tsx';
+import goalsImg from './assets/goals.jpg';
 
 function App() {
-  return <>Hello World</>;
+  return (
+    <main>
+      <Header image={{ src: goalsImg, alt: 'A list of goals.' }} />
+    </main>
+  );
 }
 
 export default App;
