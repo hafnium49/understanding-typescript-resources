@@ -92,7 +92,21 @@
 // will not complain. If "children" were required (no "?"), omitting
 // the inner content would produce a compile error.
 
+// =====================================================================
+// LESSON 237 — RENDERING A LIST OF GOALS.
+// =====================================================================
+//
+// We now use the new CourseGoals component and pass a hardcoded array
+// of goal objects as its "goals" prop. TypeScript verifies that each
+// object in this array matches the "Goal" shape declared in
+// CourseGoals.tsx — missing fields or wrong types would be compile
+// errors at this call site, not buried runtime surprises.
+//
+// State management for adding/deleting goals is deferred to a later
+// lesson; for now, the list is static.
+
 import Header from './components/Header.tsx';
+import CourseGoals from './components/CourseGoals.tsx';
 import goalsImg from './assets/goals.jpg';
 
 function App() {
@@ -101,6 +115,20 @@ function App() {
       <Header image={{ src: goalsImg, alt: 'A list of goals.' }}>
         <h1>Your Course Goals</h1>
       </Header>
+      <CourseGoals
+        goals={[
+          {
+            id: 1,
+            title: 'Learn TS',
+            description: 'Learn TypeScript from the ground up',
+          },
+          {
+            id: 2,
+            title: 'Practice TS',
+            description: 'Practice working with TypeScript',
+          },
+        ]}
+      />
     </main>
   );
 }
