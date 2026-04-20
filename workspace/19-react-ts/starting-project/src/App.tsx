@@ -77,6 +77,20 @@
 // verifies that we pass a matching object. Omitting the "image" prop,
 // misspelling "src", or passing a non-string would all be compile errors
 // — the same type safety you get for function calls.
+//
+// =====================================================================
+// LESSON 236 — PASSING CONTENT VIA THE children PROP.
+// =====================================================================
+//
+// Anything placed between the opening and closing tags of a component
+// is automatically delivered to that component as its "children" prop.
+// Here, the <h1> element becomes the "children" of <Header>, which
+// renders it inside its own <header> wrapper (see Header.tsx).
+//
+// Because the "children" prop on HeaderProps is optional (declared with
+// "?"), Header can also be used WITHOUT nested content — TypeScript
+// will not complain. If "children" were required (no "?"), omitting
+// the inner content would produce a compile error.
 
 import Header from './components/Header.tsx';
 import goalsImg from './assets/goals.jpg';
@@ -84,7 +98,9 @@ import goalsImg from './assets/goals.jpg';
 function App() {
   return (
     <main>
-      <Header image={{ src: goalsImg, alt: 'A list of goals.' }} />
+      <Header image={{ src: goalsImg, alt: 'A list of goals.' }}>
+        <h1>Your Course Goals</h1>
+      </Header>
     </main>
   );
 }
