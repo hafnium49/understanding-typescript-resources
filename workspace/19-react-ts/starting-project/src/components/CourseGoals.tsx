@@ -19,6 +19,41 @@
 // track which items changed, were added, or were removed between
 // renders. "key" is a React rule, not a TypeScript one — but using
 // a typed id field (like goal.id: number) makes it easy to satisfy.
+//
+// =====================================================================
+// LESSON 238 — AN ALTERNATIVE WAY TO TYPE COMPONENTS (FC / FunctionComponent).
+// =====================================================================
+//
+// You may encounter an older style in some codebases that types
+// components using React's "FC" (alias for "FunctionComponent")
+// generic type. It looks like this:
+//
+//   import { FC } from 'react';
+//
+//   const CourseGoals: FC<CourseGoalsProps> = ({ goals }) => {
+//     return <ul>...</ul>;
+//   };
+//
+//   export default CourseGoals;
+//
+// HOW IT WORKS:
+//   - The component is written as a CONST holding an arrow function,
+//     rather than a named function declaration.
+//   - "FC" is a GENERIC TYPE: you pass the props type inside angle
+//     brackets as a type parameter (FC<CourseGoalsProps>).
+//   - TypeScript maps the type parameter to the component's props
+//     argument, so destructuring "{ goals }" works without an explicit
+//     annotation on the parameter itself.
+//
+// WHY IT IS NO LONGER RECOMMENDED:
+//   - More verbose than annotating the parameter directly.
+//   - Historically added an implicit "children" prop even for components
+//     that did not accept children, which caused confusion.
+//   - Modern React docs recommend the direct parameter annotation style
+//     used below.
+//
+// This code uses the recommended direct-annotation style — no "FC"
+// import needed.
 
 type Goal = {
   id: number;
