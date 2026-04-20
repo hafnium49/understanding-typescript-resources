@@ -118,3 +118,67 @@ function searchAddressHandler(event: Event) {
 }
 
 form.addEventListener("submit", searchAddressHandler);
+
+// =====================================================================
+// LESSON 230 — ALTERNATIVE: WORKING WITHOUT A CREDIT CARD (OpenLayers).
+// =====================================================================
+//
+// Google Maps requires a credit card to generate an API key even for
+// free-tier usage. If you cannot provide one, swap in OpenLayers
+// instead — an open-source map renderer that needs no API key.
+//
+// QUICK START: https://openlayers.org/doc/quickstart.html
+//
+// MINIMAL REPLACEMENT PATTERN.
+//
+// 1. Add the OpenLayers CSS + script tags to index.html (from CDN),
+//    replacing the dynamically-injected Google Maps SDK:
+//
+//      <link
+//        rel="stylesheet"
+//        href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css">
+//      <script
+//        src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js">
+//      </script>
+//
+// 2. Because OpenLayers ships no TypeScript types in this CDN build,
+//    declare the global `ol` as `any` — same escape hatch pattern we
+//    saw earlier with `declare var google: any;`:
+//
+//      declare var ol: any;
+//
+// 3. Without a Google API key the geocoding request will fail, so
+//    use hard-coded dummy coordinates in the submit handler. Clear
+//    the placeholder <p> inside #map before constructing the map so
+//    the tile layer renders cleanly:
+//
+//      function searchAddressHandler(event: Event) {
+//        event.preventDefault();
+//        const coordinates = { lat: 40.41, lng: -73.99 };
+//        document.getElementById('map')!.innerHTML = '';
+//        new ol.Map({
+//          target: 'map',
+//          layers: [ new ol.layer.Tile({ source: new ol.source.OSM() }) ],
+//          view: new ol.View({
+//            center: ol.proj.fromLonLat([coordinates.lng, coordinates.lat]),
+//            zoom: 16
+//          })
+//        });
+//      }
+//
+// CONCEPTS DEMONSTRATED IN THIS ALTERNATIVE.
+//
+//   - Map source comes from OpenStreetMap (ol.source.OSM) — community
+//     tile data, no account or key required.
+//   - ol.proj.fromLonLat converts [longitude, latitude] from WGS84 to
+//     the Web Mercator projection that OL uses internally. Note the
+//     argument order is LON, LAT — opposite of Google Maps' lat/lng
+//     object form.
+//   - ol.View holds the camera state (center + zoom).
+//   - ol.layer.Tile is one of several layer kinds (others: VectorLayer
+//     for points/lines, ImageLayer for raster overlays, etc.).
+//   - The map "target" is the id of the host element as a string,
+//     rather than a DOM reference like Google Maps.
+//
+// See the OpenLayers documentation for adding markers, popups, vector
+// layers, and geocoding via alternative free services (e.g., Nominatim).
