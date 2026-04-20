@@ -96,39 +96,72 @@
 // LESSON 237 — RENDERING A LIST OF GOALS.
 // =====================================================================
 //
-// We now use the new CourseGoals component and pass a hardcoded array
-// of goal objects as its "goals" prop. TypeScript verifies that each
-// object in this array matches the "Goal" shape declared in
-// CourseGoals.tsx — missing fields or wrong types would be compile
-// errors at this call site, not buried runtime surprises.
+// We use the CourseGoals component and pass an array of goal objects
+// as its "goals" prop. TypeScript verifies that each object matches
+// the "Goal" shape declared in CourseGoals.tsx — missing fields or
+// wrong types would be compile errors at this call site.
 //
-// State management for adding/deleting goals is deferred to a later
-// lesson; for now, the list is static.
+// =====================================================================
+// LESSON 239 — MANAGING THE GOALS LIST AS STATE.
+// =====================================================================
+//
+// The goals list is no longer a static literal — it is managed by
+// React's useState hook. This allows us to change the list at runtime
+// (add or delete goals) and have React re-render the UI automatically.
+//
+// WHY STATE LIVES IN App, NOT IN CourseGoals:
+// We will soon need to mutate the list from a SIBLING component (the
+// form for creating new goals). State in React flows DOWN through
+// props, so we must "lift" the state up to the nearest common
+// ancestor — App — that owns both children. This is a standard
+// React pattern, not TypeScript-specific.
+//
+// TYPING useState:
+// useState is a GENERIC function. It can be called in two ways:
+//
+//   1. Pass the state type as a type parameter in angle brackets:
+//        const [goals, setGoals] = useState<Goal[]>([]);
+//      Useful when the initial value alone is ambiguous (e.g., an empty
+//      array could be any element type).
+//
+//   2. Let TypeScript INFER the type from a concrete initial value:
+//        useState([{ id: 1, ... }])   ← inferred as the shape of the literal
+//      Works well when the initial value is unambiguous.
+//
+// Below, we use option 2: the initial array contains two concrete goal
+// objects, so TypeScript infers the state type as an array of objects
+// with id/title/description fields. That inferred shape happens to
+// match the "Goal" type in CourseGoals, so passing "goals" to the
+// "goals" prop type-checks correctly.
+//
+// useState returns a TUPLE: [currentValue, setterFunction]. The setter
+// triggers a re-render when called with a new value.
 
+import { useState } from 'react';
 import Header from './components/Header.tsx';
 import CourseGoals from './components/CourseGoals.tsx';
 import goalsImg from './assets/goals.jpg';
 
 function App() {
+  const [goals, setGoals] = useState([
+    {
+      id: 1,
+      title: 'Learn TS',
+      description: 'Learn TypeScript from the ground up',
+    },
+    {
+      id: 2,
+      title: 'Practice TS',
+      description: 'Practice working with TypeScript',
+    },
+  ]);
+
   return (
     <main>
       <Header image={{ src: goalsImg, alt: 'A list of goals.' }}>
         <h1>Your Course Goals</h1>
       </Header>
-      <CourseGoals
-        goals={[
-          {
-            id: 1,
-            title: 'Learn TS',
-            description: 'Learn TypeScript from the ground up',
-          },
-          {
-            id: 2,
-            title: 'Practice TS',
-            description: 'Practice working with TypeScript',
-          },
-        ]}
-      />
+      <CourseGoals goals={goals} />
     </main>
   );
 }
