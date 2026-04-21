@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "compile": "tsc",
-    "start": "node dist/app.js"
+    "start": "node app.ts"
   },
   "keywords": [],
   "author": "",
