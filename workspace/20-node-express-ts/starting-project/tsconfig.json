@@ -73,6 +73,33 @@
     // option, TypeScript would silently erase type-only imports for us;
     // with it enabled, Node's lighter-weight type stripper can handle the
     // job because the intent is already spelled out in the source.
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+
+    // LESSON 255: GUARDING AGAINST NON-STRIPPABLE TYPESCRIPT SYNTAX.
+    // Node.js's native TypeScript support operates in a "strip-only" mode by
+    // default: it erases TypeScript-specific syntax (type annotations,
+    // interfaces, the `type` keyword on imports) and runs what's left as
+    // JavaScript. Most TS features are fine because they really are just
+    // extra annotations that disappear when removed.
+    //
+    // A few features, however, are not erasable — they have no pure-JS
+    // equivalent and require an actual code transformation. `enum` is the
+    // headline example: it compiles into a runtime object with numeric or
+    // string key/value mappings. Parameter-property shorthand in classes
+    // (e.g. `constructor(private name: string)`) is another. Running a file
+    // that uses these under strip-only mode produces an error like
+    // "TypeScript enum is not supported in strip-only mode". The workaround
+    // Node offers is the `--experimental-transform-types` flag, which
+    // performs a real transformation — at a cost: a measurable runtime
+    // penalty versus strip-only.
+    //
+    // Setting `erasableSyntaxOnly: true` flips this safety check to compile
+    // time. The editor and `tsc` now refuse code that uses non-strippable
+    // syntax, so problems surface while typing rather than at `node`. It
+    // requires TypeScript 5.8 or later (we are using 6.0.3 here). The
+    // practical advice: stick to strip-only, and replace features like
+    // `enum` with alternatives that are pure types — for example a string
+    // literal union such as `type TodoType = 'basic' | 'urgent'`.
+    "erasableSyntaxOnly": true
   }
 }
