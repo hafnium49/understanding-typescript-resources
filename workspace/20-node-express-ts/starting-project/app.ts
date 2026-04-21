@@ -4,42 +4,37 @@
 // with Node.js.
 
 // LESSON 250: REPLACING THE RAW HTTP SERVER WITH EXPRESS.JS.
-// The previous lesson used Node's built-in `http` module directly. While that
-// works, larger applications quickly get verbose — parsing URLs, matching
-// methods, and formatting responses are all hand-rolled. Express is a thin
-// framework that takes care of those concerns and is still the most widely
-// adopted choice in the Node ecosystem. It is not, however, authored in
-// TypeScript, so the compiler cannot know its API without help: we also
-// install @types/express as a dev dependency to unlock editor autocompletion
-// and type checking for `req` and `res`.
-//
-// Note the default-import style: `express` is the package's main export (a
-// factory function), and `esModuleInterop` in tsconfig.json lets us bring it
-// in with ordinary ES-module syntax even though the package itself ships as
-// CommonJS.
+// Express is installed alongside `@types/express` so the compiler understands
+// its API. The default-import style works here thanks to `esModuleInterop`
+// in tsconfig.json.
 import express from 'express';
 
-// Calling the imported function returns a fresh application instance. Think
-// of it as the object that owns all the routes, middleware, and the server
-// lifecycle for this app.
+// LESSON 252: MOUNTING THE TODO ROUTES.
+// The router from routes/todo.ts collects every todo endpoint. Importing it
+// here lets the application layer hand off matching requests to that module.
+//
+// Notice the `.js` extension in the import path even though the source file
+// is a .ts file. With `module: NodeNext`, TypeScript follows Node's ESM
+// resolution rules, which require a concrete file extension — and it expects
+// the extension of the *emitted* JavaScript, not the TypeScript input.
+// Forgetting this (or writing `.ts`) is a classic early mistake.
+import todoRoutes from './routes/todo.js';
+
 const app = express();
 
-// Route registration. `app.get` attaches a handler that only fires for HTTP
-// GET requests matching the given path — here, the root URL "/". Express
-// provides matching helpers for the other verbs (`post`, `put`, etc.), plus
-// `app.use` for middleware that should run regardless of method/path.
-app.get('/', (req, res) => {
-  // The request object still exposes the raw HTTP method, which is useful
-  // when debugging or inspecting traffic during development.
-  console.log(req.method);
+// LESSON 252: BODY PARSING MIDDLEWARE.
+// Express does not read request bodies by default. `express.json()` returns
+// a middleware function that, for every incoming request, checks for a JSON
+// Content-Type, reads and parses the payload, and exposes the result on
+// `req.body`. It must be registered *before* any route that expects
+// `req.body` to be populated — middleware runs in the order it is added.
+app.use(express.json());
 
-  // `res.json` serializes the value to JSON, sets the Content-Type header
-  // to application/json, and sends the response in one step. `res.end`
-  // (seen in the previous lesson) remains available, but `res.json` is
-  // what you reach for when returning structured API data.
-  res.json({ message: 'Hello World' });
-});
+// LESSON 252: ATTACHING THE RESOURCE ROUTES.
+// `app.use(todoRoutes)` makes every route registered on the todo router a
+// real route on the application. We could also pass a path prefix here
+// (e.g. `app.use('/api', todoRoutes)`) to namespace the endpoints; omitting
+// the prefix mounts them at the root.
+app.use(todoRoutes);
 
-// The application object itself knows how to start an HTTP server on the
-// given port — no need to construct one manually with `createServer`.
 app.listen(3000);

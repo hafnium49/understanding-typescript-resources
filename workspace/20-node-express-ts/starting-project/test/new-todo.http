@@ -1,0 +1,17 @@
+### LESSON 252: SMOKE TEST — CREATE A NEW TODO
+# This file is consumed by the REST Client VS Code extension
+# (https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+# Clicking "Send Request" above the line starting with POST fires the request
+# directly from the editor and opens the response in a side panel. Any other
+# HTTP client (curl, Postman, HTTPie, ...) can reproduce the same call.
+#
+# The Content-Type header is what triggers Express's `express.json()`
+# middleware to parse the body below and expose it as `req.body` inside the
+# route handler. Remove the header and `req.body.text` would come through as
+# undefined.
+POST http://localhost:3000/todos
+Content-Type: application/json
+
+{
+  "text": "Some new todo."
+}
