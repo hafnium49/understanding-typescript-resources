@@ -41,6 +41,11 @@
     // Enables TypeScript's strongest type-checking rules as a single switch.
     // Turning this off would let implicit `any` types and other loose patterns
     // slip through, which defeats most of the reason we adopted TypeScript.
-    "strict": true
+    "strict": true,
+
+    // Explicitly loads the Node.js ambient types installed via `@types/node`.
+    // Without this, the compiler in use here refuses to resolve core modules
+    // like `http` and reports that the `http` identifier cannot be found.
+    "types": ["node"]
   }
 }
