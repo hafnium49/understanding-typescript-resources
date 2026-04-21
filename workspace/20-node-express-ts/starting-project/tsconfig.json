@@ -1,15 +1,46 @@
 {
+  // LESSON 248: TSCONFIG FOR A NODE.JS + TYPESCRIPT PROJECT.
+  // Everything the TypeScript compiler needs to know about this project lives
+  // inside "compilerOptions". When the "compile" npm script runs `tsc`, the
+  // compiler auto-discovers this file and applies the settings below to every
+  // .ts file it finds.
   "compilerOptions": {
+    // The JavaScript language level the emitted code will use. Because the
+    // output here is consumed by Node.js (not an old browser), we can pick a
+    // modern dialect and skip heavy down-leveling. Keep this in sync with the
+    // minimum Node.js version you intend to support.
     "target": "es2022",
+
+    // Smooths over the mismatch between CommonJS modules (the traditional
+    // Node.js format) and ES modules (the `import`/`export` syntax). Some
+    // third-party packages still ship CommonJS; this flag makes default
+    // imports against those packages behave as students would expect.
     "esModuleInterop": true,
+
+    // Skip type-checking the .d.ts declaration files that ship with npm
+    // packages. It trades a bit of theoretical safety for noticeably faster
+    // feedback inside the editor and the compiler.
     "skipLibCheck": true,
+
+    // Tells the compiler to emit and resolve modules using Node.js's modern
+    // module resolution rules. Paired with "type": "module" in package.json,
+    // this keeps `import`/`export` statements working correctly in both our
+    // own code and in libraries we install.
     "module": "NodeNext",
+
+    // Destination folder for the compiled .js files. Our "start" script in
+    // package.json assumes this path — if you rename it here, update that too.
     "outDir": "dist",
+
+    // Built-in library type definitions to include. "es2022" covers the
+    // language features that match our target. "dom" is added even though we
+    // are running on the server — without it, TypeScript does not know about
+    // the global `console` object and would flag `console.log` as an error.
     "lib": ["es2022", "dom"],
-    "strict": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "verbatimModuleSyntax": true,
-    "erasableSyntaxOnly": true
+
+    // Enables TypeScript's strongest type-checking rules as a single switch.
+    // Turning this off would let implicit `any` types and other loose patterns
+    // slip through, which defeats most of the reason we adopted TypeScript.
+    "strict": true
   }
 }
