@@ -13,13 +13,22 @@
 // expression rather than inline inside a route helper, so Express can no
 // longer infer the parameter types for us. These named imports come from
 // @types/express and let us annotate the middleware explicitly.
-import express, { Request, Response, NextFunction } from 'express';
+//
+// LESSON 254: TYPE-ONLY IMPORTS GET THE `type` KEYWORD.
+// `Request`, `Response`, and `NextFunction` are interfaces — they exist only
+// inside TypeScript and have no runtime value. With `verbatimModuleSyntax`
+// turned on, every such import must be marked explicitly so Node's built-in
+// type stripper can safely erase it before execution. `express` itself is a
+// real runtime value (the factory function), so it stays a plain import.
+import express, { type Request, type Response, type NextFunction } from 'express';
 
 // LESSON 252: MOUNTING THE TODO ROUTES.
-// The `.js` extension is intentional even though the source file is `.ts`.
-// Under `module: NodeNext`, TypeScript applies Node's ESM resolution rules,
-// which require the extension of the *emitted* JavaScript file.
-import todoRoutes from './routes/todo.js';
+// LESSON 254: EXTENSION SWITCHES FROM .js TO .ts.
+// Because we are no longer compiling to a `dist/` folder, the file on disk
+// really is `./routes/todo.ts`. The `allowImportingTsExtensions` compiler
+// option (enabled in tsconfig.json) is what lets us reference the source
+// path directly.
+import todoRoutes from './routes/todo.ts';
 
 const app = express();
 

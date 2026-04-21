@@ -46,6 +46,33 @@
     // Explicitly loads the Node.js ambient types installed via `@types/node`.
     // Without this, the compiler in use here refuses to resolve core modules
     // like `http` and reports that the `http` identifier cannot be found.
-    "types": ["node"]
+    "types": ["node"],
+
+    // LESSON 254: SWITCHING TO NATIVE NODE.JS TYPESCRIPT EXECUTION.
+    // Node.js 22.6+ can execute .ts files directly — no `tsc` pass needed.
+    // The three options below adapt the compiler to that workflow so that
+    // the editor and a standalone type-check (`tsc` with noEmit) still give
+    // us feedback while Node handles the actual runtime stripping of types.
+
+    // Allows `import ... from './foo.ts'` in source code. Under the compile
+    // workflow we used to write `./foo.js` because the emitted output is
+    // .js; now there is no output step, so the import path has to point at
+    // the file that actually exists on disk — the .ts source.
+    "allowImportingTsExtensions": true,
+
+    // Tells the compiler never to produce JavaScript files. This is a hard
+    // requirement when `allowImportingTsExtensions` is enabled (TypeScript
+    // refuses to emit code that references paths with a .ts extension).
+    // Running `tsc` now becomes a pure type-check.
+    "noEmit": true,
+
+    // Forces every `import`/`export` statement to spell out whether each
+    // binding is a runtime value or a type-only symbol. Anything that exists
+    // solely in the type system (interfaces, type aliases, type-only class
+    // references) must be imported with the `type` keyword. Without this
+    // option, TypeScript would silently erase type-only imports for us;
+    // with it enabled, Node's lighter-weight type stripper can handle the
+    // job because the intent is already spelled out in the source.
+    "verbatimModuleSyntax": true
   }
 }

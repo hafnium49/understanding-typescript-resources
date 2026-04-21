@@ -8,13 +8,18 @@ import { Router } from 'express';
 // LESSON 253: IMPORTS FOR THE REMAINING CRUD HELPERS.
 // Each HTTP verb below delegates to one of these pure functions so the
 // handlers stay thin: they translate between HTTP and the in-memory store.
+//
+// LESSON 254: EXTENSION CHANGES FROM .js TO .ts.
+// We now rely on Node.js's native TypeScript support, so there is no .js
+// output to import from — the .ts source file is what actually exists.
+// Enabled by `allowImportingTsExtensions` in tsconfig.json.
 import {
   addTodo,
   getTodos,
   getTodo,
   updateTodo,
   removeTodo,
-} from '../data.js';
+} from '../data.ts';
 
 const router = Router();
 
