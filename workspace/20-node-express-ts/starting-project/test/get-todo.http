@@ -1,0 +1,10 @@
+### LESSON 253: SMOKE TEST — FETCH A SINGLE TODO BY ID
+# Ids are generated via Math.random in data.ts, so replace the value below
+# with one returned by a previous POST (see `new-todo.http`) or by the list
+# endpoint (`get-todos.http`).
+#
+# Supplying an id that does not exist makes `getTodo` throw `Todo not found`.
+# Express then routes the error into the global error-handling middleware in
+# app.ts and responds with a 500. Swap the id for something like `abc` to
+# exercise that path.
+GET http://localhost:3000/todos/0.123456789

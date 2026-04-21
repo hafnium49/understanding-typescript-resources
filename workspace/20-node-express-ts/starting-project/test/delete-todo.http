@@ -1,0 +1,6 @@
+### LESSON 253: SMOKE TEST — DELETE A TODO BY ID
+# The handler responds with `{ "message": "Todo deleted" }` regardless of
+# whether the id was actually present, because `removeTodo` uses Array.filter
+# and silently drops nothing when no element matches. Re-running
+# `get-todos.http` afterwards is the cleanest way to confirm the change.
+DELETE http://localhost:3000/todos/0.123456789

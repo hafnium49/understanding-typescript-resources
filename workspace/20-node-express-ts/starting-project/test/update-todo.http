@@ -1,0 +1,12 @@
+### LESSON 253: SMOKE TEST — UPDATE AN EXISTING TODO
+# PATCH communicates a partial update. Replace the id with one that currently
+# exists in the store; the server responds with the updated entity.
+#
+# Content-Type is required so `express.json()` parses the body into `req.body`
+# (otherwise `req.body.text` would come through as undefined).
+PATCH http://localhost:3000/todos/0.123456789
+Content-Type: application/json
+
+{
+  "text": "Updated text"
+}

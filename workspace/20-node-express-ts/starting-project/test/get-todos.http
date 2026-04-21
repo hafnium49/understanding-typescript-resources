@@ -1,0 +1,6 @@
+### LESSON 253: SMOKE TEST — LIST EVERY TODO
+# On a freshly started server the `todos` array is empty, so this returns
+# `{ "todos": [] }`. Create one via `new-todo.http` first to see a populated
+# response here. Because everything lives in memory, the list resets every
+# time the server restarts.
+GET http://localhost:3000/todos

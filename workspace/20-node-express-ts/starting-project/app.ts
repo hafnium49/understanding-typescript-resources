@@ -7,34 +7,45 @@
 // Express is installed alongside `@types/express` so the compiler understands
 // its API. The default-import style works here thanks to `esModuleInterop`
 // in tsconfig.json.
-import express from 'express';
+//
+// LESSON 253: ALSO GRABBING REQUEST / RESPONSE / NEXTFUNCTION TYPES.
+// The error-handling middleware below is declared with a plain function
+// expression rather than inline inside a route helper, so Express can no
+// longer infer the parameter types for us. These named imports come from
+// @types/express and let us annotate the middleware explicitly.
+import express, { Request, Response, NextFunction } from 'express';
 
 // LESSON 252: MOUNTING THE TODO ROUTES.
-// The router from routes/todo.ts collects every todo endpoint. Importing it
-// here lets the application layer hand off matching requests to that module.
-//
-// Notice the `.js` extension in the import path even though the source file
-// is a .ts file. With `module: NodeNext`, TypeScript follows Node's ESM
-// resolution rules, which require a concrete file extension — and it expects
-// the extension of the *emitted* JavaScript, not the TypeScript input.
-// Forgetting this (or writing `.ts`) is a classic early mistake.
+// The `.js` extension is intentional even though the source file is `.ts`.
+// Under `module: NodeNext`, TypeScript applies Node's ESM resolution rules,
+// which require the extension of the *emitted* JavaScript file.
 import todoRoutes from './routes/todo.js';
 
 const app = express();
 
 // LESSON 252: BODY PARSING MIDDLEWARE.
-// Express does not read request bodies by default. `express.json()` returns
-// a middleware function that, for every incoming request, checks for a JSON
-// Content-Type, reads and parses the payload, and exposes the result on
-// `req.body`. It must be registered *before* any route that expects
-// `req.body` to be populated — middleware runs in the order it is added.
+// Must run before any route that reads `req.body`. Middleware runs in
+// registration order, so this line has to stay above the route mount below.
 app.use(express.json());
 
 // LESSON 252: ATTACHING THE RESOURCE ROUTES.
-// `app.use(todoRoutes)` makes every route registered on the todo router a
-// real route on the application. We could also pass a path prefix here
-// (e.g. `app.use('/api', todoRoutes)`) to namespace the endpoints; omitting
-// the prefix mounts them at the root.
 app.use(todoRoutes);
+
+// LESSON 253: GLOBAL ERROR-HANDLING MIDDLEWARE.
+// Express recognises a middleware as an error handler by its arity: exactly
+// four declared parameters (`err, req, res, next`). Whenever a synchronous
+// route handler throws — for instance when `getTodo` cannot find the
+// requested id — Express skips the remaining regular middleware and hands
+// the error to this function. Returning a 500 with a generic message is a
+// reasonable default; a production app would branch on the error type and
+// status (404 for "not found", 400 for invalid input, and so on).
+//
+// `next` must appear in the signature for Express to spot the error-handler
+// shape, even though we don't call it here. Calling `next(err)` would forward
+// the error to any subsequent error handlers; plain `next()` would resume
+// the regular middleware chain.
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({ message: 'An error occurred.' });
+});
 
 app.listen(3000);
