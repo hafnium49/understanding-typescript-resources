@@ -30,6 +30,39 @@ import express, { type Request, type Response, type NextFunction } from 'express
 // path directly.
 import todoRoutes from './routes/todo.ts';
 
+// LESSON 255 DEMO — non-erasable TypeScript syntax (kept as commented-out
+// reference). Strip the leading `// ` from the `enum TODO_TYPE { ... }`
+// lines below to reproduce the three signals the lesson highlights:
+//
+//   1. Compile time. `./node_modules/.bin/tsc` raises
+//        error TS1294: This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+//      because of the matching option set in tsconfig.json. The point of
+//      that option is to surface this exact problem before any user runs
+//      the app.
+//
+//   2. Runtime in strip-only mode. `npm start` (which calls
+//      `node app.ts`) aborts with
+//        SyntaxError [ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]: TypeScript enum
+//        is not supported in strip-only mode
+//      because Node's built-in TypeScript support only erases purely-type
+//      syntax — and `enum` compiles into a runtime object, so it cannot
+//      be erased.
+//
+//   3. Runtime with the transform pass. Re-running as
+//        node --experimental-transform-types app.ts
+//      boots the server on port 3000 (after an
+//      `ExperimentalWarning: Transform Types is an experimental feature`
+//      notice). Node performs a real TypeScript-to-JavaScript transform
+//      in this mode, at the cost of extra startup time.
+//
+// While the lines stay commented the project type-checks cleanly and
+// `npm start` works, because nothing here is parsed as TypeScript syntax.
+//
+// enum TODO_TYPE {
+//   BASIC,
+//   URGENT,
+// }
+
 const app = express();
 
 // LESSON 252: BODY PARSING MIDDLEWARE.
